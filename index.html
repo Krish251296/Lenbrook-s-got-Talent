@@ -41,10 +41,17 @@
         const response = await fetch(FUNCTION_URL, {
           method: "POST",
           body: formData,
-          mode: "cors" // ensures cross-origin request is handled
+          mode: "cors" // ensure CORS request is sent
         });
 
-        const result = await response.json();
+        // Try parsing JSON safely
+        let result;
+        try {
+          result = await response.json();
+        } catch {
+          statusMsg.textContent = "Error: Server did not return JSON. Check Cloud Function logs.";
+          return;
+        }
 
         if (response.ok) {
           statusMsg.textContent = "✅ Submission successful! Video URL: " + result.url;
@@ -53,7 +60,6 @@
           statusMsg.textContent = "Error: " + (result.error || "Unknown error");
         }
       } catch (err) {
-        console.error(err);
         statusMsg.textContent = "Upload failed: " + err.message;
       }
     });
