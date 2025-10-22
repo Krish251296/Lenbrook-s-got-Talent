@@ -12,6 +12,8 @@
     button { background: #0078D7; color: white; border: none; border-radius: 5px; cursor: pointer; }
     button:hover { background: #005fa3; }
     #statusMsg { margin-top: 15px; font-weight: bold; }
+    a { color: #0078D7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -38,23 +40,17 @@
       const formData = new FormData(form);
 
       try {
-        const response = await fetch(FUNCTION_URL, {
-          method: "POST",
-          body: formData,
-          mode: "cors" // ensure CORS request is sent
-        });
-
-        // Try parsing JSON safely
+        const response = await fetch(FUNCTION_URL, { method: "POST", body: formData });
         let result;
+
         try {
           result = await response.json();
         } catch {
-          statusMsg.textContent = "Error: Server did not return JSON. Check Cloud Function logs.";
-          return;
+          result = { error: "Unexpected server response" };
         }
 
         if (response.ok) {
-          statusMsg.textContent = "✅ Submission successful! Video URL: " + result.url;
+          statusMsg.innerHTML = `✅ Submission successful! Video URL: <a href="${result.url}" target="_blank">${result.url}</a>`;
           form.reset();
         } else {
           statusMsg.textContent = "Error: " + (result.error || "Unknown error");
