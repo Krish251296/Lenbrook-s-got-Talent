@@ -40,16 +40,16 @@
       try {
         const response = await fetch(FUNCTION_URL, {
           method: "POST",
-          body: formData,
-          mode: "cors"
+          body: formData
         });
 
-        // Safely parse JSON
-        let result = {};
+        // Use text() first to safely catch non-JSON errors
+        const text = await response.text();
+        let result;
         try {
-          result = await response.json();
-        } catch (parseErr) {
-          throw new Error("Server response is not valid JSON: " + parseErr.message);
+          result = JSON.parse(text);
+        } catch {
+          throw new Error(text);
         }
 
         if (response.ok) {
