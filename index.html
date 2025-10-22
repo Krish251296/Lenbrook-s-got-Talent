@@ -38,7 +38,12 @@
       const formData = new FormData(form);
 
       try {
-        const response = await fetch(FUNCTION_URL, { method: "POST", body: formData });
+        const response = await fetch(FUNCTION_URL, {
+          method: "POST",
+          body: formData,
+          mode: "cors" // ensures cross-origin request is handled
+        });
+
         const result = await response.json();
 
         if (response.ok) {
@@ -48,6 +53,7 @@
           statusMsg.textContent = "Error: " + (result.error || "Unknown error");
         }
       } catch (err) {
+        console.error(err);
         statusMsg.textContent = "Upload failed: " + err.message;
       }
     });
