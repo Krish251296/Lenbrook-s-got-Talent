@@ -12,8 +12,6 @@
     button { background: #0078D7; color: white; border: none; border-radius: 5px; cursor: pointer; }
     button:hover { background: #005fa3; }
     #statusMsg { margin-top: 15px; font-weight: bold; }
-    a { color: #0078D7; text-decoration: none; }
-    a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -40,17 +38,22 @@
       const formData = new FormData(form);
 
       try {
-        const response = await fetch(FUNCTION_URL, { method: "POST", body: formData });
-        let result;
+        const response = await fetch(FUNCTION_URL, {
+          method: "POST",
+          body: formData,
+          mode: "cors"
+        });
 
+        // Safely parse JSON
+        let result = {};
         try {
           result = await response.json();
-        } catch {
-          result = { error: "Unexpected server response" };
+        } catch (parseErr) {
+          throw new Error("Server response is not valid JSON: " + parseErr.message);
         }
 
         if (response.ok) {
-          statusMsg.innerHTML = `✅ Submission successful! Video URL: <a href="${result.url}" target="_blank">${result.url}</a>`;
+          statusMsg.textContent = "✅ Submission successful! Video URL: " + result.url;
           form.reset();
         } else {
           statusMsg.textContent = "Error: " + (result.error || "Unknown error");
