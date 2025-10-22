@@ -3,18 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's got Talent Submission</title>
+  <title>Lenbrook's Got Talent - Submit Your Video</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background: #fafafa; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #fafafa;
+    }
     h1 { color: #333; }
-    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 500px; }
-    input, textarea, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 1em; }
-    button { background: #0078D7; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 1em;
+    }
+    button {
+      background: #0078D7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
     button:hover { background: #005fa3; }
+    #statusMsg { margin-top: 15px; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h1>🎄 Lenbrook's got Talent Submission</h1>
+  <h1>🎄 Lenbrook's Got Talent - Video Submission</h1>
   <form id="submissionForm">
     <input type="text" id="name" placeholder="Your Name" required />
     <input type="text" id="department" placeholder="Department" required />
@@ -31,12 +52,12 @@
     import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // Your Firebase Config (replace with your real values)
+    // 🔹 Replace with your real Firebase config
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_BUCKET",
+      authDomain: "lenbrooks-got-talent.firebaseapp.com",
+      projectId: "lenbrooks-got-talent",
+      storageBucket: "lenbrooks-got-talent.firebasestorage.app",
       messagingSenderId: "YOUR_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
@@ -52,19 +73,27 @@
       e.preventDefault();
       statusMsg.textContent = "Uploading video... please wait.";
 
-      const name = form.name.value || document.getElementById('name').value;
-      const department = document.getElementById('department').value;
-      const description = document.getElementById('description').value;
+      const name = document.getElementById('name').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const description = document.getElementById('description').value.trim();
       const file = document.getElementById('videoFile').files[0];
 
+      if (!file) {
+        statusMsg.textContent = "Please select a video file!";
+        return;
+      }
+
       try {
-        const fileRef = ref(storage, 'videos/' + Date.now() + '_' + file.name);
+        // Create a reference in Firebase Storage
+        const fileRef = ref(storage, `videos/${Date.now()}_${file.name}`);
         const uploadTask = uploadBytesResumable(fileRef, file);
 
         uploadTask.on('state_changed', null, (error) => {
           statusMsg.textContent = "Upload failed: " + error.message;
         }, async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+          // Save metadata to Firestore
           await addDoc(collection(db, "submissions"), {
             name,
             department,
@@ -72,6 +101,7 @@
             videoURL: downloadURL,
             timestamp: serverTimestamp()
           });
+
           statusMsg.textContent = "✅ Submission successful! Thank you!";
           form.reset();
         });
