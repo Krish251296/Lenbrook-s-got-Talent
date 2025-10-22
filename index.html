@@ -5,109 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lenbrook's Got Talent - Submit Your Video</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background: #fafafa;
-    }
+    body { font-family: Arial, sans-serif; margin: 40px; background: #fafafa; }
     h1 { color: #333; }
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-    }
-    input, textarea, button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      font-size: 1em;
-    }
-    button {
-      background: #0078D7;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 500px; }
+    input, textarea, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 1em; }
+    button { background: #0078D7; color: white; border: none; border-radius: 5px; cursor: pointer; }
     button:hover { background: #005fa3; }
     #statusMsg { margin-top: 15px; font-weight: bold; }
   </style>
 </head>
 <body>
   <h1>🎄 Lenbrook's Got Talent - Video Submission</h1>
-  <form id="submissionForm">
-    <input type="text" id="name" placeholder="Your Name" required />
-    <input type="text" id="department" placeholder="Department" required />
-    <textarea id="description" placeholder="Talent Description" required></textarea>
-    <input type="file" id="videoFile" accept="video/*" required />
+  <form id="submissionForm" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="text" name="department" placeholder="Department" />
+    <textarea name="description" placeholder="Talent Description"></textarea>
+    <input type="file" name="video" accept="video/*" required />
     <button type="submit">Submit Video</button>
   </form>
-
   <p id="statusMsg"></p>
 
-  <script type="module">
-    // Import Firebase SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <script>
+    const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo";
+    const form = document.getElementById("submissionForm");
+    const statusMsg = document.getElementById("statusMsg");
 
-    // 🔹 Replace with your real Firebase config
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "lenbrooks-got-talent.firebaseapp.com",
-      projectId: "lenbrooks-got-talent",
-      storageBucket: "lenbrooks-got-talent.firebasestorage.app",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    const form = document.getElementById('submissionForm');
-    const statusMsg = document.getElementById('statusMsg');
-
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       statusMsg.textContent = "Uploading video... please wait.";
 
-      const name = document.getElementById('name').value.trim();
-      const department = document.getElementById('department').value.trim();
-      const description = document.getElementById('description').value.trim();
-      const file = document.getElementById('videoFile').files[0];
-
-      if (!file) {
-        statusMsg.textContent = "Please select a video file!";
-        return;
-      }
+      const formData = new FormData(form);
 
       try {
-        // Create a reference in Firebase Storage
-        const fileRef = ref(storage, `videos/${Date.now()}_${file.name}`);
-        const uploadTask = uploadBytesResumable(fileRef, file);
-
-        uploadTask.on('state_changed', null, (error) => {
-          statusMsg.textContent = "Upload failed: " + error.message;
-        }, async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-          // Save metadata to Firestore
-          await addDoc(collection(db, "submissions"), {
-            name,
-            department,
-            description,
-            videoURL: downloadURL,
-            timestamp: serverTimestamp()
-          });
-
-          statusMsg.textContent = "✅ Submission successful! Thank you!";
-          form.reset();
+        const response = await fetch(FUNCTION_URL, {
+          method: "POST",
+          body: formData
         });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          statusMsg.textContent = "✅ Submission successful! Video URL: " + result.url;
+          form.reset();
+        } else {
+          statusMsg.textContent = "Error: " + (result.error || "Unknown error");
+        }
       } catch (err) {
-        console.error(err);
-        statusMsg.textContent = "Error: " + err.message;
+        statusMsg.textContent = "Upload failed: " + err.message;
       }
     });
   </script>
