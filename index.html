@@ -23,6 +23,7 @@
     <input type="file" name="video" accept="video/*" required />
     <button type="submit">Submit Video</button>
   </form>
+
   <p id="statusMsg"></p>
 
   <script>
@@ -37,11 +38,7 @@
       const formData = new FormData(form);
 
       try {
-        const response = await fetch(FUNCTION_URL, {
-          method: "POST",
-          body: formData
-        });
-
+        const response = await fetch(FUNCTION_URL, { method: "POST", body: formData });
         const result = await response.json();
 
         if (response.ok) {
