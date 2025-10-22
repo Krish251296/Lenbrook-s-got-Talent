@@ -1,10 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Lenbrook's Got Talent</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenbrook's got Talent Submission</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #fafafa; }
+    h1 { color: #333; }
+    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 500px; }
+    input, textarea, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 1em; }
+    button { background: #0078D7; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #005fa3; }
+  </style>
 </head>
 <body>
-  <h1>Welcome to Lenbrook's Got Talent!</h1>
-  <p>Site is live 🎉</p>
+  <h1>🎄 Lenbrook's got Talent Submission</h1>
+  <form id="submissionForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="text" id="department" placeholder="Department" required />
+    <textarea id="description" placeholder="Talent Description" required></textarea>
+    <input type="file" id="videoFile" accept="video/*" required />
+    <button type="submit">Submit Video</button>
+  </form>
+
+  <p id="statusMsg"></p>
+
+  <script type="module">
+    // Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Your Firebase Config (replace with your real values)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const form = document.getElementById('submissionForm');
+    const statusMsg = document.getElementById('statusMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusMsg.textContent = "Uploading video... please wait.";
+
+      const name = form.name.value || document.getElementById('name').value;
+      const department = document.getElementById('department').value;
+      const description = document.getElementById('description').value;
+      const file = document.getElementById('videoFile').files[0];
+
+      try {
+        const fileRef = ref(storage, 'videos/' + Date.now() + '_' + file.name);
+        const uploadTask = uploadBytesResumable(fileRef, file);
+
+        uploadTask.on('state_changed', null, (error) => {
+          statusMsg.textContent = "Upload failed: " + error.message;
+        }, async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          await addDoc(collection(db, "submissions"), {
+            name,
+            department,
+            description,
+            videoURL: downloadURL,
+            timestamp: serverTimestamp()
+          });
+          statusMsg.textContent = "✅ Submission successful! Thank you!";
+          form.reset();
+        });
+      } catch (err) {
+        console.error(err);
+        statusMsg.textContent = "Error: " + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
