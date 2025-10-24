@@ -72,7 +72,7 @@
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
       projectId: "lenbrook-s-got-talent",
-      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+      storageBucket: "lenbrooks-got-talent.firebasestorage.app",
       messagingSenderId: "327419181483",
       appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
     };
@@ -81,8 +81,9 @@
     const db = getFirestore(app);
 
     // 🧠 Access control
-    const ACCESS_CODE = "LEN2025Review"; // Change this as needed
+    const ACCESS_CODE = "LEN2025Review"; // change if needed
     let currentReviewer = null;
+    let accessGranted = false;
 
     const accessBtn = document.getElementById("accessBtn");
     const startReviewBtn = document.getElementById("startReviewBtn");
@@ -96,6 +97,7 @@
     accessBtn.addEventListener("click", () => {
       const code = document.getElementById("accessCode").value.trim();
       if (code === ACCESS_CODE) {
+        accessGranted = true;
         accessSection.style.display = "none";
         nameSection.style.display = "block";
         status.textContent = "✅ Access granted. Please enter your name.";
@@ -106,6 +108,7 @@
 
     // ✅ Reviewer name entry
     startReviewBtn.addEventListener("click", () => {
+      if (!accessGranted) return alert("Please enter the access code first!");
       const name = document.getElementById("reviewerName").value.trim();
       if (!name) return alert("Please enter your name before proceeding.");
       currentReviewer = name;
@@ -115,15 +118,17 @@
       loadSubmissions();
     });
 
-    // 📋 Load Submissions
+    // 📋 Load Submissions (only if access granted)
     async function loadSubmissions() {
+      if (!accessGranted) return;
       const snapshot = await getDocs(collection(db, "submissions"));
       tableBody.innerHTML = "";
 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        const id = docSnap.id;
+        if (data.accessCode !== ACCESS_CODE) return; // only load valid entries
 
+        const id = docSnap.id;
         const userRatings = data.ratings?.[currentReviewer] || {};
         const total = userRatings.total || 0;
         const avg = data.averageScore ? data.averageScore.toFixed(1) : "-";
@@ -147,9 +152,10 @@
       status.textContent = "✅ Loaded submissions.";
     }
 
-    // 💾 Save ratings
+    // 💾 Save ratings securely
     window.saveRating = async (id) => {
-      if (!currentReviewer) return alert("Please enter your name first.");
+      if (!accessGranted || !currentReviewer)
+        return alert("Access code or reviewer name missing.");
 
       const tech = parseInt(document.getElementById(`tech-${id}`).value || 0);
       const creative = parseInt(document.getElementById(`creative-${id}`).value || 0);
@@ -166,7 +172,11 @@
       const allTotals = Object.values(ratings).map(r => r.total);
       const avg = allTotals.reduce((a, b) => a + b, 0) / allTotals.length;
 
-      await updateDoc(ref, { ratings, averageScore: avg });
+      await updateDoc(ref, {
+        ratings,
+        averageScore: avg,
+        accessCode: ACCESS_CODE // 🔐 ensures Firestore allows it
+      });
 
       document.getElementById(`total-${id}`).textContent = total;
       document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
