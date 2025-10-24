@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Lenbrook's Got Talent</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #0078D7;
+    }
+    #loginSection, #status {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0078D7;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #0078D7;
+      color: white;
+    }
+    video {
+      width: 200px;
+      border-radius: 8px;
+    }
+    #status {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Admin Dashboard - Lenbrook's Got Talent</h1>
+
+  <div id="loginSection">
+    <button id="loginBtn">Sign in with Google</button>
+  </div>
+
+  <div id="status">Please sign in with your Lenbrook Google account.</div>
+
+  <table id="adminTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Description</th>
+        <th>Video</th>
+        <th>Ratings (All Reviewers)</th>
+        <th>Average Score</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // 🔧 Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
+      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
+      projectId: "lenbrook-s-got-talent",
+      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+      messagingSenderId: "327419181483",
+      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const ALLOWED_EMAIL = "kdesai@lenbrook.com";
+
+    const loginBtn = document.getElementById("loginBtn");
+    const loginSection = document.getElementById("loginSection");
+    const status = document.getElementById("status");
+    const table = document.getElementById("adminTable");
+    const tbody = table.querySelector("tbody");
+
+    loginBtn.addEventListener("click", async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        if (user.email.toLowerCase() === ALLOWED_EMAIL.toLowerCase()) {
+          status.textContent = `✅ Welcome ${user.displayName}`;
+          loginSection.style.display = "none";
+          table.style.display = "table";
+          loadSubmissions();
+        } else {
+          status.textContent = "❌ Access Denied: Unauthorized Email.";
+          alert("Access Denied: This page is restricted to the admin only.");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        status.textContent = "❌ Sign-in failed. Try again.";
+      }
+    });
+
+    async function loadSubmissions() {
+      try {
+        const snapshot = await getDocs(collection(db, "submissions"));
+        tbody.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const ratings = data.ratings || {};
+          const avg = data.averageScore ? data.averageScore.toFixed(2) : "-";
+
+          // Create a readable block of reviewer ratings
+          let ratingsHTML = "";
+          for (const [reviewer, score] of Object.entries(ratings)) {
+            ratingsHTML += `
+              <div style="text-align:left; margin-bottom:4px;">
+                <strong>${reviewer}</strong>: 
+                Tech ${score.technical}, 
+                Creative ${score.creativity}, 
+                Entertain ${score.entertainment}, 
+                Total ${score.total}
+              </div>
+            `;
+          }
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${data.name || ""}</td>
+            <td>${data.department || ""}</td>
+            <td>${data.description || ""}</td>
+            <td><video src="${data.videoURL}" controls></video></td>
+            <td>${ratingsHTML || "No ratings yet"}</td>
+            <td><strong>${avg}</strong></td>
+          `;
+          tbody.appendChild(tr);
+        });
+        status.textContent = "✅ Loaded all submissions successfully.";
+      } catch (err) {
+        console.error("Error loading submissions:", err);
+        status.textContent = "⚠️ Error fetching data. Check console for details.";
+      }
+    }
+  </script>
+</body>
+</html>
