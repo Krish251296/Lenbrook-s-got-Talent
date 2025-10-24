@@ -5,68 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lenbrook's Got Talent - Review Panel</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background: #f5f5f5;
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+    h1 { text-align: center; }
+    #authSection, #reviewerNameSection {
+      text-align: center; margin-bottom: 20px;
     }
-    h1 {
-      text-align: center;
-    }
-    #authSection {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: white;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #0078D7;
-      color: white;
-    }
-    video {
-      width: 200px;
-      border-radius: 8px;
-    }
-    input[type="number"] {
-      width: 60px;
-      padding: 5px;
+    input, button {
+      padding: 8px; font-size: 1em;
+      margin: 5px; border-radius: 5px; border: 1px solid #ccc;
     }
     button {
-      padding: 8px 15px;
-      background: #0078D7;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      background: #0078D7; color: white; border: none; cursor: pointer;
     }
-    button:hover {
-      background: #005fa3;
+    button:hover { background: #005fa3; }
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 20px; background: white;
     }
-    #status {
-      margin-top: 20px;
-      font-weight: bold;
-      text-align: center;
+    th, td {
+      border: 1px solid #ddd; padding: 10px; text-align: center;
     }
+    th { background-color: #0078D7; color: white; }
+    video { width: 200px; border-radius: 8px; }
+    input[type="number"] { width: 60px; padding: 5px; }
+    #status { margin-top: 20px; font-weight: bold; text-align: center; }
   </style>
 </head>
 <body>
   <h1>🎄 Lenbrook's Got Talent - Review Panel</h1>
 
   <div id="authSection">
-    <button id="loginBtn">🔐 Sign in with Google</button>
-    <span id="userInfo"></span>
+    <input type="password" id="accessCode" placeholder="Enter Access Code" />
+    <button id="accessBtn">Enter</button>
   </div>
 
-  <div id="status">Please sign in to view submissions...</div>
+  <div id="reviewerNameSection" style="display:none;">
+    <input type="text" id="reviewerName" placeholder="Enter Your Name" />
+    <button id="startReviewBtn">Start Reviewing</button>
+  </div>
+
+  <div id="status">Please enter the access code.</div>
 
   <table id="submissionsTable" style="display:none;">
     <thead>
@@ -88,14 +65,9 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { 
-      getFirestore, collection, getDocs, doc, getDoc, updateDoc 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { 
-      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // ✅ Firebase config (correct lowercase project ID)
+    // 🔧 Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
@@ -107,60 +79,43 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
 
-    const loginBtn = document.getElementById("loginBtn");
-    const userInfo = document.getElementById("userInfo");
-    const status = document.getElementById("status");
+    // 🧠 Access control
+    const ACCESS_CODE = "LEN2025Review"; // Change this as needed
+    let currentReviewer = null;
+
+    const accessBtn = document.getElementById("accessBtn");
+    const startReviewBtn = document.getElementById("startReviewBtn");
+    const accessSection = document.getElementById("authSection");
+    const nameSection = document.getElementById("reviewerNameSection");
     const table = document.getElementById("submissionsTable");
+    const status = document.getElementById("status");
     const tableBody = table.querySelector("tbody");
 
-    let currentUser = null;
-
-    // 🔑 Sign in with Google
-    loginBtn.addEventListener("click", async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        currentUser = result.user;
-        setupUI();
-        loadSubmissions();
-      } catch (err) {
-        alert("Sign-in failed. Please try again.");
-        console.error(err);
-      }
-    });
-
-    // 👀 Handle auth state
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUser = user;
-        setupUI();
-        loadSubmissions();
+    // ✅ Verify Access Code
+    accessBtn.addEventListener("click", () => {
+      const code = document.getElementById("accessCode").value.trim();
+      if (code === ACCESS_CODE) {
+        accessSection.style.display = "none";
+        nameSection.style.display = "block";
+        status.textContent = "✅ Access granted. Please enter your name.";
       } else {
-        currentUser = null;
-        table.style.display = "none";
-        status.textContent = "Please sign in to view submissions.";
-        userInfo.innerHTML = "";
-        loginBtn.style.display = "inline-block";
+        alert("❌ Invalid access code.");
       }
     });
 
-    function setupUI() {
-      userInfo.innerHTML = `
-        👤 ${currentUser.email} 
-        <button id="logoutBtn" style="margin-left:10px;">Logout</button>
-      `;
-      loginBtn.style.display = "none";
+    // ✅ Reviewer name entry
+    startReviewBtn.addEventListener("click", () => {
+      const name = document.getElementById("reviewerName").value.trim();
+      if (!name) return alert("Please enter your name before proceeding.");
+      currentReviewer = name;
+      nameSection.style.display = "none";
       table.style.display = "table";
       status.textContent = "Loading submissions...";
+      loadSubmissions();
+    });
 
-      document.getElementById("logoutBtn").addEventListener("click", async () => {
-        await signOut(auth);
-      });
-    }
-
-    // 📄 Load all submissions
+    // 📋 Load Submissions
     async function loadSubmissions() {
       const snapshot = await getDocs(collection(db, "submissions"));
       tableBody.innerHTML = "";
@@ -169,7 +124,7 @@
         const data = docSnap.data();
         const id = docSnap.id;
 
-        const userRatings = data.ratings?.[currentUser?.email] || {};
+        const userRatings = data.ratings?.[currentReviewer] || {};
         const total = userRatings.total || 0;
         const avg = data.averageScore ? data.averageScore.toFixed(1) : "-";
 
@@ -192,9 +147,9 @@
       status.textContent = "✅ Loaded submissions.";
     }
 
-    // 💾 Save reviewer’s rating
+    // 💾 Save ratings
     window.saveRating = async (id) => {
-      if (!currentUser) return alert("Please sign in first.");
+      if (!currentReviewer) return alert("Please enter your name first.");
 
       const tech = parseInt(document.getElementById(`tech-${id}`).value || 0);
       const creative = parseInt(document.getElementById(`creative-${id}`).value || 0);
@@ -206,14 +161,8 @@
       const data = docSnap.data() || {};
 
       const ratings = data.ratings || {};
-      ratings[currentUser.email] = {
-        technical: tech,
-        creativity: creative,
-        entertainment: ent,
-        total
-      };
+      ratings[currentReviewer] = { technical: tech, creativity: creative, entertainment: ent, total };
 
-      // Calculate new average
       const allTotals = Object.values(ratings).map(r => r.total);
       const avg = allTotals.reduce((a, b) => a + b, 0) / allTotals.length;
 
@@ -222,7 +171,7 @@
       document.getElementById(`total-${id}`).textContent = total;
       document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
 
-      alert("✅ Rating saved!");
+      alert(`✅ Rating saved by ${currentReviewer}!`);
     };
   </script>
 </body>
