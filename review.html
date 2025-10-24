@@ -13,6 +13,10 @@
     h1 {
       text-align: center;
     }
+    #authSection {
+      text-align: center;
+      margin-bottom: 20px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -55,6 +59,10 @@
 </head>
 <body>
   <h1>🎄 Lenbrook's Got Talent - Review Panel</h1>
+  <div id="authSection">
+    <button id="loginBtn">Sign in with Google</button>
+    <span id="userInfo"></span>
+  </div>
   <div id="status">Loading submissions...</div>
 
   <table id="submissionsTable">
@@ -67,6 +75,8 @@
         <th>Technical Skill</th>
         <th>Creativity</th>
         <th>Entertainment</th>
+        <th>Total (You)</th>
+        <th>Average (All Reviewers)</th>
         <th>Save Rating</th>
       </tr>
     </thead>
@@ -75,39 +85,76 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // Your Firebase config
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
-      authDomain: "lenbrooks-got-talent.firebaseapp.com",
+      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
       projectId: "lenbrook-s-got-talent",
-      storageBucket: "lenbrooks-got-talent.firebasestorage.app",
+      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
       messagingSenderId: "327419181483",
       appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
 
     const tableBody = document.querySelector("#submissionsTable tbody");
     const status = document.getElementById("status");
+    const loginBtn = document.getElementById("loginBtn");
+    const userInfo = document.getElementById("userInfo");
+
+    let currentUser = null;
+
+    loginBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        currentUser = result.user;
+        userInfo.textContent = `Signed in as ${currentUser.email}`;
+        loginBtn.style.display = "none";
+        loadSubmissions();
+      } catch (error) {
+        alert("Sign-in failed. Please try again.");
+        console.error(error);
+      }
+    });
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        currentUser = user;
+        userInfo.textContent = `Signed in as ${user.email}`;
+        loginBtn.style.display = "none";
+        loadSubmissions();
+      }
+    });
 
     async function loadSubmissions() {
       const snapshot = await getDocs(collection(db, "submissions"));
       tableBody.innerHTML = "";
       snapshot.forEach(docSnap => {
         const data = docSnap.data();
+        const id = docSnap.id;
+
+        const userRatings = data.ratings?.[currentUser?.email] || {};
+        const total = userRatings.total || 0;
+        const avg = data.averageScore ? data.averageScore.toFixed(1) : "-";
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${data.name || ""}</td>
           <td>${data.department || ""}</td>
           <td>${data.description || ""}</td>
           <td><video src="${data.videoURL}" controls></video></td>
-          <td><input type="number" id="tech-${docSnap.id}" min="1" max="10" value="${data.techSkill || ''}"></td>
-          <td><input type="number" id="creative-${docSnap.id}" min="1" max="10" value="${data.creativity || ''}"></td>
-          <td><input type="number" id="ent-${docSnap.id}" min="1" max="10" value="${data.entertainment || ''}"></td>
-          <td><button onclick="saveRating('${docSnap.id}')">💾 Save</button></td>
+          <td><input type="number" id="tech-${id}" min="1" max="10" value="${userRatings.technical || ''}"></td>
+          <td><input type="number" id="creative-${id}" min="1" max="10" value="${userRatings.creativity || ''}"></td>
+          <td><input type="number" id="ent-${id}" min="1" max="10" value="${userRatings.entertainment || ''}"></td>
+          <td id="total-${id}">${total}</td>
+          <td id="avg-${id}">${avg}</td>
+          <td><button onclick="saveRating('${id}')">💾 Save</button></td>
         `;
         tableBody.appendChild(tr);
       });
@@ -115,19 +162,30 @@
     }
 
     window.saveRating = async (id) => {
+      if (!currentUser) return alert("Please sign in first.");
+
       const tech = parseInt(document.getElementById(`tech-${id}`).value || 0);
       const creative = parseInt(document.getElementById(`creative-${id}`).value || 0);
       const ent = parseInt(document.getElementById(`ent-${id}`).value || 0);
-      const docRef = doc(db, "submissions", id);
-      await updateDoc(docRef, {
-        techSkill: tech,
-        creativity: creative,
-        entertainment: ent
-      });
-      alert("✅ Rating saved for submission!");
-    };
+      const total = tech + creative + ent;
 
-    loadSubmissions();
+      const ref = doc(db, "submissions", id);
+      const docSnap = await getDoc(ref);
+      const data = docSnap.data() || {};
+
+      const ratings = data.ratings || {};
+      ratings[currentUser.email] = { technical: tech, creativity: creative, entertainment: ent, total };
+
+      const allTotals = Object.values(ratings).map(r => r.total);
+      const avg = allTotals.reduce((a, b) => a + b, 0) / allTotals.length;
+
+      await updateDoc(ref, { ratings, averageScore: avg });
+
+      document.getElementById(`total-${id}`).textContent = total;
+      document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
+
+      alert("✅ Rating saved!");
+    };
   </script>
 </body>
 </html>
