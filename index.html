@@ -16,18 +16,35 @@
 </head>
 <body>
   <h1>🎄 Lenbrook's Got Talent - Video Submission</h1>
-  <form id="submissionForm" enctype="multipart/form-data">
-    <input type="text" name="name" placeholder="Your Name" required />
-    <input type="text" name="department" placeholder="Department" />
-    <textarea name="description" placeholder="Talent Description"></textarea>
-    <input type="file" name="video" accept="video/*" required />
+  <form id="submissionForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="text" id="department" placeholder="Department" />
+    <textarea id="description" placeholder="Talent Description"></textarea>
+    <input type="file" id="videoFile" accept="video/*" required />
     <button type="submit">Submit Video</button>
   </form>
 
   <p id="statusMsg"></p>
 
-  <script>
-    const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Replace with your real config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAGotRFJR-p_NPFQNSKuhDJiyeQTpuFA3k",
+      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
+      projectId: "lenbrook-s-got-talent",
+      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+      messagingSenderId: "849487663972",
+      appId: "1:849487663972:web:a597020bec0c21e84ea071"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
     const form = document.getElementById("submissionForm");
     const statusMsg = document.getElementById("statusMsg");
 
@@ -35,31 +52,43 @@
       e.preventDefault();
       statusMsg.textContent = "Uploading video... please wait.";
 
-      const formData = new FormData(form);
+      const name = document.getElementById("name").value.trim();
+      const department = document.getElementById("department").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const file = document.getElementById("videoFile").files[0];
+      if (!file) {
+        statusMsg.textContent = "Please select a video file!";
+        return;
+      }
 
       try {
-        const response = await fetch(FUNCTION_URL, {
-          method: "POST",
-          body: formData
-        });
+        // Upload video to Firebase Storage directly
+        const fileRef = ref(storage, `videos/${Date.now()}_${file.name}`);
+        const uploadTask = uploadBytesResumable(fileRef, file);
 
-        // Use text() first to safely catch non-JSON errors
-        const text = await response.text();
-        let result;
-        try {
-          result = JSON.parse(text);
-        } catch {
-          throw new Error(text);
-        }
+        uploadTask.on("state_changed", (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          statusMsg.textContent = `Uploading... ${Math.round(progress)}%`;
+        }, (error) => {
+          statusMsg.textContent = "Upload failed: " + error.message;
+        }, async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-        if (response.ok) {
-          statusMsg.textContent = "✅ Submission successful! Video URL: " + result.url;
+          // Store metadata in Firestore
+          await addDoc(collection(db, "submissions"), {
+            name,
+            department,
+            description,
+            videoURL: downloadURL,
+            timestamp: serverTimestamp()
+          });
+
+          statusMsg.textContent = "✅ Submission successful!";
           form.reset();
-        } else {
-          statusMsg.textContent = "Error: " + (result.error || "Unknown error");
-        }
+        });
       } catch (err) {
-        statusMsg.textContent = "Upload failed: " + err.message;
+        console.error(err);
+        statusMsg.textContent = "Error: " + err.message;
       }
     });
   </script>
