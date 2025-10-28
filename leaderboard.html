@@ -3,197 +3,240 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent • Leaderboard</title>
+  <title>Lenbrook's Got Talent 🎄 | Leaderboard</title>
+
   <style>
     :root {
-      --bg-grad-start: #5a000a;
-      --bg-grad-end: #1c0003;
-      --card-bg: rgba(255, 255, 255, 0.08);
-      --card-border: rgba(255, 255, 255, 0.22);
-      --accent: #ffd15a;
-      --accent-glow: rgba(255, 209, 90, 0.4);
-      --text-light: #fff;
-      --text-dim: #ddd;
-      --table-bg: rgba(0,0,0,0.35);
-      --table-border: rgba(255,255,255,0.15);
+      --bg-grad-top: #b30000;
+      --bg-grad-bottom: #330000;
+      --card-bg: rgba(255,255,255,0.95);
+      --accent: #d4af37;
+      --text-dark: #2b2b2b;
+      --table-head-bg: #c91c1c;
     }
 
     body {
       margin: 0;
+      background: radial-gradient(circle at 20% 20%, var(--bg-grad-top) 0%, var(--bg-grad-bottom) 70%);
+      color: #fff;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
-      background: radial-gradient(circle at 20% 20%, var(--bg-grad-start) 0%, var(--bg-grad-end) 70%);
-      background-attachment: fixed;
-      color: var(--text-light);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 2rem 1rem 6rem;
-      box-sizing: border-box;
-      position: relative;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
-                        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
-      background-size: 3px 3px, 4px 4px;
-      background-position: 0 0, 2px 2px;
-      animation: snowFloat 6s linear infinite;
-      opacity: .4;
-      z-index: 0;
-    }
-    @keyframes snowFloat {
-      0% { transform: translateY(0px); }
-      100% { transform: translateY(20px); }
-    }
-
-    header.branding {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      max-width: 1000px;
-      margin: 0 auto 2rem;
-    }
-    header.branding img {
-      width: 180px;
-      max-width: 45vw;
-      height: auto;
-    }
-    .event-meta {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      color: var(--text-light);
-      text-shadow: 0 0 8px rgba(255,255,255,0.3);
-      font-size: .9rem;
-      line-height: 1.3;
     }
-    .event-meta .title-line {
-      font-weight: 600;
-      color: var(--accent);
+
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      pointer-events: none;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
     }
-    .event-meta .title-line span {
+    @keyframes fall {
+      0% { transform: translateY(-10px) translateX(0); opacity: 1; }
+      100% { transform: translateY(110vh) translateX(30px); opacity: 0; }
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      padding: 20px 24px 0;
+      flex-wrap: wrap;
       color: #fff;
-      font-weight: 400;
+    }
+    header img.logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
     }
 
-    .leader-card {
-      position: relative;
-      z-index: 2;
-      max-width: 1000px;
-      margin: 0 auto;
-      background: var(--table-bg);
-      border: 1px solid var(--table-border);
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.8),
-        0 0 30px var(--accent-glow);
-      border-radius: 16px;
-      padding: 1rem 1rem 2rem;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+    .title-block {
+      margin-left: 16px;
+      flex: 1;
+      min-width: 200px;
     }
-
-    .leader-card h2 {
-      margin: 0 0 .5rem;
-      text-align: center;
+    .event-title {
       font-size: 1.4rem;
-      font-weight: 600;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .badge {
+      background: rgba(212,175,55,0.15);
       color: var(--accent);
-      text-shadow: 0 0 12px var(--accent-glow);
+      border: 1px solid rgba(212,175,55,0.5);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      line-height: 1.2;
+    }
+    .presented {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-top: 4px;
+      letter-spacing: 0.02em;
     }
 
-    .leader-card .subtitle {
+    main {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .board-card {
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border-radius: 20px;
+      border: 2px solid rgba(212,175,55,0.4);
+      box-shadow:
+        0 30px 60px rgba(0,0,0,0.6),
+        0 0 20px rgba(212,175,55,0.4) inset;
+      padding: 20px;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto 40px;
+    }
+
+    .board-headline {
       text-align: center;
-      font-size: .9rem;
-      color: var(--text-dim);
-      margin-bottom: 1.5rem;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin: 0 0 4px;
+      color: var(--text-dark);
+    }
+    .board-sub {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 2px solid rgba(212,175,55,0.4);
+      box-shadow:
+        0 30px 60px rgba(0,0,0,0.6),
+        0 0 20px rgba(212,175,55,0.4) inset;
+      background: rgba(255,255,255,0.95);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      color: var(--text-light);
-      font-size: .9rem;
+      font-size: 0.9rem;
     }
     thead th {
-      background: rgba(255,255,255,0.07);
-      color: var(--accent);
-      text-shadow: 0 0 8px var(--accent-glow);
-      font-weight: 600;
-      border-bottom: 1px solid var(--table-border);
-      padding: .75rem .5rem;
+      background: var(--table-head-bg);
+      color: #fff;
+      padding: 10px;
       text-align: center;
+      font-weight: 600;
+      white-space: nowrap;
     }
     tbody td {
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: .75rem .5rem;
+      border-top: 1px solid #ddd;
+      padding: 10px;
       text-align: center;
-      color: var(--text-dim);
-    }
-    tbody tr:last-child td {
-      border-bottom: none;
+      color: var(--text-dark);
+      vertical-align: middle;
     }
 
-    .rank {
-      font-weight: 600;
+    .rank-badge {
+      font-weight: 700;
       color: var(--accent);
-      text-shadow: 0 0 8px var(--accent-glow);
-    }
-    .team {
-      color:#fff;
-      font-weight:600;
-    }
-    .score {
-      color:#fff;
-      font-size:1rem;
-      font-weight:600;
+      background: rgba(212,175,55,0.12);
+      border: 1px solid rgba(212,175,55,0.5);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      display: inline-block;
+      min-width: 32px;
     }
 
     footer {
-      position: relative;
-      z-index: 2;
       text-align: center;
-      margin-top: 3rem;
-      color: var(--text-dim);
-      font-size: .8rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+      padding: 0 16px 40px;
+      line-height: 1.4;
     }
-    footer span {
-      color: var(--accent);
-      font-weight: 500;
+
+    @media(max-width:600px){
+      .event-title { font-size: 1.1rem; }
     }
   </style>
 </head>
 <body>
-  <header class="branding">
-    <img src="logo.png" alt="Lenbrook's Got Talent logo" />
-    <div class="event-meta">
-      <div class="title-line">Holiday Lunch 2025 <span>• Leaderboard</span></div>
-      <div>Overall average scores so far ✨</div>
+
+  <!-- snow -->
+  <script>
+    for (let i = 0; i < 15; i++) {
+      const delay = (Math.random()*5).toFixed(2);
+      const duration = (6+Math.random()*6).toFixed(2);
+      const left = (Math.random()*100).toFixed(2);
+      document.write(
+        `<div class="snowflake" style="
+          left:${left}vw;
+          animation-delay:${delay}s;
+          animation-duration:${duration}s;
+        ">✻</div>`
+      );
+    }
+  </script>
+
+  <header>
+    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
+    <div class="title-block">
+      <div class="event-title">
+        <span>Lenbrook's Got Talent</span>
+        <span class="badge">Holiday Edition ❄</span>
+      </div>
+      <div class="presented">Presented by Party Patrol</div>
     </div>
   </header>
 
-  <main class="leader-card">
-    <h2>Current Standings</h2>
-    <div class="subtitle">Ranked by average judge score</div>
+  <main>
+    <section class="board-card">
+      <h2 class="board-headline">Live Leaderboard</h2>
+      <div class="board-sub">
+        Top acts by average judge score 🎁
+      </div>
 
-    <table id="leaderTable">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Team / Participant</th>
-          <th>Description</th>
-          <th>Average Score</th>
-          <th>Judges Count</th>
-        </tr>
-      </thead>
-      <tbody id="leaderBody"></tbody>
-    </table>
+      <div class="table-wrapper">
+        <table id="leaderboardTable">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team / Participant</th>
+              <th>Avg Score</th>
+              <th>Total Judges</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- rows injected -->
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
   <footer>
-    Presented by <span>Party Patrol</span> ✨
+    🎄 Lenbrook Christmas Lunch Event &nbsp;•&nbsp; Leaderboard (read only)
   </footer>
 
   <script type="module">
@@ -204,6 +247,7 @@
       getDocs
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+    // same config
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
@@ -216,51 +260,43 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Load leaderboard
-    async function buildLeaderboard() {
-      const tbody = document.getElementById("leaderBody");
-      tbody.innerHTML = "";
+    const tbody = document.querySelector("#leaderboardTable tbody");
 
-      const snapshot = await getDocs(collection(db, "submissions"));
-
+    async function loadLeaderboard() {
+      const snap = await getDocs(collection(db, "submissions"));
       const rows = [];
-      snapshot.forEach(docSnap => {
+
+      snap.forEach(docSnap => {
         const data = docSnap.data();
         const ratings = data.ratings || {};
-        const judgeCount = Object.keys(ratings).length;
-        const avg = data.averageScore !== undefined
-          ? Number(data.averageScore)
-          : null;
+        const totalJudges = Object.keys(ratings).length;
+        const avgScore = data.averageScore || 0;
 
         rows.push({
           name: data.name || "",
-          description: data.description || "",
-          avg: avg,
-          judgeCount
+          avg: avgScore,
+          judges: totalJudges
         });
       });
 
-      // sort by avg desc
-      rows.sort((a,b) => {
-        const avA = a.avg ?? -1;
-        const avB = b.avg ?? -1;
-        return avB - avA;
-      });
+      // sort desc by avg
+      rows.sort((a,b)=> b.avg - a.avg);
 
-      rows.forEach((row, i) => {
+      tbody.innerHTML = "";
+
+      rows.forEach((r, idx) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td class="rank">${row.avg != null ? i+1 : "—"}</td>
-          <td class="team">${row.name}</td>
-          <td>${row.description}</td>
-          <td class="score">${row.avg != null ? row.avg.toFixed(1) : "—"}</td>
-          <td>${row.judgeCount}</td>
+          <td><span class="rank-badge">${idx+1}</span></td>
+          <td>${r.name}</td>
+          <td>${r.avg.toFixed ? r.avg.toFixed(1) : r.avg}</td>
+          <td>${r.judges}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    buildLeaderboard();
+    loadLeaderboard();
   </script>
 </body>
 </html>
