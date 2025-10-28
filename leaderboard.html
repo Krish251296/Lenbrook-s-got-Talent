@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenbrook's Got Talent - Live Leaderboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #0078D7;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    tr:hover {
+      background: #eef6ff;
+    }
+    .trophy {
+      font-size: 1.5em;
+    }
+    #status {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏆 Lenbrook's Got Talent - Live Leaderboard</h1>
+  <div id="status">Loading leaderboard...</div>
+
+  <table id="leaderboardTable">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Team and/or Participant</th>
+        <th>Description</th>
+        <th>Average Score</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // 🔧 Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
+      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
+      projectId: "lenbrook-s-got-talent",
+      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+      messagingSenderId: "327419181483",
+      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tableBody = document.querySelector("#leaderboardTable tbody");
+    const status = document.getElementById("status");
+
+    // 🔥 Real-time leaderboard listener
+    onSnapshot(collection(db, "submissions"), (snapshot) => {
+      const submissions = [];
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const avg = data.averageScore || 0;
+        submissions.push({
+          name: data.name || "Unnamed",
+          description: data.description || "",
+          avg: avg
+        });
+      });
+
+      // Sort by average descending
+      submissions.sort((a, b) => b.avg - a.avg);
+      renderLeaderboard(submissions);
+    });
+
+    function renderLeaderboard(submissions) {
+      tableBody.innerHTML = "";
+      submissions.forEach((entry, i) => {
+        let trophy = "";
+        if (i === 0) trophy = "🥇";
+        else if (i === 1) trophy = "🥈";
+        else if (i === 2) trophy = "🥉";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="trophy">${trophy || i + 1}</td>
+          <td>${entry.name}</td>
+          <td>${entry.description}</td>
+          <td>${entry.avg.toFixed(1)}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+      status.textContent = "✅ Leaderboard updated live.";
+    }
+  </script>
+</body>
+</html>
