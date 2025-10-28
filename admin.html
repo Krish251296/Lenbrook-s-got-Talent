@@ -3,235 +3,299 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent • Admin Dashboard</title>
+  <title>Lenbrook's Got Talent 🎄 | Admin Panel</title>
+
   <style>
     :root {
-      --bg-grad-start: #5a000a;
-      --bg-grad-end: #1c0003;
-      --card-bg: rgba(255, 255, 255, 0.08);
-      --card-border: rgba(255, 255, 255, 0.22);
-      --accent: #ffd15a;
-      --accent-glow: rgba(255, 209, 90, 0.4);
-      --text-light: #fff;
-      --text-dim: #ddd;
-      --button-bg: #c62828;
-      --button-bg-hover: #ff3d3d;
-      --table-bg: rgba(0,0,0,0.35);
-      --table-border: rgba(255,255,255,0.15);
+      --bg-grad-top: #b30000;
+      --bg-grad-bottom: #330000;
+      --card-bg: rgba(255,255,255,0.95);
+      --accent: #d4af37;
+      --text-dark: #2b2b2b;
+      --btn-bg: #c91c1c;
+      --btn-bg-hover: #9e1515;
+      --table-head-bg: #c91c1c;
     }
 
     body {
       margin: 0;
+      background: radial-gradient(circle at 20% 20%, var(--bg-grad-top) 0%, var(--bg-grad-bottom) 70%);
+      color: #fff;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
-      background: radial-gradient(circle at 20% 20%, var(--bg-grad-start) 0%, var(--bg-grad-end) 70%);
-      background-attachment: fixed;
-      color: var(--text-light);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 2rem 1rem 6rem;
-      box-sizing: border-box;
-      position: relative;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
-                        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
-      background-size: 3px 3px, 4px 4px;
-      background-position: 0 0, 2px 2px;
-      animation: snowFloat 6s linear infinite;
-      opacity: .4;
-      z-index: 0;
-    }
-    @keyframes snowFloat {
-      0% { transform: translateY(0px); }
-      100% { transform: translateY(20px); }
-    }
-
-    header.branding {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      max-width: 1400px;
-      margin: 0 auto 2rem;
-    }
-    header.branding img {
-      width: 180px;
-      max-width: 45vw;
-      height: auto;
-    }
-    .event-meta {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      color: var(--text-light);
-      text-shadow: 0 0 8px rgba(255,255,255,0.3);
-      font-size: .9rem;
-      line-height: 1.3;
-    }
-    .event-meta .title-line {
-      font-weight: 600;
-      color: var(--accent);
-    }
-    .event-meta .title-line span {
-      color: #fff;
-      font-weight: 400;
     }
 
-    .login-card {
-      position: relative;
-      z-index: 2;
-      max-width: 400px;
-      margin: 0 auto 2rem;
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      pointer-events: none;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10px) translateX(0); opacity: 1; }
+      100% { transform: translateY(110vh) translateX(30px); opacity: 0; }
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      padding: 20px 24px 0;
+      flex-wrap: wrap;
+      color: #fff;
+    }
+    header img.logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .title-block {
+      margin-left: 16px;
+      flex: 1;
+      min-width: 200px;
+    }
+    .event-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .badge {
+      background: rgba(212,175,55,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(212,175,55,0.5);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      line-height: 1.2;
+    }
+    .presented {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .admin-card {
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      color: var(--text-dark);
+      border-radius: 20px;
+      border: 2px solid rgba(212,175,55,0.4);
       box-shadow:
-        0 30px 80px rgba(0,0,0,0.8),
-        0 0 30px var(--accent-glow);
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem 1.5rem;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .login-card h2 {
-      color: var(--accent);
-      text-shadow: 0 0 12px var(--accent-glow);
-      margin: 0 0 .5rem;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-
-    .google-btn {
-      background: var(--button-bg);
-      border: none;
-      color: #fff;
-      font-weight: 600;
-      border-radius: 8px;
-      padding: .9rem 1rem;
-      cursor: pointer;
-      font-size: 1rem;
+        0 30px 60px rgba(0,0,0,0.6),
+        0 0 20px rgba(212,175,55,0.4) inset;
+      padding: 20px;
+      max-width: 1100px;
       width: 100%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8),
-                  0 0 20px rgba(255,255,255,0.2);
-      transition: background .18s, box-shadow .18s;
-    }
-    .google-btn:hover {
-      background: var(--button-bg-hover);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.9),
-                  0 0 30px var(--accent-glow);
-    }
-
-    #loginStatus {
-      font-size: .8rem;
-      color: var(--text-dim);
-      margin-top: .75rem;
-      min-height: 1.2rem;
-    }
-
-    .admin-wrapper {
-      position: relative;
-      z-index: 2;
-      max-width: 1400px;
       margin: 0 auto;
-      border-radius: 16px;
-      background: var(--table-bg);
-      border: 1px solid var(--table-border);
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.8),
-        0 0 30px var(--accent-glow);
+    }
+
+    .admin-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .admin-left h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0;
+    }
+    .admin-left .sub {
+      font-size: 0.8rem;
+      color: #555;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .admin-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      min-width: 200px;
+    }
+
+    .status-line {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      min-height: 1.2em;
+    }
+
+    button.btn {
+      background: var(--btn-bg);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 14px;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(201,28,28,0.4);
+      width: 140px;
+      text-align: center;
+    }
+    button.btn:hover {
+      background: var(--btn-bg-hover);
+    }
+
+    .table-wrapper {
       overflow-x: auto;
-      padding: 1rem;
-      display: none; /* only after auth */
+      border-radius: 16px;
+      border: 2px solid rgba(212,175,55,0.4);
+      box-shadow:
+        0 30px 60px rgba(0,0,0,0.6),
+        0 0 20px rgba(212,175,55,0.4) inset;
+      background: rgba(255,255,255,0.95);
     }
 
     table {
       width: 100%;
-      min-width: 900px;
       border-collapse: collapse;
-      color: var(--text-light);
-      font-size: .9rem;
+      font-size: 0.8rem;
     }
+
     thead th {
-      background: rgba(255,255,255,0.07);
-      color: var(--accent);
-      text-shadow: 0 0 8px var(--accent-glow);
-      font-weight: 600;
-      border-bottom: 1px solid var(--table-border);
-      padding: .75rem .5rem;
+      background: var(--table-head-bg);
+      color: #fff;
+      padding: 8px;
       text-align: center;
+      font-weight: 600;
       white-space: nowrap;
     }
+
     tbody td {
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: .75rem .5rem;
+      border-top: 1px solid #ddd;
+      padding: 8px;
       text-align: center;
+      color: var(--text-dark);
       vertical-align: middle;
-      color: var(--text-dim);
-    }
-    tbody tr:last-child td {
-      border-bottom: none;
     }
 
     video {
-      width: 180px;
-      max-height: 120px;
-      border-radius: 8px;
-      outline: 2px solid rgba(255,255,255,0.2);
-      background:#000;
+      width: 140px;
+      max-height: 100px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+
+    .judge-list {
+      font-size: 0.7rem;
+      line-height: 1.4;
+      text-align: left;
+      max-width: 150px;
+      margin: 0 auto;
+      white-space: pre-line;
     }
 
     footer {
-      position: relative;
-      z-index: 2;
       text-align: center;
-      margin-top: 3rem;
-      color: var(--text-dim);
-      font-size: .8rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+      padding: 0 16px 40px;
+      line-height: 1.4;
     }
-    footer span {
-      color: var(--accent);
-      font-weight: 500;
+
+    @media(max-width:700px){
+      .admin-header { flex-direction: column; align-items: flex-start; }
+      .admin-right { align-items: flex-start; }
+      video { width: 120px; }
     }
   </style>
 </head>
 <body>
-  <header class="branding">
-    <img src="logo.png" alt="Lenbrook's Got Talent logo" />
-    <div class="event-meta">
-      <div class="title-line">Holiday Lunch 2025 <span>• Admin Dashboard</span></div>
-      <div>Full submissions, averages, judge breakdown 🎯</div>
+
+  <!-- snow -->
+  <script>
+    for (let i = 0; i < 15; i++) {
+      const delay = (Math.random()*5).toFixed(2);
+      const duration = (6+Math.random()*6).toFixed(2);
+      const left = (Math.random()*100).toFixed(2);
+      document.write(
+        `<div class="snowflake" style="
+          left:${left}vw;
+          animation-delay:${delay}s;
+          animation-duration:${duration}s;
+        ">✻</div>`
+      );
+    }
+  </script>
+
+  <header>
+    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
+    <div class="title-block">
+      <div class="event-title">
+        <span>Lenbrook's Got Talent</span>
+        <span class="badge">Holiday Edition ❄</span>
+      </div>
+      <div class="presented">Presented by Party Patrol</div>
     </div>
   </header>
 
-  <section class="login-card" id="loginCard">
-    <h2>Admin Login</h2>
-    <button class="google-btn" id="loginBtn">Sign in with Google</button>
-    <div id="loginStatus"></div>
-  </section>
+  <main>
+    <section class="admin-card">
+      <div class="admin-header">
+        <div class="admin-left">
+          <h2>Admin Dashboard</h2>
+          <div class="sub">Full scoring data, all judges, live averages 🎄</div>
+          <div id="status" class="status-line">Please sign in.</div>
+        </div>
 
-  <section class="admin-wrapper" id="adminWrapper">
-    <table id="adminTable">
-      <thead>
-        <tr>
-          <th>Team / Participant</th>
-          <th>Description</th>
-          <th>Video</th>
-          <th>Average Score</th>
-          <th>Judges Count</th>
-          <th>Raw Ratings</th>
-        </tr>
-      </thead>
-      <tbody id="adminBody"></tbody>
-    </table>
-  </section>
+        <div class="admin-right">
+          <div id="userEmail" class="status-line"></div>
+          <button class="btn" id="loginBtn">Sign In</button>
+          <button class="btn" id="logoutBtn" style="display:none;">Sign Out</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper" id="tableWrapper" style="display:none;">
+        <table id="adminTable">
+          <thead>
+            <tr>
+              <th>Team / Participant</th>
+              <th>Description</th>
+              <th>Video</th>
+              <th>Average Score</th>
+              <th>Judges & Scores</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- injected -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    Presented by <span>Party Patrol</span> ✨
+    🎄 Lenbrook Christmas Lunch Event &nbsp;•&nbsp; Admin View (restricted)
   </footer>
 
   <script type="module">
@@ -241,14 +305,16 @@
       collection,
       getDocs
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
     import {
       getAuth,
-      signInWithPopup,
       GoogleAuthProvider,
+      signInWithPopup,
       onAuthStateChanged,
+      signOut
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // config
+    // same config
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
@@ -263,66 +329,75 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    const ALLOWED_ADMIN_EMAIL = "kdesai@lenbrook.com";
+    const ALLOWED_ADMIN = "kdesai@lenbrook.com"; // only you
 
+    const statusEl = document.getElementById("status");
     const loginBtn = document.getElementById("loginBtn");
-    const loginStatus = document.getElementById("loginStatus");
-    const loginCard = document.getElementById("loginCard");
-    const adminWrapper = document.getElementById("adminWrapper");
-    const adminBody = document.getElementById("adminBody");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userEmailEl = document.getElementById("userEmail");
+    const tableWrapper = document.getElementById("tableWrapper");
+    const tableBody = document.querySelector("#adminTable tbody");
 
     loginBtn.addEventListener("click", async () => {
       try {
-        loginStatus.textContent = "Opening Google sign-in...";
         await signInWithPopup(auth, provider);
       } catch (err) {
         console.error("Login error:", err);
-        loginStatus.textContent = "Sign-in failed. Please try again.";
+        statusEl.textContent = "Login failed. Please try again.";
       }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
     });
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        return;
-      }
-      if (user.email !== ALLOWED_ADMIN_EMAIL) {
-        loginStatus.textContent = "Access denied for " + user.email;
+        userEmailEl.textContent = "";
+        statusEl.textContent = "Please sign in.";
+        tableWrapper.style.display = "none";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
         return;
       }
 
-      // success → show table
-      loginCard.style.display = "none";
-      adminWrapper.style.display = "block";
-
-      await loadAdminData();
+      userEmailEl.textContent = user.email || "";
+      if (user.email === ALLOWED_ADMIN) {
+        statusEl.textContent = "✅ Admin access granted.";
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+        tableWrapper.style.display = "block";
+        await loadAdminData();
+      } else {
+        statusEl.textContent = "⛔ You are signed in, but not authorized.";
+        tableWrapper.style.display = "none";
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+      }
     });
 
     async function loadAdminData() {
-      adminBody.innerHTML = "";
-      const snapshot = await getDocs(collection(db, "submissions"));
+      const snap = await getDocs(collection(db, "submissions"));
+      tableBody.innerHTML = "";
 
-      snapshot.forEach((docSnap) => {
+      snap.forEach(docSnap => {
         const data = docSnap.data();
+        const avg = data.averageScore ? data.averageScore.toFixed(1) : "-";
+
         const ratings = data.ratings || {};
-        const judgeCount = Object.keys(ratings).length;
-        const avg = data.averageScore !== undefined
-          ? Number(data.averageScore).toFixed(1)
-          : "—";
+        const judgeLines = Object.entries(ratings).map(([judgeName, r]) => {
+          return `${judgeName}:\n  Tech ${r.technical} | Cre ${r.creativity} | Ent ${r.entertainment} | Total ${r.total}`;
+        }).join("\n\n");
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td style="color:#fff;font-weight:600;">${data.name || ""}</td>
+          <td>${data.name || ""}</td>
           <td>${data.description || ""}</td>
           <td><video src="${data.videoURL}" controls></video></td>
-          <td style="color:var(--accent);font-weight:600;text-shadow:0 0 8px var(--accent-glow);">
-            ${avg}
-          </td>
-          <td>${judgeCount}</td>
-          <td style="font-size:.7rem;line-height:1.4;color:var(--text-dim);text-align:left;white-space:pre-wrap;word-break:break-word;">
-            ${JSON.stringify(ratings, null, 2)}
-          </td>
+          <td>${avg}</td>
+          <td><div class="judge-list">${judgeLines || "—"}</div></td>
         `;
-        adminBody.appendChild(tr);
+        tableBody.appendChild(tr);
       });
     }
   </script>
