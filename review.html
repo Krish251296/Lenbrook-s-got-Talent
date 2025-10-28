@@ -42,8 +42,7 @@
   <table id="submissionsTable" style="display:none;">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Department</th>
+        <th>Team and/or Participant Name</th>
         <th>Description</th>
         <th>Video</th>
         <th>Technical Skill</th>
@@ -109,7 +108,6 @@
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${data.name || ""}</td>
-            <td>${data.department || ""}</td>
             <td>${data.description || ""}</td>
             <td><video src="${data.videoURL}" controls></video></td>
             <td><input type="number" id="tech-${id}" min="1" max="10" value="${userRatings.technical || ""}"></td>
