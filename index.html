@@ -1,324 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent 🎄 | Submit Your Video</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lenbrook's Got Talent • Submit</title>
 
-  <style>
-    :root {
-      --bg-grad-top: #b30000;
-      --bg-grad-bottom: #330000;
-      --card-bg: rgba(255,255,255,0.95);
-      --accent: #d4af37; /* gold */
-      --text-dark: #2b2b2b;
-      --btn-bg: #c91c1c;
-      --btn-bg-hover: #9e1515;
-    }
+<style>
+  /* ===== Background gradient + snow canvas layer ===== */
+  :root {
+    --bg-grad-from: #001f4d;
+    --bg-grad-to: #013b8a;
+    --card-bg: rgba(255,255,255,0.12);
+    --card-border: rgba(255,255,255,0.4);
+    --text-light: #fff;
+    --accent: #4dd0ff;
+    --accent-glow: rgba(77,208,255,0.6);
+    --pill-bg: rgba(255,255,255,0.18);
+    --pill-border: rgba(255,255,255,0.5);
+    --pill-hover-bg: rgba(255,255,255,0.3);
+  }
 
-    /* full-page festive gradient */
-    body {
-      margin: 0;
-      background: radial-gradient(circle at 20% 20%, var(--bg-grad-top) 0%, var(--bg-grad-bottom) 70%);
-      color: #fff;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+  * {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    /* tiny snowflakes */
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: rgba(255,255,255,0.8);
-      font-size: 12px;
-      pointer-events: none;
-      animation-name: fall;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-    @keyframes fall {
-      0% { transform: translateY(-10px) translateX(0); opacity: 1; }
-      100% { transform: translateY(110vh) translateX(30px); opacity: 0; }
-    }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    color: var(--text-light);
+    background: radial-gradient(circle at 20% 20%, #053a7a 0%, #00132e 60%) fixed,
+                linear-gradient(to bottom right, var(--bg-grad-from), var(--bg-grad-to)) fixed;
+    position: relative;
+    overflow-x: hidden;
+  }
 
-    header {
-      display: flex;
-      align-items: flex-start;
-      padding: 20px 24px 0;
-      position: relative;
-      flex-wrap: wrap;
-      color: #fff;
-    }
+  canvas#snowCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
 
-    header img.logo {
-      width: 72px;
-      height: 72px;
-      object-fit: contain;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.1);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-    }
+  /* soft color blobs / holiday glow accents */
+  .bg-glow {
+    position: fixed;
+    filter: blur(80px);
+    opacity: 0.4;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .glow-red {
+    background: radial-gradient(circle, rgba(255,72,72,0.6) 0%, transparent 70%);
+    width: 260px;
+    height: 260px;
+    top: 5%;
+    right: 5%;
+  }
+  .glow-green {
+    background: radial-gradient(circle, rgba(0,255,170,0.5) 0%, transparent 70%);
+    width: 220px;
+    height: 220px;
+    bottom: 8%;
+    left: 10%;
+  }
 
-    .title-block {
-      margin-left: 16px;
-      flex: 1;
-      min-width: 200px;
-    }
+  /* subtle “string lights” */
+  .lights {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right:0;
+    height: 60px;
+    background-repeat: repeat-x;
+    background-size: 200px 60px;
+    background-position: center top;
+    pointer-events:none;
+    z-index:2;
+    background-image:
+      radial-gradient(circle at 20px 40px, rgba(255,0,0,0.9) 0 6px, transparent 7px),
+      radial-gradient(circle at 60px 40px, rgba(0,255,170,0.9) 0 6px, transparent 7px),
+      radial-gradient(circle at 100px 40px, rgba(255,255,0,0.9) 0 6px, transparent 7px),
+      radial-gradient(circle at 140px 40px, rgba(0,180,255,0.9) 0 6px, transparent 7px);
+    animation: pulseLights 2s infinite;
+  }
+  @keyframes pulseLights {
+    0%,100% { filter: drop-shadow(0 0 4px #fff) brightness(1); }
+    50% { filter: drop-shadow(0 0 10px #fff) brightness(1.4); }
+  }
 
-    .event-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.2;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+  /* ===== layout ===== */
+  header.app-header {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px clamp(16px,2vw,32px);
+  }
 
-    .badge {
-      background: rgba(212,175,55,0.15);
-      color: var(--accent);
-      border: 1px solid rgba(212,175,55,0.5);
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 4px 10px;
-      line-height: 1.2;
-    }
+  .logo-area {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    color:var(--text-light);
+  }
+  .logo-area img {
+    width:64px;
+    height:64px;
+    object-fit:contain;
+    border-radius:12px;
+    background:rgba(255,255,255,0.15);
+    box-shadow:0 8px 24px rgba(0,0,0,0.6);
+    border:1px solid rgba(255,255,255,0.4);
+    backdrop-filter: blur(6px);
+  }
+  .party-tag {
+    font-size:0.8rem;
+    font-weight:500;
+    margin-top:6px;
+    color:var(--accent);
+    text-shadow:0 0 8px var(--accent-glow);
+  }
 
-    .presented {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--accent);
-      margin-top: 4px;
-      letter-spacing: 0.02em;
-    }
+  .title-wrap {
+    flex:1;
+  }
+  .title-wrap h1 {
+    margin:0;
+    font-size:clamp(1.4rem,1vw,1.8rem);
+    font-weight:600;
+    line-height:1.2;
+    color:#fff;
+    text-shadow:0 4px 16px rgba(0,0,0,0.8);
+    letter-spacing: -0.03em;
+  }
+  .title-wrap .subtitle {
+    font-size:0.9rem;
+    font-weight:400;
+    color:rgba(255,255,255,0.8);
+    text-shadow:0 3px 12px rgba(0,0,0,0.8);
+    margin-top:4px;
+  }
 
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      padding: 24px;
-    }
+  main.app-main {
+    position: relative;
+    z-index: 3;
+    display:flex;
+    justify-content:center;
+    padding: 0 16px 80px;
+  }
 
-    .card {
-      width: 100%;
-      max-width: 420px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow:
-        0 30px 60px rgba(0,0,0,0.6),
-        0 0 20px rgba(212,175,55,0.4) inset;
-      padding: 24px 24px 32px;
-      color: var(--text-dark);
-      position: relative;
-      border: 2px solid rgba(212,175,55,0.4);
-    }
+  .card {
+    width:100%;
+    max-width:480px;
+    background: var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:24px;
+    padding:24px 24px 32px;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.8),
+      0 0 80px rgba(77,208,255,0.25);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    position:relative;
+  }
 
-    .card h2 {
-      color: var(--text-dark);
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin: 0 0 4px;
-    }
+  .card h2 {
+    margin:0 0 8px;
+    text-align:center;
+    font-size:1.2rem;
+    font-weight:600;
+    color:#fff;
+    text-shadow:0 4px 16px rgba(0,0,0,0.8);
+    letter-spacing:-0.03em;
+  }
 
-    .card .subhead {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #555;
-      font-weight: 500;
-      margin-bottom: 20px;
-    }
+  .card p.desc {
+    margin:0 0 20px;
+    text-align:center;
+    font-size:0.9rem;
+    color:rgba(255,255,255,0.8);
+    line-height:1.4;
+  }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+  form#submissionForm {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
 
-    label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #444;
-      display: flex;
-      flex-direction: column;
-      text-align: left;
-    }
+  .input-group label {
+    font-size:0.8rem;
+    font-weight:500;
+    color:rgba(255,255,255,0.9);
+    margin-bottom:4px;
+    display:block;
+  }
 
-    input[type="text"],
-    textarea,
-    input[type="file"] {
-      margin-top: 6px;
-      width: 100%;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      font-size: 0.9rem;
-      padding: 10px 12px;
-      font-family: inherit;
-      background-color: #fff;
-    }
+  .frost-input,
+  .frost-textarea,
+  .file-row {
+    background: var(--pill-bg);
+    border:1px solid var(--pill-border);
+    border-radius:14px;
+    padding:12px 14px;
+    font-size:0.95rem;
+    color:#fff;
+    width:100%;
+    outline:none;
+    box-shadow:0 20px 40px rgba(0,0,0,0.6);
+    backdrop-filter: blur(12px) saturate(150%);
+  }
+  .frost-input::placeholder,
+  .frost-textarea::placeholder {
+    color:rgba(255,255,255,0.5);
+  }
+  .frost-textarea {
+    min-height:70px;
+    resize:none;
+  }
 
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
+  .file-row input[type="file"] {
+    color:#fff;
+    font-size:0.8rem;
+  }
 
-    button[type="submit"] {
-      background: var(--btn-bg);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 12px 16px;
-      cursor: pointer;
-      box-shadow: 0 12px 24px rgba(201,28,28,0.4);
-      transition: background 0.15s;
-    }
+  .actions {
+    text-align:center;
+  }
+  .pill-btn {
+    appearance:none;
+    border:none;
+    outline:none;
+    cursor:pointer;
+    border-radius:999px;
+    padding:12px 20px;
+    min-width:160px;
+    font-size:1rem;
+    font-weight:600;
+    color:#00132e;
+    background:linear-gradient(135deg,#fff 0%,#c8f6ff 100%);
+    box-shadow:
+      0 20px 40px rgba(0,0,0,0.8),
+      0 0 30px rgba(255,255,255,0.5),
+      0 0 60px rgba(77,208,255,0.5);
+    border:1px solid rgba(255,255,255,0.7);
+    transition:all .15s;
+  }
+  .pill-btn:hover{
+    box-shadow:
+      0 24px 50px rgba(0,0,0,0.9),
+      0 0 40px rgba(255,255,255,0.6),
+      0 0 80px rgba(77,208,255,0.7);
+    transform:translateY(-1px) scale(1.02);
+  }
 
-    button[type="submit"]:hover {
-      background: var(--btn-bg-hover);
-    }
+  #statusMsg {
+    margin-top:16px;
+    font-size:0.9rem;
+    font-weight:500;
+    text-align:center;
+    color:var(--accent);
+    min-height:1.4em;
+    text-shadow:0 0 8px var(--accent-glow);
+  }
 
-    #statusMsg {
-      margin-top: 16px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--text-dark);
-      min-height: 1.2em;
-    }
-
-    footer {
-      text-align: center;
-      color: rgba(255,255,255,0.8);
-      font-size: 0.75rem;
-      padding: 24px 16px 40px;
-      line-height: 1.4;
-    }
-
-    @media (max-width:480px){
-      header {
-        flex-direction: row;
-        align-items: flex-start;
-      }
-      header img.logo {
-        width: 60px;
-        height: 60px;
-      }
-      .event-title {
-        font-size: 1.1rem;
-      }
-    }
-  </style>
+  footer.app-footer {
+    position:relative;
+    z-index:3;
+    text-align:center;
+    color:rgba(255,255,255,0.4);
+    font-size:0.7rem;
+    padding:40px 16px 60px;
+  }
+</style>
 </head>
 <body>
+<canvas id="snowCanvas"></canvas>
+<div class="bg-glow glow-red"></div>
+<div class="bg-glow glow-green"></div>
+<div class="lights"></div>
 
-  <!-- ❄ snow layer -->
-  <!-- we make ~15 flakes with random positions using inline style -->
-  <script>
-    for (let i = 0; i < 15; i++) {
-      const delay = (Math.random()*5).toFixed(2);
-      const duration = (6+Math.random()*6).toFixed(2);
-      const left = (Math.random()*100).toFixed(2);
-      document.write(
-        `<div class="snowflake" style="
-          left:${left}vw;
-          animation-delay:${delay}s;
-          animation-duration:${duration}s;
-        ">✻</div>`
-      );
-    }
-  </script>
+<header class="app-header">
+  <div class="logo-area">
+    <img src="logo.png" alt="Lenbrook's Got Talent Logo" />
+    <div class="party-tag">Presented by Party Patrol 🎉</div>
+  </div>
+  <div class="title-wrap">
+    <h1>Lenbrook's Got Talent</h1>
+    <div class="subtitle">Holiday Showcase • Talent Submission</div>
+  </div>
+</header>
 
-  <header>
-    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
-    <div class="title-block">
-      <div class="event-title">
-        <span>Lenbrook's Got Talent</span>
-        <span class="badge">Holiday Edition ❄</span>
+<main class="app-main">
+  <section class="card">
+    <h2>Submit Your Act ✨</h2>
+    <p class="desc">
+      Upload your performance video for the Christmas Lunch event.
+      Solo or team, all styles welcome!
+    </p>
+
+    <form id="submissionForm" enctype="multipart/form-data">
+      <div class="input-group">
+        <label>Team / Performer Name *</label>
+        <input class="frost-input" type="text" name="name" placeholder="e.g. AV Ninjas, or Sarah & Mike" required />
       </div>
-      <div class="presented">Presented by Party Patrol</div>
-    </div>
-  </header>
 
-  <main>
-    <div class="card">
-      <h2>Submit Your Performance Video</h2>
-      <div class="subhead">Show us your talent for the Christmas Lunch 🎁</div>
+      <div class="input-group">
+        <label>Optional Team Info / Departments</label>
+        <input class="frost-input" type="text" name="department" placeholder="e.g. IT + Marketing" />
+      </div>
 
-      <form id="submissionForm" enctype="multipart/form-data">
-        <label>
-          Team / Participant Name *
-          <input type="text" name="name" placeholder="e.g. Finance Carolers or Jane D." required />
-        </label>
+      <div class="input-group">
+        <label>Talent Description *</label>
+        <textarea class="frost-textarea" name="description" placeholder="Describe the act... singing, dancing, comedy, etc." required></textarea>
+      </div>
 
-        <label>
-          Description of Your Act *
-          <textarea name="description" placeholder="What are you performing? Song, skit, dance, etc." required></textarea>
-        </label>
-
-        <label>
-          Upload Video *
+      <div class="input-group">
+        <label>Upload Performance Video *</label>
+        <div class="file-row">
           <input type="file" name="video" accept="video/*" required />
-        </label>
+        </div>
+      </div>
 
-        <button type="submit">🎬 Upload My Talent</button>
-      </form>
+      <div class="actions">
+        <button class="pill-btn" type="submit">Submit Video 🎬</button>
+      </div>
+    </form>
 
-      <p id="statusMsg"></p>
-    </div>
-  </main>
+    <div id="statusMsg"></div>
+  </section>
+</main>
 
-  <footer>
-    🎄 Lenbrook Christmas Lunch Event &nbsp;•&nbsp; Internal Only
-  </footer>
+<footer class="app-footer">
+  Lenbrook Holiday Event • 2025 • All sparkle, no stress ✨
+</footer>
 
-  <script>
-    // IMPORTANT:
-    // We are keeping your current upload flow:
-    //   - POST the formData to Cloud Function endpoint that streams to Storage
-    //   - That function writes Firestore doc with name/description/videoURL/timestamp
-    // same URL as before
+<script>
+  // ===== Fast, dense snowfall background =====
+  (() => {
+    const canvas = document.getElementById("snowCanvas");
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    const flakes = [];
+    const FLAKE_COUNT = 160; // dense
 
-    const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app/"; // <-- your existing deployed express/CF URL
-    const form = document.getElementById("submissionForm");
-    const statusMsg = document.getElementById("statusMsg");
+    function random(min, max){return Math.random()*(max-min)+min;}
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      statusMsg.textContent = "Uploading video... please wait ⏳";
-
-      const formData = new FormData(form);
-
-      try {
-        const response = await fetch(FUNCTION_URL, {
-          method: "POST",
-          body: formData
+    function init() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      flakes.length = 0;
+      for (let i=0; i<FLAKE_COUNT; i++){
+        flakes.push({
+          x: random(0, w),
+          y: random(0, h),
+          r: random(1, 3.2),
+          d: random(0.5, 1.5), // density factor
+          vx: random(-0.6, 0.6),
+          vy: random(0.8, 2.4) // faster fall
         });
-
-        const text = await response.text();
-        let result;
-        try {
-          result = JSON.parse(text);
-        } catch {
-          throw new Error(text);
-        }
-
-        if (response.ok) {
-          statusMsg.textContent = "✅ Submission received! Thank you!";
-          form.reset();
-        } else {
-          statusMsg.textContent = "❌ Error: " + (result.error || "Unknown error");
-        }
-      } catch (err) {
-        statusMsg.textContent = "❌ Upload failed: " + err.message;
       }
-    });
-  </script>
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle="#fff";
+      ctx.shadowColor="rgba(255,255,255,0.8)";
+      ctx.shadowBlur=8;
+      for (const flake of flakes){
+        ctx.beginPath();
+        ctx.arc(flake.x, flake.y, flake.r, 0, Math.PI*2);
+        ctx.fill();
+      }
+      update();
+      requestAnimationFrame(draw);
+    }
+
+    function update(){
+      for (const flake of flakes){
+        flake.x += flake.vx + Math.sin(Date.now()*0.001 + flake.d)*0.3; // little swirl
+        flake.y += flake.vy * flake.d;
+        if (flake.y>h){
+          flake.y = -5;
+          flake.x = random(0,w);
+        }
+        if (flake.x>w) flake.x=0;
+        if (flake.x<0) flake.x=w;
+      }
+    }
+
+    window.addEventListener("resize", init);
+    init();
+    draw();
+  })();
+</script>
+
+<script>
+  // ===== Submission logic (your existing fetch-to-Cloud Function approach) =====
+  const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app/"; // you said this works
+  const form = document.getElementById("submissionForm");
+  const statusMsg = document.getElementById("statusMsg");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    statusMsg.textContent = "Uploading video... please wait ✨";
+
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(FUNCTION_URL, {
+        method: "POST",
+        body: formData,
+      });
+
+      const text = await response.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch {
+        throw new Error(text);
+      }
+
+      if (response.ok) {
+        statusMsg.textContent = "✅ Submission successful! Thank you!";
+        form.reset();
+      } else {
+        statusMsg.textContent = "⚠️ Error: " + (result.error || "Unknown error");
+      }
+    } catch (err) {
+      statusMsg.textContent = "❌ Upload failed: " + err.message;
+    }
+  });
+</script>
+
 </body>
 </html>
