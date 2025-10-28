@@ -3,90 +3,272 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent - Submit Your Video</title>
+  <title>Lenbrook's Got Talent • Submit Your Video</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background: #fafafa; }
-    h1 { color: #333; }
-    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 500px; }
-    input, textarea, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 1em; }
-    button { background: #0078D7; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #005fa3; }
-    #statusMsg { margin-top: 15px; font-weight: bold; }
+    :root {
+      --bg-grad-start: #5a000a;
+      --bg-grad-end: #1c0003;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.22);
+      --accent: #ffd15a;
+      --accent-glow: rgba(255, 209, 90, 0.4);
+      --text-light: #fff;
+      --text-dim: #ddd;
+      --button-bg: #c62828;
+      --button-bg-hover: #ff3d3d;
+    }
+
+    /* full-page background */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-light);
+      background: radial-gradient(circle at 20% 20%, var(--bg-grad-start) 0%, var(--bg-grad-end) 70%);
+      background-attachment: fixed;
+      position: relative;
+      padding: 2rem 1rem 6rem;
+      box-sizing: border-box;
+    }
+
+    /* subtle snow overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 3px 3px, 4px 4px;
+      background-position: 0 0, 2px 2px;
+      pointer-events: none;
+      animation: snowFloat 6s linear infinite;
+      opacity: 0.4;
+      z-index: 0;
+    }
+    @keyframes snowFloat {
+      0%   { transform: translateY(0px); }
+      100% { transform: translateY(20px); }
+    }
+
+    /* logo top-left */
+    .branding {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+    }
+    .branding img {
+      width: 180px;
+      max-width: 45vw;
+      height: auto;
+    }
+    .event-meta {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: var(--text-light);
+      text-shadow: 0 0 8px rgba(255,255,255,0.3);
+      font-size: .9rem;
+      line-height: 1.3;
+    }
+    .event-meta .title-line {
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .event-meta .title-line span {
+      color: #fff;
+      font-weight: 400;
+    }
+
+    /* main card */
+    .card {
+      position: relative;
+      z-index: 2;
+      max-width: 500px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.8),
+        0 0 30px var(--accent-glow);
+      border-radius: 16px;
+      padding: 1.5rem 1.5rem 2rem;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .card h1 {
+      margin: 0 0 .5rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-align: center;
+      text-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .card .subtitle {
+      font-size: .9rem;
+      text-align: center;
+      color: var(--text-dim);
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    label {
+      font-size: .8rem;
+      color: var(--text-light);
+      font-weight: 500;
+      display: block;
+      margin-bottom: .4rem;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      background: rgba(0,0,0,0.4);
+      color: var(--text-light);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      font-size: 1rem;
+      padding: .75rem .8rem;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    button[type="submit"] {
+      background: var(--button-bg);
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: .9rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8),
+                  0 0 20px rgba(255,255,255,0.2);
+      transition: background .18s, box-shadow .18s;
+    }
+    button[type="submit"]:hover {
+      background: var(--button-bg-hover);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9),
+                  0 0 30px var(--accent-glow);
+    }
+
+    #statusMsg {
+      font-size: .9rem;
+      font-weight: 500;
+      text-align: center;
+      min-height: 1.5rem;
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent-glow);
+      margin-top: .5rem;
+    }
+
+    footer {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      margin-top: 3rem;
+      color: var(--text-dim);
+      font-size: .8rem;
+    }
+    footer span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    @media (min-width: 600px) {
+      .card h1 { font-size: 1.6rem; }
+      .subtitle { font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
-  <h1>🎄 Lenbrook's Got Talent - Video Submission</h1>
-  <form id="submissionForm">
-    <input type="text" id="name" placeholder="Team and/or Participant Name" required />
-    <textarea id="description" placeholder="Talent Description"></textarea>
-    <input type="file" id="videoFile" accept="video/*" required />
-    <button type="submit">Submit Video</button>
-  </form>
+  <!-- header / logo -->
+  <header class="branding">
+    <img src="logo.png" alt="Lenbrook's Got Talent logo" />
+    <div class="event-meta">
+      <div class="title-line">Holiday Lunch 2025 <span>• Lenbrook’s Got Talent</span></div>
+      <div>Submit your performance video below 🎤🎄</div>
+    </div>
+  </header>
 
-  <p id="statusMsg"></p>
+  <!-- main card -->
+  <main class="card">
+    <h1>Submit Your Performance</h1>
+    <div class="subtitle">Upload your team / individual act for Lenbrook’s Got Talent!</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    <form id="submissionForm" enctype="multipart/form-data">
+      <div>
+        <label for="name">Team / Participant Name *</label>
+        <input type="text" id="name" name="name" placeholder="Example: The Jingle Rockers" required />
+      </div>
 
-    // Replace with your real config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
-      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
-      projectId: "lenbrook-s-got-talent",
-      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
-      messagingSenderId: "327419181483",
-      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
-    };
+      <div>
+        <label for="description">Describe your act *</label>
+        <textarea id="description" name="description" placeholder="Singing, dancing, magic, comedy... 🎶🎭" required></textarea>
+      </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+      <div>
+        <label for="video">Upload performance video (mp4, mov, etc.) *</label>
+        <input type="file" id="videoFile" name="video" accept="video/*" required />
+      </div>
 
+      <button type="submit">🎁 Submit Video</button>
+    </form>
+
+    <div id="statusMsg"></div>
+  </main>
+
+  <footer>
+    Presented by <span>Party Patrol</span> ✨
+  </footer>
+
+  <script>
+    const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo"; // (If you switched to Cloud Run URL, update here)
     const form = document.getElementById("submissionForm");
     const statusMsg = document.getElementById("statusMsg");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      statusMsg.textContent = "Uploading video... please wait.";
+      statusMsg.textContent = "Uploading video... please wait ⏳";
 
-      const name = document.getElementById("name").value.trim();
-      const department = document.getElementById("department").value.trim();
-      const description = document.getElementById("description").value.trim();
-      const file = document.getElementById("videoFile").files[0];
-      if (!file) {
-        statusMsg.textContent = "Please select a video file!";
-        return;
-      }
+      const formData = new FormData(form);
 
       try {
-        // Upload video to Firebase Storage directly
-        const fileRef = ref(storage, `videos/${Date.now()}_${file.name}`);
-        const uploadTask = uploadBytesResumable(fileRef, file);
-
-        uploadTask.on("state_changed", (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          statusMsg.textContent = `Uploading... ${Math.round(progress)}%`;
-        }, (error) => {
-          statusMsg.textContent = "Upload failed: " + error.message;
-        }, async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-          // Store metadata in Firestore
-          await addDoc(collection(db, "submissions"), {
-            name,
-            description,
-            videoURL: downloadURL,
-            timestamp: serverTimestamp()
-          });
-
-          statusMsg.textContent = "✅ Submission successful!";
-          form.reset();
+        const response = await fetch(FUNCTION_URL, {
+          method: "POST",
+          body: formData
         });
+
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch {
+          throw new Error(text);
+        }
+
+        if (response.ok) {
+          statusMsg.textContent = "✅ Submission successful! Thank you!";
+          form.reset();
+        } else {
+          statusMsg.textContent = "❌ Error: " + (result.error || "Unknown error");
+        }
       } catch (err) {
-        console.error(err);
-        statusMsg.textContent = "Error: " + err.message;
+        statusMsg.textContent = "❌ Upload failed: " + err.message;
       }
     });
   </script>
