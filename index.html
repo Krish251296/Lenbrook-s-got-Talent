@@ -3,241 +3,289 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent • Submit Your Video</title>
+  <title>Lenbrook's Got Talent 🎄 | Submit Your Video</title>
+
   <style>
     :root {
-      --bg-grad-start: #5a000a;
-      --bg-grad-end: #1c0003;
-      --card-bg: rgba(255, 255, 255, 0.08);
-      --card-border: rgba(255, 255, 255, 0.22);
-      --accent: #ffd15a;
-      --accent-glow: rgba(255, 209, 90, 0.4);
-      --text-light: #fff;
-      --text-dim: #ddd;
-      --button-bg: #c62828;
-      --button-bg-hover: #ff3d3d;
+      --bg-grad-top: #b30000;
+      --bg-grad-bottom: #330000;
+      --card-bg: rgba(255,255,255,0.95);
+      --accent: #d4af37; /* gold */
+      --text-dark: #2b2b2b;
+      --btn-bg: #c91c1c;
+      --btn-bg-hover: #9e1515;
     }
 
-    /* full-page background */
+    /* full-page festive gradient */
     body {
       margin: 0;
+      background: radial-gradient(circle at 20% 20%, var(--bg-grad-top) 0%, var(--bg-grad-bottom) 70%);
+      color: #fff;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: var(--text-light);
-      background: radial-gradient(circle at 20% 20%, var(--bg-grad-start) 0%, var(--bg-grad-end) 70%);
-      background-attachment: fixed;
-      position: relative;
-      padding: 2rem 1rem 6rem;
-      box-sizing: border-box;
-    }
-
-    /* subtle snow overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      left: 0; top: 0; right: 0; bottom: 0;
-      background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
-                        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
-      background-size: 3px 3px, 4px 4px;
-      background-position: 0 0, 2px 2px;
-      pointer-events: none;
-      animation: snowFloat 6s linear infinite;
-      opacity: 0.4;
-      z-index: 0;
-    }
-    @keyframes snowFloat {
-      0%   { transform: translateY(0px); }
-      100% { transform: translateY(20px); }
-    }
-
-    /* logo top-left */
-    .branding {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      max-width: 1400px;
-      margin: 0 auto 2rem;
-    }
-    .branding img {
-      width: 180px;
-      max-width: 45vw;
-      height: auto;
-    }
-    .event-meta {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      color: var(--text-light);
-      text-shadow: 0 0 8px rgba(255,255,255,0.3);
-      font-size: .9rem;
-      line-height: 1.3;
-    }
-    .event-meta .title-line {
-      font-weight: 600;
-      color: var(--accent);
-    }
-    .event-meta .title-line span {
-      color: #fff;
-      font-weight: 400;
     }
 
-    /* main card */
-    .card {
+    /* tiny snowflakes */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      pointer-events: none;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10px) translateX(0); opacity: 1; }
+      100% { transform: translateY(110vh) translateX(30px); opacity: 0; }
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      padding: 20px 24px 0;
       position: relative;
-      z-index: 2;
-      max-width: 500px;
-      width: 100%;
-      margin: 0 auto;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.8),
-        0 0 30px var(--accent-glow);
-      border-radius: 16px;
-      padding: 1.5rem 1.5rem 2rem;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      color: #fff;
     }
 
-    .card h1 {
-      margin: 0 0 .5rem;
+    header img.logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+
+    .title-block {
+      margin-left: 16px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .event-title {
       font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--accent);
-      text-align: center;
-      text-shadow: 0 0 12px var(--accent-glow);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .card .subtitle {
-      font-size: .9rem;
+    .badge {
+      background: rgba(212,175,55,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(212,175,55,0.5);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      line-height: 1.2;
+    }
+
+    .presented {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow:
+        0 30px 60px rgba(0,0,0,0.6),
+        0 0 20px rgba(212,175,55,0.4) inset;
+      padding: 24px 24px 32px;
+      color: var(--text-dark);
+      position: relative;
+      border: 2px solid rgba(212,175,55,0.4);
+    }
+
+    .card h2 {
+      color: var(--text-dark);
       text-align: center;
-      color: var(--text-dim);
-      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+
+    .card .subhead {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      font-weight: 500;
+      margin-bottom: 20px;
     }
 
     form {
-      display: grid;
-      gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
     label {
-      font-size: .8rem;
-      color: var(--text-light);
-      font-weight: 500;
-      display: block;
-      margin-bottom: .4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #444;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
     }
 
     input[type="text"],
     textarea,
     input[type="file"] {
+      margin-top: 6px;
       width: 100%;
-      background: rgba(0,0,0,0.4);
-      color: var(--text-light);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 8px;
-      font-size: 1rem;
-      padding: .75rem .8rem;
-      box-sizing: border-box;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      font-family: inherit;
+      background-color: #fff;
     }
+
     textarea {
       min-height: 70px;
       resize: vertical;
     }
 
     button[type="submit"] {
-      background: var(--button-bg);
+      background: var(--btn-bg);
       color: #fff;
       border: none;
-      font-weight: 600;
-      border-radius: 8px;
-      padding: .9rem 1rem;
-      cursor: pointer;
+      border-radius: 12px;
       font-size: 1rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8),
-                  0 0 20px rgba(255,255,255,0.2);
-      transition: background .18s, box-shadow .18s;
+      font-weight: 600;
+      padding: 12px 16px;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(201,28,28,0.4);
+      transition: background 0.15s;
     }
+
     button[type="submit"]:hover {
-      background: var(--button-bg-hover);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.9),
-                  0 0 30px var(--accent-glow);
+      background: var(--btn-bg-hover);
     }
 
     #statusMsg {
-      font-size: .9rem;
-      font-weight: 500;
+      margin-top: 16px;
       text-align: center;
-      min-height: 1.5rem;
-      color: var(--accent);
-      text-shadow: 0 0 8px var(--accent-glow);
-      margin-top: .5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      min-height: 1.2em;
     }
 
     footer {
-      position: relative;
-      z-index: 2;
       text-align: center;
-      margin-top: 3rem;
-      color: var(--text-dim);
-      font-size: .8rem;
-    }
-    footer span {
-      color: var(--accent);
-      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+      padding: 24px 16px 40px;
+      line-height: 1.4;
     }
 
-    @media (min-width: 600px) {
-      .card h1 { font-size: 1.6rem; }
-      .subtitle { font-size: 1rem; }
+    @media (max-width:480px){
+      header {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      header img.logo {
+        width: 60px;
+        height: 60px;
+      }
+      .event-title {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- header / logo -->
-  <header class="branding">
-    <img src="logo.png" alt="Lenbrook's Got Talent logo" />
-    <div class="event-meta">
-      <div class="title-line">Holiday Lunch 2025 <span>• Lenbrook’s Got Talent</span></div>
-      <div>Submit your performance video below 🎤🎄</div>
+
+  <!-- ❄ snow layer -->
+  <!-- we make ~15 flakes with random positions using inline style -->
+  <script>
+    for (let i = 0; i < 15; i++) {
+      const delay = (Math.random()*5).toFixed(2);
+      const duration = (6+Math.random()*6).toFixed(2);
+      const left = (Math.random()*100).toFixed(2);
+      document.write(
+        `<div class="snowflake" style="
+          left:${left}vw;
+          animation-delay:${delay}s;
+          animation-duration:${duration}s;
+        ">✻</div>`
+      );
+    }
+  </script>
+
+  <header>
+    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
+    <div class="title-block">
+      <div class="event-title">
+        <span>Lenbrook's Got Talent</span>
+        <span class="badge">Holiday Edition ❄</span>
+      </div>
+      <div class="presented">Presented by Party Patrol</div>
     </div>
   </header>
 
-  <!-- main card -->
-  <main class="card">
-    <h1>Submit Your Performance</h1>
-    <div class="subtitle">Upload your team / individual act for Lenbrook’s Got Talent!</div>
+  <main>
+    <div class="card">
+      <h2>Submit Your Performance Video</h2>
+      <div class="subhead">Show us your talent for the Christmas Lunch 🎁</div>
 
-    <form id="submissionForm" enctype="multipart/form-data">
-      <div>
-        <label for="name">Team / Participant Name *</label>
-        <input type="text" id="name" name="name" placeholder="Example: The Jingle Rockers" required />
-      </div>
+      <form id="submissionForm" enctype="multipart/form-data">
+        <label>
+          Team / Participant Name *
+          <input type="text" name="name" placeholder="e.g. Finance Carolers or Jane D." required />
+        </label>
 
-      <div>
-        <label for="description">Describe your act *</label>
-        <textarea id="description" name="description" placeholder="Singing, dancing, magic, comedy... 🎶🎭" required></textarea>
-      </div>
+        <label>
+          Description of Your Act *
+          <textarea name="description" placeholder="What are you performing? Song, skit, dance, etc." required></textarea>
+        </label>
 
-      <div>
-        <label for="video">Upload performance video (mp4, mov, etc.) *</label>
-        <input type="file" id="videoFile" name="video" accept="video/*" required />
-      </div>
+        <label>
+          Upload Video *
+          <input type="file" name="video" accept="video/*" required />
+        </label>
 
-      <button type="submit">🎁 Submit Video</button>
-    </form>
+        <button type="submit">🎬 Upload My Talent</button>
+      </form>
 
-    <div id="statusMsg"></div>
+      <p id="statusMsg"></p>
+    </div>
   </main>
 
   <footer>
-    Presented by <span>Party Patrol</span> ✨
+    🎄 Lenbrook Christmas Lunch Event &nbsp;•&nbsp; Internal Only
   </footer>
 
   <script>
-    const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo"; // (If you switched to Cloud Run URL, update here)
+    // IMPORTANT:
+    // We are keeping your current upload flow:
+    //   - POST the formData to Cloud Function endpoint that streams to Storage
+    //   - That function writes Firestore doc with name/description/videoURL/timestamp
+    // same URL as before
+
+    const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app/"; // <-- your existing deployed express/CF URL
     const form = document.getElementById("submissionForm");
     const statusMsg = document.getElementById("statusMsg");
 
@@ -262,7 +310,7 @@
         }
 
         if (response.ok) {
-          statusMsg.textContent = "✅ Submission successful! Thank you!";
+          statusMsg.textContent = "✅ Submission received! Thank you!";
           form.reset();
         } else {
           statusMsg.textContent = "❌ Error: " + (result.error || "Unknown error");
