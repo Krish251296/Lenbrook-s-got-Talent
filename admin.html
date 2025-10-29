@@ -3,237 +3,324 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent • Admin</title>
-
+  <title>Admin | Lenbrook's Got Talent</title>
   <style>
-    /* global bg */
-    html, body {
-      margin:0;
-      padding:0;
-      min-height:100vh;
-      background: radial-gradient(circle at 50% 20%, #2e3a60 0%, #0f1424 70%);
-      background-color:#0f1424;
-      color:#fff;
-      font-family:'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    :root {
+      --bg-start: #0b1220;
+      --bg-end: #1a2a4a;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --text-primary: #ffffff;
+      --text-dim: rgba(255,255,255,0.6);
+      --accent: #4da3ff;
+      --accent-bright: #91c4ff;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 10px;
     }
 
-    body{
-      display:flex;
-      flex-direction:column;
-      padding:2rem 1rem 4rem;
-      box-sizing:border-box;
-      position:relative;
+    @keyframes snow-fall {
+      0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
+      10%  { opacity: 1; }
+      100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
     }
 
-    main{
-      position:relative;
-      z-index:2;
-      max-width:1100px;
-      width:100%;
-      margin:0 auto;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
+      background: radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
+                  linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
+      background-repeat: no-repeat;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    /* snow */
-    .snow,
-    .snow::before,
-    .snow::after {
-      content:"";
-      position:fixed;
-      left:0;
-      top:0;
-      width:100%;
-      height:100%;
-      pointer-events:none;
-      background-repeat:repeat;
-      background-size:3px 3px;
-      image-rendering:pixelated;
-      z-index:0;
+    .bg-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 60vmin;
+      height: 60vmin;
+      transform: translate(-50%, -30%);
+      background: radial-gradient(circle,
+        rgba(130,180,255,0.45) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(60px);
+      pointer-events: none;
     }
-    .snow {
-      background-image:radial-gradient(rgba(255,255,255,0.9) 1.2px, transparent 1.2px);
-      animation:snowMoveA 6s linear infinite;
-      opacity:.6;
-    }
-    .snow::before {
-      background-image:radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px);
-      animation:snowMoveB 10s linear infinite;
-      opacity:.4;
-    }
-    .snow::after {
-      background-image:radial-gradient(rgba(255,255,255,0.3) 0.8px, transparent 0.8px);
-      animation:snowMoveC 14s linear infinite;
-      opacity:.25;
-    }
-    @keyframes snowMoveA {
-      0%   {transform:translateY(-60px) translateX(0px);}
-      100% {transform:translateY(60px)  translateX(20px);}
-    }
-    @keyframes snowMoveB {
-      0%   {transform:translateY(-80px) translateX(0px);}
-      100% {transform:translateY(80px)  translateX(-20px);}
-    }
-    @keyframes snowMoveC {
-      0%   {transform:translateY(-100px) translateX(0px);}
-      100% {transform:translateY(100px)  translateX(10px);}
+    .bg-glow-bottom {
+      position: absolute;
+      bottom: -20vmin;
+      left: 50%;
+      width: 80vmin;
+      height: 80vmin;
+      transform: translateX(-50%);
+      background: radial-gradient(circle,
+        rgba(0,140,255,0.25) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(80px);
+      opacity: 0.4;
+      pointer-events: none;
     }
 
-    header.page-head{
-      text-align:center;
-      margin-bottom:2rem;
-      position:relative;
-      z-index:2;
+    .snow-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 5;
     }
-    header.page-head img.logo{
-      width:180px;
-      max-width:60vw;
-      height:auto;
-      filter:drop-shadow(0 20px 30px rgba(0,0,0,.6));
-    }
-    header.page-head h1{
-      color:#fff;
-      font-size:1.3rem;
-      font-weight:600;
-      margin:1rem 0 .5rem;
-      text-shadow:0 2px 4px rgba(0,0,0,.8);
-    }
-    header.page-head p.sub{
-      margin:0;
-      color:rgba(255,255,255,.7);
-      font-size:.9rem;
-      line-height:1.4;
+    .flake {
+      position: absolute;
+      top: -10vh;
+      color: #fff;
+      font-size: 10px;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
+      opacity: 0.8;
+      animation: snow-fall linear infinite;
     }
 
-    .admin-card{
-      background: radial-gradient(circle at 20% 20%, rgba(60,72,110,.6) 0%, rgba(20,24,40,.6) 70%);
-      backdrop-filter: blur(16px) saturate(140%);
-      -webkit-backdrop-filter: blur(16px) saturate(140%);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:18px;
-      box-shadow:0 60px 120px rgba(0,0,0,.85),0 8px 24px rgba(0,0,0,.6),0 0 120px rgba(88,130,255,.18) inset;
-      padding:1.5rem 1rem 2rem;
-      color:#fff;
+    .page-shell {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: clamp(1rem,2vw,2rem) clamp(1rem,2vw,2rem) 4rem;
     }
 
-    /* login block */
-    #loginSection{
-      text-align:center;
-      margin-bottom:1.5rem;
+    header {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
     }
-    #loginSection button{
-      background:linear-gradient(90deg, rgba(88,130,255,1) 0%, rgba(164,120,255,1) 100%);
-      color:#fff;
-      font-size:.9rem;
-      font-weight:600;
-      border:0;
-      border-radius:8px;
-      padding:.8rem 1rem;
-      cursor:pointer;
-      box-shadow:0 30px 60px rgba(0,0,0,.9),0 8px 24px rgba(88,130,255,.4),0 0 60px rgba(164,120,255,.6);
+    .brand-logo-wrapper {
+      position: relative;
+      display: inline-block;
     }
-
-    #adminStatus{
-      color:rgba(255,255,255,.7);
-      font-size:.8rem;
-      font-weight:500;
-      min-height:1.2em;
-      text-align:center;
-      margin-top:.75rem;
+    .brand-logo {
+      width: clamp(140px, 22vw, 240px);
+      height: auto;
+      display: block;
+      border-radius: var(--radius-md);
     }
-
-    /* submissions list */
-    #submissionsList .entry{
-      border-bottom:1px solid rgba(255,255,255,.07);
-      padding:1rem 0;
-      display:flex;
-      flex-direction:column;
-      gap:.5rem;
-    }
-    .row-top{
-      display:flex;
-      flex-wrap:wrap;
-      gap:1rem;
-      align-items:flex-start;
-      justify-content:space-between;
-      color:#fff;
-    }
-    .row-top-left{
-      min-width:200px;
-    }
-    .act-name{
-      font-size:1rem;
-      font-weight:600;
-      color:#fff;
-    }
-    .dept{
-      font-size:.8rem;
-      color:rgba(255,255,255,.7);
-    }
-    .desc{
-      font-size:.8rem;
-      line-height:1.4;
-      color:rgba(255,255,255,.8);
-    }
-    .video-link{
-      font-size:.75rem;
-      word-break:break-all;
-      color:#8fb4ff;
-    }
-    video.preview{
-      width:220px;
-      max-height:140px;
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,.2);
-      box-shadow:0 20px 40px rgba(0,0,0,.8);
+    .brand-logo-glow {
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, -10px);
+      width: 140%;
+      height: 60px;
+      background: radial-gradient(ellipse at center,
+        rgba(130,180,255,0.45) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(30px);
+      opacity: 0.6;
+      pointer-events: none;
     }
 
-    @media(min-width:700px){
-      #submissionsList .entry{
-        flex-direction:row;
-        justify-content:space-between;
+    .headline {
+      font-size: clamp(1.2rem,1vw,1.4rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 1.5rem;
+    }
+    .subtext {
+      font-size: .9rem;
+      color: var(--text-dim);
+      margin-top: .5rem;
+      line-height: 1.4;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .login-card {
+      max-width: 360px;
+      margin: 2rem auto;
+      text-align: center;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow:
+        0 30px 120px rgba(0,0,0,0.8),
+        0 2px 3px rgba(255,255,255,0.1) inset;
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      padding: 1.25rem 1.25rem 1.5rem;
+    }
+
+    .login-btn {
+      appearance: none;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      border-radius: var(--radius-lg);
+      padding: .9rem 1rem;
+      font-size: .95rem;
+      font-weight: 600;
+      line-height: 1.2;
+      color: #000;
+      width: 100%;
+      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.8),
+        0 2px 2px rgba(255,255,255,0.4) inset;
+    }
+
+    .logout-btn {
+      appearance: none;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      padding: .6rem .8rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: #000;
+      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.8),
+        0 2px 2px rgba(255,255,255,0.4) inset;
+      min-width: 80px;
+    }
+
+    .admin-section {
+      display: none;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow:
+        0 30px 120px rgba(0,0,0,0.8),
+        0 2px 3px rgba(255,255,255,0.1) inset;
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      padding: 1rem;
+      margin-top: 2rem;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 800px;
+      border-collapse: collapse;
+      font-size: .8rem;
+      color: var(--text-primary);
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255,255,255,0.07);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: .75rem .75rem;
+      white-space: nowrap;
+    }
+    td {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: .75rem .75rem;
+    }
+
+    video {
+      width: 180px;
+      max-height: 120px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.4);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+    }
+
+    .statusText {
+      font-size: .8rem;
+      font-weight: 500;
+      color: var(--accent-bright);
+      text-align: center;
+      min-height: 1.2em;
+      margin-top: .75rem;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .whoami {
+      font-size: .8rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    @media(max-width:600px){
+      .brand-logo {
+        width: clamp(150px, 40vw, 240px);
       }
-      .row-top{
-        flex:1;
+      .admin-section {
+        border-radius: var(--radius-lg);
+        padding: .75rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="snow"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-glow-bottom"></div>
+  <div class="snow-wrap" id="snowLayer"></div>
 
-  <header class="page-head">
-    <img class="logo" src="logo.png" alt="Lenbrook's Got Talent Logo"/>
-    <h1>Admin Console</h1>
-    <p class="sub">Internal review only</p>
-  </header>
-
-  <main>
-    <section class="admin-card">
-      <div id="loginSection">
-        <button id="googleLoginBtn">Sign in with Google</button>
-        <div id="adminStatus"></div>
+  <div class="page-shell">
+    <header>
+      <div class="brand-logo-wrapper">
+        <img src="logo.png" class="brand-logo" alt="Lenbrook's Got Talent" />
+        <div class="brand-logo-glow"></div>
       </div>
-
-      <div id="submissionsSection" style="display:none;">
-        <div id="submissionsList"></div>
+      <div class="headline">Admin Dashboard</div>
+      <div class="subtext">
+        Internal view of all submissions and scores.
       </div>
+    </header>
+
+    <section class="login-card" id="loginCard">
+      <button class="login-btn" id="loginBtn">Sign in with Google</button>
+      <div id="loginStatus" class="statusText"></div>
     </section>
-  </main>
+
+    <section class="admin-section" id="adminSection">
+      <div class="top-row">
+        <div class="whoami">
+          <div id="whoamiEmail"></div>
+          <div id="whoamiWarn" style="color:#ff7070;font-weight:500;"></div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Sign Out</button>
+      </div>
+
+      <table id="adminTable">
+        <thead>
+          <tr>
+            <th>Team / Participant</th>
+            <th>Collab</th>
+            <th>Description</th>
+            <th>Video</th>
+            <th>Average Score</th>
+            <th>Raw Ratings</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup,
-      onAuthStateChanged,
+    import { 
+      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { 
+      getFirestore, collection, getDocs 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // same firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
@@ -244,97 +331,103 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
 
-    // ONLY allow this email:
-    const ALLOWED_EMAIL = "kdesai@lenbrook.com";
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const loginCard = document.getElementById("loginCard");
+    const adminSection = document.getElementById("adminSection");
+    const loginStatus = document.getElementById("loginStatus");
+    const whoamiEmail = document.getElementById("whoamiEmail");
+    const whoamiWarn = document.getElementById("whoamiWarn");
+    const adminTableBody = document.querySelector("#adminTable tbody");
 
-    const loginBtn = document.getElementById("googleLoginBtn");
-    const statusEl = document.getElementById("adminStatus");
-    const submissionsSection = document.getElementById("submissionsSection");
-    const submissionsList = document.getElementById("submissionsList");
-    const loginSection = document.getElementById("loginSection");
+    const APPROVED_ADMIN = "kdesai@lenbrook.com";
+
+    // snow
+    const snowLayer = document.getElementById('snowLayer');
+    function spawnFlake() {
+      const flake = document.createElement('div');
+      flake.className = 'flake';
+      flake.textContent = '•';
+      const size = (Math.random()*0.6 + 0.4) * 12;
+      flake.style.fontSize = size + 'px';
+      flake.style.left = Math.random()*100 + 'vw';
+      const dur = Math.random()*4 + 4;
+      flake.style.animationDuration = dur + 's';
+      snowLayer.appendChild(flake);
+      setTimeout(()=>flake.remove(), dur*1000);
+    }
+    setInterval(spawnFlake, 120);
 
     loginBtn.addEventListener("click", async () => {
       try {
-        const result = await signInWithPopup(auth, provider);
-        // google account info:
-        const user = result.user;
-        checkAccess(user);
+        loginStatus.textContent = "Signing in...";
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        // onAuthStateChanged below will continue the flow
       } catch (err) {
-        console.error("Login error:", err);
-        statusEl.textContent = "Login failed. Please try again.";
+        loginStatus.textContent = "Login error: " + err;
       }
     });
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        checkAccess(user);
-      }
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
     });
 
-    async function checkAccess(user) {
-      if (!user || !user.email) {
-        statusEl.textContent = "No user email found.";
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // logged out
+        loginCard.style.display = "block";
+        adminSection.style.display = "none";
+        loginStatus.textContent = "";
+        whoamiEmail.textContent = "";
+        whoamiWarn.textContent = "";
         return;
       }
-      if (user.email.toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
-        statusEl.textContent = "Access denied for " + user.email;
+
+      whoamiEmail.textContent = "Signed in as: " + (user.email || "(no email)");
+      if (user.email !== APPROVED_ADMIN) {
+        whoamiWarn.textContent = "You are not authorized to view admin data.";
+        loginCard.style.display = "none";
+        adminSection.style.display = "block";
+        adminTableBody.innerHTML = "";
         return;
       }
 
-      // allowed
-      statusEl.textContent = "✅ Signed in as " + user.email;
-      loginSection.style.display = "none";
-      submissionsSection.style.display = "block";
+      whoamiWarn.textContent = "";
+      loginCard.style.display = "none";
+      adminSection.style.display = "block";
+      await loadAdminData();
+    });
 
-      loadSubmissionsForAdmin();
-    }
-
-    async function loadSubmissionsForAdmin() {
-      submissionsList.innerHTML = "Loading...";
+    async function loadAdminData() {
+      adminTableBody.innerHTML = "";
       const snapshot = await getDocs(collection(db, "submissions"));
 
-      let html = "";
-      snapshot.forEach(docSnap => {
+      snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        html += renderEntry(data);
+        const tr = document.createElement("tr");
+
+        // pretty-print ratings
+        let ratingsPretty = "";
+        if (data.ratings) {
+          for (const [reviewer, r] of Object.entries(data.ratings)) {
+            ratingsPretty += `${reviewer}: T${r.technical||0}/C${r.creativity||0}/E${r.entertainment||0} (Total ${r.total||0})\n`;
+          }
+        }
+
+        tr.innerHTML = `
+          <td>${data.name || ""}</td>
+          <td>${data.department || ""}</td>
+          <td>${data.description || ""}</td>
+          <td><video src="${data.videoURL}" controls></video></td>
+          <td>${data.averageScore ? data.averageScore.toFixed(1) : "-"}</td>
+          <td><pre style="white-space:pre-wrap;font-size:.7rem;line-height:1.4;color:var(--text-dim);margin:0;">${ratingsPretty || ""}</pre></td>
+        `;
+        adminTableBody.appendChild(tr);
       });
-
-      submissionsList.innerHTML = html || "<p>No submissions found.</p>";
-    }
-
-    function renderEntry(data) {
-      const name = data.name || "";
-      const dept = data.department || "";
-      const desc = data.description || "";
-      const videoURL = data.videoURL || "";
-      const avg = typeof data.averageScore === "number"
-        ? data.averageScore.toFixed(1)
-        : "-";
-
-      return `
-        <div class="entry">
-          <div class="row-top">
-            <div class="row-top-left">
-              <div class="act-name">${name}</div>
-              <div class="dept">${dept}</div>
-              <div class="desc">${desc}</div>
-              <div class="desc">Average Score: <strong>${avg}</strong></div>
-              <div class="video-link">${videoURL}</div>
-            </div>
-            <div class="row-top-right">
-              ${
-                videoURL
-                  ? `<video class="preview" src="${videoURL}" controls></video>`
-                  : `<div style="color:rgba(255,255,255,.5);font-size:.8rem;">No video URL</div>`
-              }
-            </div>
-          </div>
-        </div>
-      `;
     }
   </script>
 </body>
