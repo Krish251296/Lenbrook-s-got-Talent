@@ -1,335 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard ❄️ Lenbrook’s Got Talent</title>
-  <style>
-    :root {
-      --bg-start: #4a0029;
-      --bg-end:   #d69a2e;
-      --card-bg: rgba(255,255,255,0.15);
-      --card-border: rgba(255,255,255,0.3);
-      --text-main: #fff;
-      --accent: #ffd983;
-      --btn-bg: #ffffff;
-      --btn-text: #4a0029;
-      --btn-bg-hover: #ffd983;
-      --btn-text-hover: #3b0020;
-      --radius-lg: 20px;
-      --radius-sm: 10px;
-      --shadow-card: 0 30px 60px rgba(0,0,0,0.5);
-      --glass-blur: blur(12px);
-      --font-stack: "Inter", system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-      --table-bg: rgba(0,0,0,0.3);
-      --table-border: rgba(255,255,255,0.2);
-      --table-head-bg: rgba(255,255,255,0.12);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin • Lenbrook’s Got Talent</title>
+<style>
+  :root {
+    --bg-grad-start: #0a1424;
+    --bg-grad-end: #1d2a44;
+    --card-bg: rgba(255,255,255,0.07);
+    --card-border: rgba(255,255,255,0.22);
+    --card-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    --accent: #4da3ff;
+    --accent-hover: #6bb4ff;
+    --text-primary: #ffffff;
+    --text-dim: rgba(255,255,255,0.6);
+    --radius-xl: 20px;
+  }
 
-    *{box-sizing:border-box;-webkit-font-smoothing:antialiased;}
-    body{
-      margin:0;
-      min-height:100vh;
-      color:var(--text-main);
-      font-family:var(--font-stack);
-      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 60%),
-                  linear-gradient(135deg,var(--bg-start)0%,var(--bg-end)100%);
-      position:relative;
-      overflow-x:hidden;
-    }
+  * {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    .snow{
-      pointer-events:none;
-      position:fixed;
-      inset:0;
-      background-image:
-        radial-gradient(circle at 10px 10px,rgba(255,255,255,0.9)2px,transparent 3px),
-        radial-gradient(circle at 50px 30px,rgba(255,255,255,0.6)1.5px,transparent 3px),
-        radial-gradient(circle at 90px 60px,rgba(255,255,255,0.8)2px,transparent 3px);
-      background-size:120px 120px;
-      opacity:.4;
-      animation:snowDrift 8s linear infinite;
-      z-index:2;
-    }
-    @keyframes snowDrift{
-      0%{background-position:0px 0px,0px 0px,0px 0px;}
-      100%{background-position:0px 120px,0px 120px,0px 120px;}
-    }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-primary);
+    background: radial-gradient(circle at 20% 20%, rgba(90,130,255,0.25) 0%, rgba(0,0,0,0) 60%),
+                radial-gradient(circle at 80% 30%, rgba(255,0,180,0.12) 0%, rgba(0,0,0,0) 60%),
+                radial-gradient(circle at 50% 80%, rgba(0,255,170,0.08) 0%, rgba(0,0,0,0) 60%),
+                linear-gradient(160deg, var(--bg-grad-start) 0%, var(--bg-grad-end) 100%);
+    position: relative;
+    overflow-x: hidden;
+    padding-bottom: 80px;
+  }
 
-    .corner-logo{
-      position:fixed;
-      top:16px;left:16px;
-      z-index:10;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .corner-logo img{
-      height:56px;width:auto;
-      filter:drop-shadow(0 10px 20px rgba(0,0,0,.6));
-    }
-    .corner-logo .tagline{
-      font-size:.8rem;
-      font-weight:500;
-      color:var(--accent);
-      line-height:1.2;
-      text-shadow:0 2px 4px rgba(0,0,0,.7);
-    }
-    .corner-santa{
-      position:fixed;
-      top:16px;
-      right:16px;
-      z-index:10;
-    }
-    .corner-santa img{
-      height:64px;width:auto;
-      filter:drop-shadow(0 12px 24px rgba(0,0,0,.8));
-    }
-    .corner-psb{
-      position:fixed;
-      left:16px;
-      bottom:16px;
-      z-index:10;
-    }
-    .corner-psb img{
-      height:60px;width:auto;
-      filter:drop-shadow(0 12px 24px rgba(0,0,0,.8));
-    }
+  .snow-layer {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle at 20px 20px, rgba(255,255,255,0.9) 0 2px, transparent 3px),
+                      radial-gradient(circle at 80px 60px, rgba(255,255,255,0.5) 0 1px, transparent 2px),
+                      radial-gradient(circle at 200px 120px, rgba(255,255,255,0.8) 0 1.5px, transparent 2px);
+    background-size: 250px 250px;
+    animation: snowFloat 6s linear infinite;
+    opacity: 0.45;
+    mix-blend-mode: screen;
+    z-index: 5;
+  }
+  @keyframes snowFloat {
+    0%   { background-position-y: 0px;   }
+    100% { background-position-y: 250px; }
+  }
 
-    .page-shell{
-      position:relative;
-      z-index:5;
-      min-height:100vh;
-      padding:110px 16px 80px;
-      max-width:1200px;
-      margin:0 auto;
-    }
+  header.topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 24px;
+    position: relative;
+    z-index: 20;
+  }
 
-    .card{
-      background:var(--card-bg);
-      border:1px solid var(--card-border);
-      box-shadow:var(--shadow-card);
-      backdrop-filter:var(--glass-blur);
-      border-radius:var(--radius-lg);
-      padding:20px;
-      margin-bottom:20px;
-      text-shadow:0 2px 4px rgba(0,0,0,.8);
-      color:#fff;
-    }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-    h2.section-title{
-      margin:0 0 4px;
-      font-size:1.1rem;
-      font-weight:600;
-      color:var(--accent);
-      text-align:center;
-    }
-    p.section-desc{
-      margin:0 0 12px;
-      font-size:.8rem;
-      font-weight:400;
-      color:#fff;
-      opacity:.8;
-      text-align:center;
-    }
+  .logo-img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.07);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
 
-    #loginBlock, #adminStatus {
-      text-align:center;
-      color:#fff;
-      font-size:.9rem;
-      font-weight:500;
-      text-shadow:0 2px 4px rgba(0,0,0,.8);
-    }
+  .brand-block {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
 
-    button#loginBtn{
-      border:0;
-      border-radius:var(--radius-sm);
-      background:var(--btn-bg);
-      color:var(--btn-text);
-      font-weight:600;
-      font-size:.9rem;
-      padding:10px 14px;
-      cursor:pointer;
-      box-shadow:0 20px 40px rgba(0,0,0,.6);
-      transition:all .15s linear;
-      margin-top:10px;
-    }
-    button#loginBtn:hover{
-      background:var(--btn-bg-hover);
-      color:var(--btn-text-hover);
-      box-shadow:0 24px 50px rgba(0,0,0,.75);
-    }
+  .brand-title {
+    font-size: clamp(1rem, 0.25vw + 0.9rem, 1.05rem);
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
 
-    .table-wrap{
-      overflow-x:auto;
-      border-radius:var(--radius-lg);
-      border:1px solid var(--table-border);
-      background:var(--table-bg);
-      box-shadow:var(--shadow-card);
-      backdrop-filter:var(--glass-blur);
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:900px;
-      font-size:.8rem;
-      color:#fff;
-      text-shadow:0 1px 2px rgba(0,0,0,.8);
-    }
-    thead{
-      background:var(--table-head-bg);
-    }
-    th{
-      text-align:left;
-      padding:10px 8px;
-      font-weight:600;
-      color:var(--accent);
-      white-space:nowrap;
-      border-bottom:1px solid var(--table-border);
-    }
-    td{
-      padding:12px 8px;
-      border-bottom:1px solid var(--table-border);
-      vertical-align:top;
-    }
-    video{
-      max-width:180px;
-      width:100%;
-      border-radius:var(--radius-sm);
-      box-shadow:0 20px 40px rgba(0,0,0,.8);
-      display:block;
-    }
+  .brand-sub {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
 
-    .mono{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:.7rem;
-      line-height:1.4;
-      white-space:pre-wrap;
-      word-break:break-word;
-      color:#ffd983;
-    }
+  main.page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    position: relative;
+    z-index: 20;
+  }
 
-    @media(max-width:600px){
-      th,td{font-size:.7rem;padding:8px 6px;}
-      video{max-width:140px;}
+  .admin-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    margin: 0 0 6px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--text-dim);
+    margin: 0 0 16px;
+  }
+
+  .login-block button {
+    background: radial-gradient(circle at 20% 20%, #4da3ff 0%, #246bff 60%);
+    border: 0;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 20px 40px rgba(36,107,255,0.5);
+  }
+
+  .login-block button:hover {
+    background: radial-gradient(circle at 20% 20%, var(--accent-hover) 0%, #3a7dff 60%);
+  }
+
+  #adminStatus {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    min-height: 1.2em;
+    margin-top: 8px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.25);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    display: none;
+  }
+
+  table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+  }
+
+  thead th {
+    background: rgba(255,255,255,0.08);
+    font-weight: 500;
+    text-align: left;
+    padding: 12px;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-primary);
+  }
+
+  tbody td {
+    vertical-align: top;
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    color: var(--text-dim);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  video {
+    width: 200px;
+    max-width: 40vw;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  }
+
+  .santa {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    font-size: 2.4rem;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7));
+    user-select: none;
+    z-index: 40;
+  }
+
+  @media (max-width:600px){
+    .logo-img {
+      width:60px;
+      height:60px;
     }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="snow"></div>
+<div class="snow-layer"></div>
 
-  <div class="corner-logo">
-    <img src="logo.png" alt="Lenbrook's Got Talent Logo">
-    <div class="tagline">
-      Presented by Party Patrol<br/>Holiday Showcase 2025
-    </div>
-  </div>
-  <div class="corner-santa">
-    <img src="santa.png" alt="Santa">
-  </div>
-  <div class="corner-psb">
-    <img src="psb.png" alt="PSB Headphones">
-  </div>
-
-  <div class="page-shell">
-    <!-- login card -->
-    <div class="card" id="loginCard">
-      <h2 class="section-title">Admin Sign-In</h2>
-      <p class="section-desc">Only authorized organizer can view this dashboard.</p>
-      <div id="loginBlock">
-        <button id="loginBtn">Sign in with Google</button>
+<header class="topbar">
+  <div class="logo-wrap">
+    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo-img" />
+    <div class="brand-block">
+      <div class="brand-title">
+        <span>Lenbrook’s Got Talent</span>
+        <span style="color:var(--text-dim);font-weight:400;">Admin View</span>
       </div>
-      <div id="adminStatus" style="margin-top:8px;">Not signed in.</div>
-    </div>
-
-    <!-- data table -->
-    <div class="table-wrap" id="adminTableWrap" style="display:none;">
-      <table id="adminTable">
-        <thead>
-          <tr>
-            <th>Team / Participant</th>
-            <th>Collab Info</th>
-            <th>Description</th>
-            <th>Video</th>
-            <th>Average Score</th>
-            <th>All Ratings (debug)</th>
-          </tr>
-        </thead>
-        <tbody id="adminTbody"></tbody>
-      </table>
+      <div class="brand-sub">Presented by Party Patrol</div>
     </div>
   </div>
+</header>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+<main class="page">
+  <section class="admin-card">
+    <h1>Host / Organizer Access 🎤</h1>
+    <p class="subtitle">
+      Sign in with the approved event email to view all submissions and ratings.
+    </p>
 
-    // keep same config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
-      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
-      projectId: "lenbrook-s-got-talent",
-      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
-      messagingSenderId: "327419181483",
-      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
-    };
+    <div class="login-block">
+      <button id="loginBtn">Sign in with Google</button>
+    </div>
+    <div id="adminStatus">Not signed in.</div>
+  </section>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+  <section class="table-wrap" id="adminTableWrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Team / Participant</th>
+          <th>Collab / Departments</th>
+          <th>Description</th>
+          <th>Video</th>
+          <th>Average Score</th>
+          <th>All Judge Totals</th>
+        </tr>
+      </thead>
+      <tbody id="adminBody"></tbody>
+    </table>
+  </section>
+</main>
 
-    const loginBtn = document.getElementById("loginBtn");
-    const adminStatus = document.getElementById("adminStatus");
-    const loginCard = document.getElementById("loginCard");
-    const adminTableWrap = document.getElementById("adminTableWrap");
-    const adminTbody = document.getElementById("adminTbody");
+<div class="santa">🎅</div>
 
-    const ALLOWED_EMAIL = "kdesai@lenbrook.com";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    loginBtn.addEventListener("click", async () => {
-      try {
-        const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
-      } catch (err) {
-        console.error("Login error:", err);
-        adminStatus.textContent = "Login failed.";
-      }
-    });
+  // same config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
+    authDomain: "lenbrook-s-got-talent.firebaseapp.com",
+    projectId: "lenbrook-s-got-talent",
+    storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+    messagingSenderId: "327419181483",
+    appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
+  };
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user && user.email === ALLOWED_EMAIL) {
-        adminStatus.textContent = `Signed in as ${user.email}`;
-        loginCard.style.display = "none";
-        adminTableWrap.style.display = "block";
-        loadAdminData();
-      } else if (user && user.email !== ALLOWED_EMAIL) {
-        adminStatus.textContent = "Access denied for " + user.email;
-        adminTableWrap.style.display = "none";
-      } else {
-        adminStatus.textContent = "Not signed in.";
-        adminTableWrap.style.display = "none";
-      }
-    });
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-    async function loadAdminData() {
-      const snap = await getDocs(collection(db, "submissions"));
-      adminTbody.innerHTML = "";
+  const allowedEmail = "kdesai@lenbrook.com";
 
-      snap.forEach(docSnap => {
-        const data = docSnap.data();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${data.name || ""}</td>
-          <td>${data.department || ""}</td>
-          <td>${data.description || ""}</td>
-          <td><video src="${data.videoURL}" controls></video></td>
-          <td>${data.averageScore ? data.averageScore.toFixed(1) : "-"}</td>
-          <td><div class="mono">${JSON.stringify(data.ratings || {}, null, 2)}</div></td>
-        `;
-        adminTbody.appendChild(tr);
-      });
+  const loginBtn = document.getElementById("loginBtn");
+  const adminStatus = document.getElementById("adminStatus");
+  const adminBody = document.getElementById("adminBody");
+  const adminTableWrap = document.getElementById("adminTableWrap");
+
+  loginBtn.addEventListener("click", async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      console.error("Login error:", err);
+      adminStatus.textContent = "Login failed. Please try again.";
     }
-  </script>
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      adminStatus.textContent = "Not signed in.";
+      adminTableWrap.style.display = "none";
+      return;
+    }
+
+    // Only allow the one email
+    if (user.email !== allowedEmail) {
+      adminStatus.textContent = "Access denied for " + user.email;
+      adminTableWrap.style.display = "none";
+      return;
+    }
+
+    adminStatus.textContent = "Signed in as " + user.email + " ✅ Loading data...";
+    await loadAllData();
+    adminTableWrap.style.display = "block";
+  });
+
+  async function loadAllData() {
+    const snap = await getDocs(collection(db, "submissions"));
+    adminBody.innerHTML = "";
+
+    snap.forEach(docSnap => {
+      const data = docSnap.data();
+      const ratings = data.ratings || {};
+      const judgeSummaries = Object.entries(ratings).map(([judge, r]) => {
+        return `${judge}: ${r.total}`;
+      }).join(", ");
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td style="color:#fff;font-weight:600;">${data.name || ""}</td>
+        <td>${data.departments || ""}</td>
+        <td>${data.description || ""}</td>
+        <td><video src="${data.videoURL}" controls></video></td>
+        <td style="color:var(--accent);font-weight:600;">${data.averageScore ? data.averageScore.toFixed(1) : "-"}</td>
+        <td style="color:var(--text-dim);">${judgeSummaries || "(no ratings yet)"}</td>
+      `;
+      adminBody.appendChild(tr);
+    });
+
+    adminStatus.textContent = "Loaded all acts.";
+  }
+</script>
 </body>
 </html>
