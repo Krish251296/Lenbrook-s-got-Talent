@@ -3,207 +3,232 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent • Leaderboard</title>
-
+  <title>Leaderboard | Lenbrook's Got Talent</title>
   <style>
-    /* global bg fix */
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at 50% 20%, #2e3a60 0%, #0f1424 70%);
-      background-color: #0f1424;
-      color: #fff;
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    :root {
+      --bg-start: #0b1220;
+      --bg-end: #1a2a4a;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --text-primary: #ffffff;
+      --text-dim: rgba(255,255,255,0.6);
+      --accent: #4da3ff;
+      --accent-bright: #91c4ff;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    @keyframes snow-fall {
+      0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
+      10%  { opacity: 1; }
+      100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
     }
 
     body {
-      display: flex;
-      flex-direction: column;
-      padding: 2rem 1rem 4rem;
-      box-sizing: border-box;
-      position: relative;
-    }
-
-    main {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    /* snow */
-    .snow,
-    .snow::before,
-    .snow::after {
-      content: "";
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      background-repeat: repeat;
-      background-size: 3px 3px;
-      image-rendering: pixelated;
-      z-index: 0;
-    }
-    .snow {
-      background-image: radial-gradient(rgba(255,255,255,0.9) 1.2px, transparent 1.2px);
-      animation: snowMoveA 6s linear infinite;
-      opacity: 0.6;
-    }
-    .snow::before {
-      background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px);
-      animation: snowMoveB 10s linear infinite;
-      opacity: 0.4;
-    }
-    .snow::after {
-      background-image: radial-gradient(rgba(255,255,255,0.3) 0.8px, transparent 0.8px);
-      animation: snowMoveC 14s linear infinite;
-      opacity: 0.25;
-    }
-    @keyframes snowMoveA {
-      0%   { transform: translateY(-60px) translateX(0px); }
-      100% { transform: translateY(60px)  translateX(20px); }
-    }
-    @keyframes snowMoveB {
-      0%   { transform: translateY(-80px) translateX(0px); }
-      100% { transform: translateY(80px)  translateX(-20px); }
-    }
-    @keyframes snowMoveC {
-      0%   { transform: translateY(-100px) translateX(0px); }
-      100% { transform: translateY(100px)  translateX(10px); }
-    }
-
-    header.page-head {
-      text-align: center;
-      margin-bottom: 2rem;
-      position: relative;
-      z-index: 2;
-    }
-    header.page-head img.logo {
-      width: 180px;
-      max-width: 60vw;
-      height: auto;
-      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6));
-    }
-    header.page-head h1 {
-      color: #fff;
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin: 1rem 0 .5rem;
-      text-shadow: 0 2px 4px rgba(0,0,0,.8);
-    }
-    header.page-head p.sub {
       margin: 0;
-      color: rgba(255,255,255,0.7);
-      font-size: .9rem;
-      line-height:1.4;
+      min-height: 100vh;
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
+      background: radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
+                  linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
+      background-repeat: no-repeat;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    .board-shell {
-      background: radial-gradient(circle at 20% 20%, rgba(60,72,110,.6) 0%, rgba(20,24,40,.6) 70%);
-      backdrop-filter: blur(16px) saturate(140%);
-      -webkit-backdrop-filter: blur(16px) saturate(140%);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 18px;
-      box-shadow:0 60px 120px rgba(0,0,0,.85),0 8px 24px rgba(0,0,0,.6),0 0 120px rgba(88,130,255,.18) inset;
-      padding:1.5rem 1rem 2rem;
-      color:#fff;
+    .bg-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 60vmin;
+      height: 60vmin;
+      transform: translate(-50%, -30%);
+      background: radial-gradient(circle,
+        rgba(130,180,255,0.45) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .bg-glow-bottom {
+      position: absolute;
+      bottom: -20vmin;
+      left: 50%;
+      width: 80vmin;
+      height: 80vmin;
+      transform: translateX(-50%);
+      background: radial-gradient(circle,
+        rgba(0,140,255,0.25) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(80px);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .snow-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .flake {
+      position: absolute;
+      top: -10vh;
+      color: #fff;
+      font-size: 10px;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
+      opacity: 0.8;
+      animation: snow-fall linear infinite;
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 10;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: clamp(1rem,2vw,2rem) clamp(1rem,2vw,2rem) 4rem;
+      text-align: center;
+    }
+
+    .brand-logo-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-top: 2rem;
+    }
+    .brand-logo {
+      width: clamp(140px, 22vw, 240px);
+      height: auto;
+      display: block;
+      border-radius: var(--radius-md);
+    }
+    .brand-logo-glow {
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, -10px);
+      width: 140%;
+      height: 60px;
+      background: radial-gradient(ellipse at center,
+        rgba(130,180,255,0.45) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(30px);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .headline {
+      font-size: clamp(1.25rem,1vw,1.4rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 1.5rem;
+    }
+    .subtext {
+      font-size: .9rem;
+      color: var(--text-dim);
+      margin-top: .5rem;
+      line-height: 1.4;
+    }
+
+    .table-card {
+      margin-top: 2rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow:
+        0 30px 120px rgba(0,0,0,0.8),
+        0 2px 3px rgba(255,255,255,0.1) inset;
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      padding: 1rem;
+      overflow-x: auto;
     }
 
     table {
-      width:100%;
-      border-collapse:collapse;
-      color:#fff;
-      font-size:.9rem;
-    }
-    thead th {
-      text-align:left;
-      background:rgba(0,0,0,.4);
-      color:#fff;
-      font-weight:600;
-      padding:.75rem .75rem;
-      border-bottom:1px solid rgba(255,255,255,.15);
-      white-space:nowrap;
-    }
-    tbody td {
-      border-bottom:1px solid rgba(255,255,255,.07);
-      padding:.75rem .75rem;
-      vertical-align:top;
-    }
-    tbody tr:hover {
-      background:rgba(255,255,255,.05);
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+      font-size: .8rem;
+      color: var(--text-primary);
+      text-align: left;
     }
 
-    .rank-num {
-      font-weight:600;
-      color:#fff;
+    th {
+      background: rgba(255,255,255,0.07);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: .75rem .75rem;
+      white-space: nowrap;
     }
-    .avg-score {
-      font-weight:600;
-      color:#8fb4ff;
-    }
-    .collab {
-      color:rgba(255,255,255,.7);
-      font-size:.8rem;
-      line-height:1.4;
-    }
-    .desc {
-      color:rgba(255,255,255,.8);
-      font-size:.8rem;
-      line-height:1.4;
+    td {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: .75rem .75rem;
     }
 
-    .status-line {
-      text-align:center;
-      color:rgba(255,255,255,.7);
-      font-size:.8rem;
-      font-weight:500;
-      margin-top:1rem;
-      min-height:1.2em;
+    .rank-badge {
+      font-weight: 600;
+      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
+      color: #000;
+      border-radius: var(--radius-md);
+      display: inline-block;
+      padding: .4rem .6rem;
+      min-width: 2rem;
+      text-align: center;
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.8),
+        0 2px 2px rgba(255,255,255,0.4) inset;
+    }
+
+    @media(max-width:600px){
+      .brand-logo {
+        width: clamp(150px, 40vw, 240px);
+      }
+      .table-card {
+        border-radius: var(--radius-lg);
+        padding: .75rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="snow"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-glow-bottom"></div>
+  <div class="snow-wrap" id="snowLayer"></div>
 
-  <header class="page-head">
-    <img class="logo" src="logo.png" alt="Lenbrook's Got Talent Logo"/>
-    <h1>Leaderboard</h1>
-    <p class="sub">Sorted by average judge score</p>
-  </header>
+  <main class="page-shell">
+    <div class="brand-logo-wrapper">
+      <img src="logo.png" class="brand-logo" alt="Lenbrook's Got Talent" />
+      <div class="brand-logo-glow"></div>
+    </div>
 
-  <main>
-    <section class="board-shell">
+    <div class="headline">Leaderboard</div>
+    <div class="subtext">
+      Live view of the top-scoring performances (by judge average).
+    </div>
+
+    <section class="table-card">
       <table id="leaderboardTable">
         <thead>
           <tr>
             <th>Rank</th>
             <th>Team / Participant</th>
-            <th>Collaboration / Departments</th>
+            <th>Collab</th>
             <th>Description</th>
-            <th>Average Score</th>
+            <th>Avg Total Score</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          <!-- rows injected -->
+        </tbody>
       </table>
-
-      <div class="status-line" id="status">Loading leaderboard...</div>
     </section>
   </main>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // firebase config (same project)
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
@@ -216,46 +241,53 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const tableBody = document.querySelector("#leaderboardTable tbody");
-    const statusEl = document.getElementById("status");
+    const tbody = document.querySelector("#leaderboardTable tbody");
+
+    // snow
+    const snowLayer = document.getElementById('snowLayer');
+    function spawnFlake() {
+      const flake = document.createElement('div');
+      flake.className = 'flake';
+      flake.textContent = '•';
+      const size = (Math.random()*0.6 + 0.4) * 12;
+      flake.style.fontSize = size + 'px';
+      flake.style.left = Math.random()*100 + 'vw';
+      const dur = Math.random()*4 + 4;
+      flake.style.animationDuration = dur + 's';
+      snowLayer.appendChild(flake);
+      setTimeout(()=>flake.remove(), dur*1000);
+    }
+    setInterval(spawnFlake, 120);
 
     async function loadLeaderboard() {
       const snapshot = await getDocs(collection(db, "submissions"));
+      const rows = [];
 
-      let entries = [];
-      snapshot.forEach(docSnap => {
+      snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        entries.push({
+        const avg = data.averageScore || 0;
+        rows.push({
           name: data.name || "",
           department: data.department || "",
           description: data.description || "",
-          avg: typeof data.averageScore === "number" ? data.averageScore : null
+          avgScore: avg
         });
       });
 
-      // sort high to low by avg
-      entries.sort((a,b)=>{
-        const av = b.avg ?? -1;
-        const bv = a.avg ?? -1;
-        return av - bv;
-      });
+      rows.sort((a,b) => b.avgScore - a.avgScore);
 
-      tableBody.innerHTML = "";
-
-      entries.forEach((item, idx)=>{
-        const avgDisplay = item.avg != null ? item.avg.toFixed(1) : "-";
+      tbody.innerHTML = "";
+      rows.forEach((row, idx) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td class="rank-num">#${idx+1}</td>
-          <td>${item.name}</td>
-          <td class="collab">${item.department}</td>
-          <td class="desc">${item.description}</td>
-          <td class="avg-score">${avgDisplay}</td>
+          <td><span class="rank-badge">${idx+1}</span></td>
+          <td>${row.name}</td>
+          <td>${row.department}</td>
+          <td>${row.description}</td>
+          <td>${row.avgScore.toFixed(1)}</td>
         `;
-        tableBody.appendChild(tr);
+        tbody.appendChild(tr);
       });
-
-      statusEl.textContent = "✅ Leaderboard loaded.";
     }
 
     loadLeaderboard();
