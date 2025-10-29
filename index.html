@@ -38,7 +38,6 @@
   }
 
   /**************** SNOW ****************/
-  /* We’ll layer 2 different densities/speeds for “more snow” */
   .snow-layer,
   .snow-layer2 {
     pointer-events: none;
@@ -48,7 +47,6 @@
     z-index: 10;
   }
 
-  /* layer 1: slightly bigger flakes, slower */
   .snow-layer {
     background-image:
       radial-gradient(circle at 20px 20px, rgba(255,255,255,0.9) 0 2px, transparent 3px),
@@ -59,7 +57,6 @@
     opacity: 0.5;
   }
 
-  /* layer 2: finer, faster */
   .snow-layer2 {
     background-image:
       radial-gradient(circle at 40px 40px, rgba(255,255,255,0.9) 0 1.5px, transparent 2.5px),
@@ -97,17 +94,17 @@
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.2);
     box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    border-radius: 16px;
-    /* bigger logo block now */
-    width: 100px;
-    height: 100px;
+    border-radius: 20px;
+    /* doubled size */
+    width: 160px;
+    height: 160px;
   }
 
   .logo-only img {
-    width: 88px;
-    height: 88px;
+    width: 140px;
+    height: 140px;
     object-fit: contain;
-    border-radius: 12px;
+    border-radius: 16px;
   }
 
   /* page layout */
@@ -151,8 +148,6 @@
     padding: 6px 12px;
     margin-bottom: 16px;
   }
-
-  /* we removed the 2nd pill "Company Talent Edition", so badge is just one pill now */
 
   .title {
     font-size: 1.15rem;
@@ -248,7 +243,6 @@
     word-break: break-word;
   }
 
-  /* santa bottom-right */
   .santa {
     position: fixed;
     right: 16px;
@@ -259,16 +253,16 @@
     z-index: 30;
   }
 
-  /* responsive tweaks */
   @media (max-width: 480px) {
     .logo-only {
-      width: 80px;
-      height: 80px;
-      border-radius: 14px;
+      width: 130px;
+      height: 130px;
+      border-radius: 18px;
     }
     .logo-only img {
-      width: 72px;
-      height: 72px;
+      width: 110px;
+      height: 110px;
+      border-radius: 14px;
     }
 
     .card {
@@ -282,12 +276,10 @@
 </style>
 </head>
 <body>
-<!-- denser layered snow -->
 <div class="snow-layer"></div>
 <div class="snow-layer2"></div>
 
 <header class="topbar">
-  <!-- Just the logo, bigger -->
   <div class="logo-only">
     <img src="logo.png" alt="Lenbrook's Got Talent" />
   </div>
@@ -295,7 +287,6 @@
 
 <main class="page-shell">
   <section class="card">
-    <!-- Badge: now only "Holiday Showcase" -->
     <div class="holiday-badge">
       <span>🎄 Holiday Showcase</span>
     </div>
@@ -355,7 +346,6 @@
 <div class="santa">🎅</div>
 
 <script>
-  // Cloud Function endpoint (uploadVideo)
   const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app";
   const form = document.getElementById("submissionForm");
   const statusMsg = document.getElementById("statusMsg");
