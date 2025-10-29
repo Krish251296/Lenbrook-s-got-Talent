@@ -30,9 +30,10 @@
       min-height: 100vh;
       color: var(--text-primary);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
-      background: radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
-                  radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
-                  linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
+      background:
+        radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
+        radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
+        linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
       background-repeat: no-repeat;
       position: relative;
       overflow-x: hidden;
@@ -50,20 +51,23 @@
         rgba(0,0,0,0) 70%);
       filter: blur(60px);
       pointer-events: none;
+      z-index: 0;
     }
+
     .bg-glow-bottom {
       position: absolute;
-      bottom: -20vmin;
+      bottom: 0;
       left: 50%;
       width: 80vmin;
-      height: 80vmin;
-      transform: translateX(-50%);
+      height: 40vmin;
+      transform: translate(-50%, 20%);
       background: radial-gradient(circle,
-        rgba(0,140,255,0.25) 0%,
+        rgba(0,0,0,0.6) 0%,
         rgba(0,0,0,0) 70%);
       filter: blur(80px);
-      opacity: 0.4;
+      opacity: 1;
       pointer-events: none;
+      z-index: 0;
     }
 
     .snow-wrap {
@@ -79,8 +83,9 @@
       color: #fff;
       font-size: 10px;
       filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
-      opacity: 0.8;
+      opacity: 0.9;
       animation: snow-fall linear infinite;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
     }
 
     .page-shell {
@@ -314,11 +319,11 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { 
-      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut 
+    import {
+      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { 
-      getFirestore, collection, getDocs 
+    import {
+      getFirestore, collection, getDocs
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -345,7 +350,7 @@
 
     const APPROVED_ADMIN = "kdesai@lenbrook.com";
 
-    // snow
+    // snow (denser)
     const snowLayer = document.getElementById('snowLayer');
     function spawnFlake() {
       const flake = document.createElement('div');
@@ -359,14 +364,13 @@
       snowLayer.appendChild(flake);
       setTimeout(()=>flake.remove(), dur*1000);
     }
-    setInterval(spawnFlake, 120);
+    setInterval(spawnFlake, 90);
 
     loginBtn.addEventListener("click", async () => {
       try {
         loginStatus.textContent = "Signing in...";
         const provider = new GoogleAuthProvider();
         await signInWithPopup(auth, provider);
-        // onAuthStateChanged below will continue the flow
       } catch (err) {
         loginStatus.textContent = "Login error: " + err;
       }
@@ -378,7 +382,6 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // logged out
         loginCard.style.display = "block";
         adminSection.style.display = "none";
         loginStatus.textContent = "";
