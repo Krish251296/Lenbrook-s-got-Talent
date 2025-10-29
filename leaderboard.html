@@ -3,273 +3,284 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent – Leaderboard</title>
-
+  <title>Lenbrook's Got Talent • Leaderboard</title>
   <style>
     :root {
-      --bg-start: #0a1633;
-      --bg-end: #1b2b5a;
-      --gold: #ffd86b;
-      --white: #fff;
-      --glass-bg: rgba(15, 26, 56, 0.6);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --text-dim: #c7d2ff;
+      --bg-start: #0f1a3a;
+      --bg-end: #1a274d;
+      --card-bg: rgba(15, 20, 40, 0.6);
+      --card-border: rgba(255,255,255,0.12);
+      --text-main: #fff;
+      --text-dim: #bfc7e6;
+      --accent-strong: #ffe083;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --transition-fast: 0.18s ease;
+    }
+    @keyframes floatySnow {
+      0%{transform:translateY(-10vh) translateX(0);opacity:0;}
+      10%{opacity:1;}
+      100%{transform:translateY(110vh) translateX(var(--driftX));opacity:0;}
+    }
+    @keyframes fadeUp {
+      0%{opacity:0;transform:translateY(20px) scale(.98);}
+      100%{opacity:1;transform:translateY(0) scale(1);}
+    }
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Inter",Roboto,"Segoe UI",Helvetica,Arial,sans-serif;
+      background: radial-gradient(circle at 20% 20%, #1f2d57 0%, #0b1025 70%) fixed;
+      color:var(--text-main);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      overflow-x:hidden;
+      position:relative;
+    }
+    body::before{
+      content:"";
+      position:fixed;inset:0;
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 60%),
+        radial-gradient(1.5px 1.5px at 80% 10%, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 60%),
+        radial-gradient(1.2px 1.2px at 60% 70%, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 60%),
+        radial-gradient(1.5px 1.5px at 30% 80%, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 60%);
+      pointer-events:none;
+      opacity:.6;
+    }
+    .snow-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2;}
+    .flake{
+      position:absolute;top:-10vh;
+      width:var(--size);height:var(--size);
+      background:radial-gradient(circle,#fff 0%,rgba(255,255,255,0)70%);
+      border-radius:50%;
+      filter:drop-shadow(0 0 6px rgba(255,255,255,.6));
+      animation:floatySnow var(--dur) linear infinite;
+      opacity:.8;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-font-smoothing: antialiased;
+    header.hero{
+      padding:24px clamp(16px,2vw,32px) 16px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      z-index:5;
+      position:relative;
+    }
+    .logo-block{
+      display:flex;
+      align-items:flex-start;
+      gap:16px;
+      flex:1 1 auto;
+      min-width:200px;
+    }
+    .logo-card{
+      background:rgba(255,255,255,0.04);
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.18);
+      box-shadow:0 20px 60px rgba(0,0,0,.8),0 0 20px rgba(255,255,255,.2) inset;
+      padding:10px 12px;
+      min-width:90px;
+      display:flex;justify-content:center;align-items:center;
+      backdrop-filter:blur(8px);
+    }
+    .logo-card img{max-width:90px;height:auto;display:block;}
+    .hero-copy{display:flex;flex-direction:column;justify-content:center;min-width:220px;}
+
+    .event-title{
+      font-size:clamp(1.3rem,.6vw+1rem,1.6rem);
+      line-height:1.2;
+      font-weight:600;
+      color:var(--text-main);
+      text-shadow:0 0 12px rgba(255,255,255,.5),0 2px 4px rgba(0,0,0,.8);
+      display:flex;align-items:center;gap:.5rem;
+    }
+    .event-sub{margin-top:4px;font-size:.9rem;color:var(--text-dim);line-height:1.4;}
+    nav.links-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:16px;
+    }
+    .nav-btn{
+      background:rgba(255,255,255,0.07);
+      border:1px solid rgba(255,255,255,0.18);
+      border-radius:14px;
+      color:var(--text-main);
+      font-size:.8rem;
+      padding:8px 12px;
+      text-decoration:none;
+      box-shadow:0 10px 30px rgba(0,0,0,.8),0 0 20px rgba(255,255,255,.15) inset;
+      transition:all var(--transition-fast);
+      backdrop-filter:blur(6px);
+    }
+    .nav-btn:hover{
+      box-shadow:0 16px 40px rgba(255,230,150,.3),0 0 24px rgba(255,230,150,.6);
+      border-color:var(--accent-strong);
+      color:var(--accent-strong);
     }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color: var(--white);
-      background: radial-gradient(circle at 20% 20%, var(--bg-end) 0%, var(--bg-start) 60%);
-      position: relative;
-      overflow-x: hidden;
+    main{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      padding:16px clamp(12px,2vw,24px) 80px;
+      z-index:5;
+    }
+    .card{
+      width:100%;
+      max-width:800px;
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:var(--radius-xl);
+      box-shadow:0 30px 120px rgba(0,0,0,.9),0 0 80px rgba(255,230,150,.08);
+      backdrop-filter:blur(12px) saturate(140%);
+      -webkit-backdrop-filter:blur(12px) saturate(140%);
+      padding:24px;
+      position:relative;
+      animation:fadeUp .4s var(--transition-fast) both;
     }
 
-    #snowCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
+    .card-header-row{
+      font-size:1rem;
+      font-weight:600;
+      margin-bottom:12px;
+      color:var(--text-main);
+      text-shadow:0 0 8px rgba(255,255,255,.4);
+      display:flex;
+      align-items:center;
+      gap:.5rem;
     }
 
-    .page {
-      position: relative;
-      z-index: 1;
-      padding: 24px clamp(16px, 2vw, 32px) 64px;
-      max-width: 1000px;
-      margin: 0 auto;
+    #leaderStatus{
+      color:var(--text-dim);
+      font-size:.8rem;
+      margin-bottom:16px;
     }
 
-    .header-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      gap: 16px 24px;
+    table{
+      width:100%;
+      border-collapse:collapse;
+      color:var(--text-main);
+      font-size:.9rem;
+      background:rgba(0,0,0,0.2);
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.8),0 0 30px rgba(255,255,255,.07) inset;
+    }
+    thead{
+      background:rgba(255,255,255,0.05);
+      backdrop-filter:blur(6px);
+    }
+    th{
+      padding:12px;
+      font-weight:600;
+      color:var(--accent-strong);
+      text-shadow:0 0 6px rgba(255,230,150,.7);
+      border-bottom:1px solid rgba(255,255,255,0.12);
+    }
+    td{
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,0.07);
+      text-align:left;
+    }
+    tr:last-child td{border-bottom:none;}
+
+    .rank-badge{
+      font-weight:600;
+      color:#000;
+      background:linear-gradient(90deg,#ffe083 0%,#ffc94a 100%);
+      padding:4px 10px;
+      border-radius:999px;
+      box-shadow:0 10px 30px rgba(255,200,80,.4),
+                 0 0 20px rgba(255,225,160,.8);
+      min-width:36px;
+      text-align:center;
+      display:inline-block;
     }
 
-    .brand-block {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      min-width: 180px;
-    }
-
-    .brand-block img {
-      width: 140px;
-      height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
-    }
-
-    .presented {
-      color: var(--gold);
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-top: 4px;
-      text-shadow: 0 0 6px rgba(255,216,107,0.5);
-      letter-spacing: 0.03em;
-    }
-
-    .title-block {
-      flex: 1;
-      min-width: 250px;
-    }
-
-    .page-title {
-      margin: 0;
-      font-size: clamp(1.4rem, 1vw + 1rem, 1.8rem);
-      font-weight: 600;
-      color: var(--gold);
-      text-shadow: 0 0 8px rgba(255,216,107,0.4);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .page-sub {
-      margin: 4px 0 0;
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      line-height: 1.4;
-    }
-
-    .card {
-      margin-top: 24px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.8),
-        0 0 40px rgba(255,216,107,0.07);
-      backdrop-filter: blur(8px);
-      border-radius: 16px;
-      padding: 24px clamp(16px,2vw,24px);
-      animation: fadeInUp 0.6s both;
-      color: var(--white);
-    }
-
-    .leader-row {
-      display: grid;
-      grid-template-columns: 2fr auto;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-
-    .leader-row:last-child {
-      border-bottom: 0;
-    }
-
-    .left-part {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .act-name {
-      font-weight: 600;
-      color: var(--gold);
-      text-shadow:0 0 10px rgba(255,216,107,.4);
-      font-size: 1rem;
-      line-height: 1.4;
-    }
-
-    .act-desc {
-      font-size: 0.8rem;
-      color: var(--text-dim);
+    footer{
+      text-align:center;
+      font-size:.7rem;
       line-height:1.4;
+      color:var(--text-dim);
+      padding:24px 16px 48px;
+      z-index:5;
     }
 
-    .score-tag {
-      min-width: 64px;
-      text-align: right;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--white);
-      text-shadow:0 0 10px rgba(0,0,0,.8),0 0 8px rgba(255,216,107,.4);
-    }
-
-    .nav-row {
-      margin-top: 28px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .nav-chip {
-      font-size: 0.8rem;
-      color: var(--gold);
-      background: rgba(255,216,107,0.08);
-      border: 1px solid rgba(255,216,107,0.4);
-      box-shadow: 0 8px 24px rgba(0,0,0,.8), 0 0 24px rgba(255,216,107,.2);
-      padding: 8px 12px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 500;
-      line-height: 1.2;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: box-shadow .15s, transform .15s, background .15s;
-    }
-
-    .nav-chip:hover {
-      background: rgba(255,216,107,0.16);
-      transform: translateY(-1px) scale(1.03);
-      box-shadow: 0 16px 32px rgba(0,0,0,.9), 0 0 32px rgba(255,216,107,.4);
-    }
-
-    @keyframes fadeInUp {
-      0% {opacity:0; transform:translateY(12px) scale(.98);}
-      100% {opacity:1; transform:translateY(0) scale(1);}
+    @media(max-width:600px){
+      td,th { font-size:.8rem; }
     }
   </style>
 </head>
 <body>
-  <canvas id="snowCanvas"></canvas>
+  <div class="snow-layer" id="snowLayer"></div>
 
-  <main class="page">
-    <header class="header-bar">
-      <div class="brand-block">
-        <img src="logo.png" alt="Lenbrook's Got Talent Logo">
-        <div class="presented">Presented by Party Patrol ❄️</div>
+  <header class="hero">
+    <div class="logo-block">
+      <div class="logo-card">
+        <img src="logo.png" alt="Lenbrook's Got Talent Logo"/>
       </div>
+      <div class="hero-copy">
+        <div class="event-title">🏆 Leaderboard</div>
+        <div class="event-sub">Ranking by average judge score.</div>
 
-      <div class="title-block">
-        <h1 class="page-title">
-          🏆 Leaderboard
-        </h1>
-        <p class="page-sub">
-          Live average scores from the judging panel.
-          Higher = crowd favourite 🎉
-        </p>
+        <nav class="links-row">
+          <a class="nav-btn" href="review.html">🎄 Judge Panel</a>
+          <a class="nav-btn" href="admin.html">🔐 Admin</a>
+          <a class="nav-btn" href="index.html">⬅ Back to Submit</a>
+        </nav>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <section class="card">
-      <div id="leaderboardList">
-        <!-- rows injected here -->
+  <main>
+    <div class="card">
+      <div class="card-header-row">
+        <span>Live Standings</span>
       </div>
-    </section>
+      <div id="leaderStatus">Loading leaderboard...</div>
 
-    <div class="nav-row">
-      <a class="nav-chip" href="index.html">⬅ Submit an Act</a>
-      <a class="nav-chip" href="review.html">📝 Judge Panel</a>
-      <a class="nav-chip" href="admin.html">🔐 Admin</a>
+      <table id="leaderTable">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Team / Participant</th>
+            <th>Description</th>
+            <th>Avg Score</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </main>
 
-  <!-- Snow -->
-  <script>
-    const canvas = document.getElementById("snowCanvas");
-    const ctx = canvas.getContext("2d");
-    let w,h,flakes;
-    function initSnow(){
-      w=canvas.width=window.innerWidth;
-      h=canvas.height=window.innerHeight;
-      flakes=Array.from({length:140}).map(()=>({
-        x:Math.random()*w,
-        y:Math.random()*h,
-        r:Math.random()*2+1,
-        dY:Math.random()*1+0.5,
-        dX:Math.random()*0.6-0.3
-      }));
-    }
-    function drawSnow(){
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle="rgba(255,255,255,0.9)";
-      ctx.shadowColor="rgba(255,255,255,0.6)";
-      ctx.shadowBlur=8;
-      flakes.forEach(f=>{
-        ctx.beginPath();
-        ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-        ctx.fill();
-      });
-      flakes.forEach(f=>{
-        f.y+=f.dY;
-        f.x+=f.dX;
-        if(f.y>h){f.y=-5;f.x=Math.random()*w;}
-        if(f.x>w){f.x=0;}
-        if(f.x<0){f.x=w;}
-      });
-      requestAnimationFrame(drawSnow);
-    }
-    window.addEventListener("resize",initSnow);
-    initSnow();
-    drawSnow();
-  </script>
+  <footer>
+    Higher average = higher rank. Holiday glory awaits. ✨
+  </footer>
 
-  <!-- Firebase leaderboard logic -->
   <script type="module">
+    // snow
+    const snowLayer = document.getElementById("snowLayer");
+    function makeFlake() {
+      const f=document.createElement("div");
+      const size=(Math.random()*3+2).toFixed(1)+"px";
+      const dur=(Math.random()*4+4).toFixed(1)+"s";
+      const left=Math.random()*100;
+      const driftX=(Math.random()*40-20).toFixed(1)+"px";
+      f.className="flake";
+      f.style.left=left+"vw";
+      f.style.setProperty("--size",size);
+      f.style.setProperty("--dur",dur);
+      f.style.setProperty("--driftX",driftX);
+      snowLayer.appendChild(f);
+      setTimeout(()=>snowLayer.removeChild(f),parseFloat(dur)*1000);
+    }
+    setInterval(makeFlake,180);
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // SAME CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
@@ -282,38 +293,36 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const listEl = document.getElementById("leaderboardList");
+    const tbody = document.querySelector("#leaderTable tbody");
+    const leaderStatus = document.getElementById("leaderStatus");
 
     async function loadLeaderboard() {
-      const snap = await getDocs(collection(db, "submissions"));
-
-      // collect items with averageScore
-      const arr = [];
-      snap.forEach(docSnap => {
+      const snapshot = await getDocs(collection(db, "submissions"));
+      const rows = [];
+      snapshot.forEach(docSnap => {
         const data = docSnap.data();
-        arr.push({
-          name: data.name || "(Unnamed Act)",
+        rows.push({
+          name: data.name || "",
           description: data.description || "",
-          avg: data.averageScore || 0
+          avg: typeof data.averageScore === "number" ? data.averageScore : 0
         });
       });
 
-      // sort descending
-      arr.sort((a,b)=>b.avg - a.avg);
+      rows.sort((a,b) => b.avg - a.avg);
 
-      listEl.innerHTML = "";
-      arr.forEach((item, idx) => {
-        const row = document.createElement("div");
-        row.className = "leader-row";
-        row.innerHTML = `
-          <div class="left-part">
-            <div class="act-name">#${idx+1} — ${item.name}</div>
-            <div class="act-desc">${item.description}</div>
-          </div>
-          <div class="score-tag">${item.avg.toFixed ? item.avg.toFixed(1) : "0.0"}</div>
+      tbody.innerHTML = "";
+      rows.forEach((row, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="rank-badge">${idx+1}</span></td>
+          <td>${row.name}</td>
+          <td>${row.description}</td>
+          <td>${row.avg ? row.avg.toFixed(1) : "-"}</td>
         `;
-        listEl.appendChild(row);
+        tbody.appendChild(tr);
       });
+
+      leaderStatus.textContent = "✅ Leaderboard updated.";
     }
 
     loadLeaderboard();
