@@ -1,455 +1,441 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Judge Panel • Lenbrook’s Got Talent</title>
-<style>
-  :root {
-    --bg-grad-start: #0a1424;
-    --bg-grad-end: #1d2a44;
-    --card-bg: rgba(255,255,255,0.07);
-    --card-border: rgba(255,255,255,0.22);
-    --card-shadow: 0 30px 80px rgba(0,0,0,0.6);
-    --accent: #4da3ff;
-    --accent-hover: #6bb4ff;
-    --text-primary: #ffffff;
-    --text-dim: rgba(255,255,255,0.6);
-    --radius-xl: 20px;
-  }
-
-  * {
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--text-primary);
-    background: radial-gradient(circle at 20% 20%, rgba(90,130,255,0.25) 0%, rgba(0,0,0,0) 60%),
-                radial-gradient(circle at 80% 30%, rgba(255,0,180,0.12) 0%, rgba(0,0,0,0) 60%),
-                radial-gradient(circle at 50% 80%, rgba(0,255,170,0.08) 0%, rgba(0,0,0,0) 60%),
-                linear-gradient(160deg, var(--bg-grad-start) 0%, var(--bg-grad-end) 100%);
-    position: relative;
-    overflow-x: hidden;
-    padding-bottom: 80px;
-  }
-
-  .snow-layer {
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(circle at 20px 20px, rgba(255,255,255,0.9) 0 2px, transparent 3px),
-                      radial-gradient(circle at 80px 60px, rgba(255,255,255,0.5) 0 1px, transparent 2px),
-                      radial-gradient(circle at 200px 120px, rgba(255,255,255,0.8) 0 1.5px, transparent 2px);
-    background-size: 250px 250px;
-    animation: snowFloat 6s linear infinite;
-    opacity: 0.45;
-    mix-blend-mode: screen;
-    z-index: 5;
-  }
-  @keyframes snowFloat {
-    0%   { background-position-y: 0px;   }
-    100% { background-position-y: 250px; }
-  }
-
-  header.topbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px 24px;
-    position: relative;
-    z-index: 20;
-  }
-
-  .logo-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-img {
-    width: 72px;
-    height: 72px;
-    object-fit: contain;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.07);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.2);
-  }
-
-  .brand-block {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-  }
-
-  .brand-title {
-    font-size: clamp(1rem, 0.25vw + 0.9rem, 1.05rem);
-    font-weight: 600;
-    color: var(--text-primary);
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-  }
-
-  .brand-sub {
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    font-weight: 400;
-  }
-
-  main.page {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 24px 40px;
-    position: relative;
-    z-index: 20;
-  }
-
-  .panel-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
-    backdrop-filter: blur(24px) saturate(140%);
-    -webkit-backdrop-filter: blur(24px) saturate(140%);
-    border-radius: var(--radius-xl);
-    padding: 24px;
-    margin-bottom: 24px;
-  }
-
-  h1 {
-    margin: 0 0 6px;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    letter-spacing: -0.03em;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: baseline;
-  }
-
-  .subtitle {
-    font-size: 0.85rem;
-    line-height: 1.4;
-    color: var(--text-dim);
-    margin: 0 0 16px;
-  }
-
-  .inline-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-
-  .inline-row input {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.28);
-    color: var(--text-primary);
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 0.9rem;
-    min-width: 200px;
-    outline: none;
-  }
-
-  .inline-row input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 16px rgba(77,163,255,0.5);
-    background: rgba(255,255,255,0.09);
-  }
-
-  .inline-row button {
-    background: radial-gradient(circle at 20% 20%, #4da3ff 0%, #246bff 60%);
-    border: 0;
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 20px 40px rgba(36,107,255,0.5);
-  }
-
-  .inline-row button:hover {
-    background: radial-gradient(circle at 20% 20%, var(--accent-hover) 0%, #3a7dff 60%);
-  }
-
-  #status {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--accent);
-    min-height: 1.2em;
-  }
-
-  .table-wrap {
-    overflow-x: auto;
-    border-radius: var(--radius-xl);
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(0,0,0,0.25);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-  }
-
-  table {
-    width: 100%;
-    min-width: 900px;
-    border-collapse: collapse;
-    color: var(--text-primary);
-    font-size: 0.85rem;
-  }
-
-  thead th {
-    background: rgba(255,255,255,0.08);
-    font-weight: 500;
-    text-align: left;
-    padding: 12px;
-    white-space: nowrap;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    color: var(--text-primary);
-  }
-
-  tbody td {
-    vertical-align: top;
-    padding: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    color: var(--text-dim);
-  }
-
-  tbody tr:last-child td {
-    border-bottom: 0;
-  }
-
-  video {
-    width: 200px;
-    max-width: 40vw;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.18);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-  }
-
-  input.score-input {
-    width: 60px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.28);
-    color: var(--text-primary);
-    border-radius: 10px;
-    padding: 8px 10px;
-    font-size: 0.8rem;
-    outline: none;
-    text-align: center;
-  }
-
-  input.score-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 16px rgba(77,163,255,0.5);
-    background: rgba(255,255,255,0.09);
-  }
-
-  button.save-btn {
-    background: radial-gradient(circle at 20% 20%, #4da3ff 0%, #246bff 60%);
-    border: 0;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 20px 40px rgba(36,107,255,0.5);
-  }
-
-  button.save-btn:hover {
-    background: radial-gradient(circle at 20% 20%, var(--accent-hover) 0%, #3a7dff 60%);
-  }
-
-  .santa {
-    position: fixed;
-    right: 16px;
-    bottom: 16px;
-    font-size: 2.4rem;
-    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7));
-    user-select: none;
-    z-index: 40;
-  }
-
-  @media (max-width:600px){
-    .logo-img {
-      width:60px;
-      height:60px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Judge Panel | Lenbrook's Got Talent</title>
+  <style>
+    :root {
+      --bg-start: #0b1220;
+      --bg-end: #1a2a4a;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --text-primary: #ffffff;
+      --text-dim: rgba(255,255,255,0.6);
+      --accent: #4da3ff;
+      --accent-bright: #91c4ff;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 10px;
     }
-  }
-</style>
+
+    @keyframes snow-fall {
+      0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
+      10%  { opacity: 1; }
+      100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
+      background: radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
+                  linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
+      background-repeat: no-repeat;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 60vmin;
+      height: 60vmin;
+      transform: translate(-50%, -30%);
+      background: radial-gradient(circle,
+        rgba(130,180,255,0.45) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .bg-glow-bottom {
+      position: absolute;
+      bottom: -20vmin;
+      left: 50%;
+      width: 80vmin;
+      height: 80vmin;
+      transform: translateX(-50%);
+      background: radial-gradient(circle,
+        rgba(0,140,255,0.25) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(80px);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .snow-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .flake {
+      position: absolute;
+      top: -10vh;
+      color: #fff;
+      font-size: 10px;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
+      opacity: 0.8;
+      animation: snow-fall linear infinite;
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 10;
+      padding: clamp(1rem,2vw,2rem);
+      max-width: 1400px;
+      margin: 0 auto 4rem auto;
+    }
+
+    .brand-area {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .brand-logo-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .brand-logo {
+      width: clamp(140px, 22vw, 240px);
+      height: auto;
+      display: block;
+      border-radius: var(--radius-md);
+    }
+    .brand-logo-glow {
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, -10px);
+      width: 140%;
+      height: 60px;
+      background: radial-gradient(ellipse at center,
+        rgba(130,180,255,0.45) 0%,
+        rgba(0,0,0,0) 70%);
+      filter: blur(30px);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .panel-headline {
+      font-size: clamp(1.2rem, 1vw, 1.4rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-top: 1.5rem;
+    }
+    .panel-desc {
+      font-size: .9rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+      max-width: 360px;
+      margin: .5rem auto 0;
+    }
+
+    .judge-shell {
+      max-width: 400px;
+      margin: 2rem auto 2.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 1.25rem 1.25rem 1.5rem;
+      box-shadow:
+        0 30px 120px rgba(0,0,0,0.8),
+        0 2px 3px rgba(255,255,255,0.1) inset;
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      text-align: center;
+    }
+    .judge-shell input {
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.4);
+      padding: .75rem .9rem;
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+      box-shadow:
+        0 0 20px rgba(77,163,255,0) inset,
+        0 0 20px rgba(0,0,0,0.6);
+    }
+    .judge-shell button {
+      margin-top: .8rem;
+      appearance: none;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      border-radius: var(--radius-lg);
+      padding: .8rem 1rem;
+      width: 100%;
+      font-size: .9rem;
+      font-weight: 600;
+      color: #000;
+      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.8),
+        0 2px 2px rgba(255,255,255,0.4) inset;
+    }
+
+    .statusText {
+      font-size: .8rem;
+      font-weight: 500;
+      color: var(--accent-bright);
+      text-align: center;
+      min-height: 1.2em;
+      margin-top: .75rem;
+    }
+
+    /* table wrapper glass */
+    .table-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow:
+        0 30px 120px rgba(0,0,0,0.8),
+        0 2px 3px rgba(255,255,255,0.1) inset;
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      padding: 1rem;
+      overflow-x: auto;
+      display: none; /* hidden until judge enters name */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+      color: var(--text-primary);
+      font-size: .8rem;
+    }
+
+    th {
+      text-align: left;
+      font-weight: 600;
+      white-space: nowrap;
+      background: rgba(255,255,255,0.07);
+      color: var(--text-primary);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: .75rem .75rem;
+    }
+    td {
+      vertical-align: top;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: .75rem .75rem;
+      color: var(--text-primary);
+    }
+
+    video {
+      width: 200px;
+      max-height: 140px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.4);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+    }
+
+    .score-input {
+      width: 60px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.4);
+      padding: .5rem .6rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      outline: none;
+    }
+
+    .save-btn {
+      appearance: none;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      padding: .6rem .8rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: #000;
+      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.8),
+        0 2px 2px rgba(255,255,255,0.4) inset;
+      min-width: 80px;
+    }
+
+    @media(max-width:600px){
+      .brand-logo {
+        width: clamp(150px, 40vw, 240px);
+      }
+      .table-card {
+        border-radius: var(--radius-lg);
+        padding: .75rem;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="snow-layer"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-glow-bottom"></div>
+  <div class="snow-wrap" id="snowLayer"></div>
 
-<header class="topbar">
-  <div class="logo-wrap">
-    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo-img" />
-    <div class="brand-block">
-      <div class="brand-title">
-        <span>Lenbrook’s Got Talent</span>
-        <span style="color:var(--text-dim);font-weight:400;">Judge Panel</span>
+  <div class="page-shell">
+    <header class="brand-area">
+      <div class="brand-logo-wrapper">
+        <img src="logo.png" class="brand-logo" alt="Lenbrook's Got Talent" />
+        <div class="brand-logo-glow"></div>
       </div>
-      <div class="brand-sub">Presented by Party Patrol</div>
-    </div>
+      <div class="panel-headline">Judge Panel</div>
+      <div class="panel-desc">
+        Score each performance. Your scores stay private to you, but we average totals.
+      </div>
+    </header>
+
+    <!-- who is judging -->
+    <section class="judge-shell">
+      <input type="text" id="reviewerName" placeholder="Your name (for scoring)" />
+      <button id="startReviewBtn">Start Judging</button>
+      <div id="status" class="statusText">Enter your name to load videos.</div>
+    </section>
+
+    <!-- table of acts -->
+    <section class="table-card" id="tableCard">
+      <table id="submissionsTable">
+        <thead>
+          <tr>
+            <th>Team / Participant</th>
+            <th>Collab</th>
+            <th>Description</th>
+            <th>Video</th>
+            <th>Technical</th>
+            <th>Creativity</th>
+            <th>Entertainment</th>
+            <th>Your Total</th>
+            <th>Avg Total</th>
+            <th>Save</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
   </div>
-</header>
 
-<main class="page">
-  <section class="panel-card">
-    <h1>Welcome, Judge 🎄</h1>
-    <p class="subtitle">
-      Score each act from 1–10 in three areas. Only you see your own scores. Everyone’s combined score builds the leaderboard.
-    </p>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    <div class="inline-row">
-      <input id="reviewerName" type="text" placeholder="Your Name (Judge ID)" />
-      <button id="startBtn">Start Reviewing</button>
-    </div>
-
-    <div id="status">Enter your judge name to begin.</div>
-  </section>
-
-  <section class="table-wrap" id="tableSection" style="display:none;">
-    <table>
-      <thead>
-        <tr>
-          <th>Team / Participant</th>
-          <th>Collab / Departments</th>
-          <th>Description</th>
-          <th>Video</th>
-          <th>Technical Skill</th>
-          <th>Creativity</th>
-          <th>Entertainment</th>
-          <th>Total (You)</th>
-          <th>Average (All)</th>
-          <th>Save</th>
-        </tr>
-      </thead>
-      <tbody id="submissionsBody"></tbody>
-    </table>
-  </section>
-</main>
-
-<div class="santa">🎅</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-  // Firebase config (unchanged)
-  const firebaseConfig = {
-    apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
-    authDomain: "lenbrook-s-got-talent.firebaseapp.com",
-    projectId: "lenbrook-s-got-talent",
-    storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
-    messagingSenderId: "327419181483",
-    appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const statusEl = document.getElementById("status");
-  const startBtn = document.getElementById("startBtn");
-  const reviewerNameInput = document.getElementById("reviewerName");
-  const tableSection = document.getElementById("tableSection");
-  const tbody = document.getElementById("submissionsBody");
-
-  let currentReviewer = null;
-
-  startBtn.addEventListener("click", async () => {
-    const name = reviewerNameInput.value.trim();
-    if (!name) {
-      alert("Please enter your judge name.");
-      return;
-    }
-    currentReviewer = name;
-    statusEl.textContent = "Loading acts...";
-    await loadSubmissions();
-    tableSection.style.display = "block";
-  });
-
-  async function loadSubmissions() {
-    const snap = await getDocs(collection(db, "submissions"));
-    tbody.innerHTML = "";
-
-    snap.forEach(docSnap => {
-      const data = docSnap.data();
-      const id = docSnap.id;
-
-      // your rating
-      const myRating = data.ratings?.[currentReviewer] || {};
-      const tech = myRating.technical || "";
-      const creative = myRating.creativity || "";
-      const ent = myRating.entertainment || "";
-      const totalMine = myRating.total || 0;
-
-      // everyone avg
-      const avgAll = data.averageScore ? data.averageScore.toFixed(1) : "-";
-
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td style="color:#fff;font-weight:600;">${data.name || ""}</td>
-        <td>${data.departments || ""}</td>
-        <td>${data.description || ""}</td>
-        <td><video src="${data.videoURL}" controls></video></td>
-        <td><input class="score-input" type="number" min="1" max="10" id="tech-${id}" value="${tech}"></td>
-        <td><input class="score-input" type="number" min="1" max="10" id="creative-${id}" value="${creative}"></td>
-        <td><input class="score-input" type="number" min="1" max="10" id="ent-${id}" value="${ent}"></td>
-        <td id="total-${id}" style="color:#fff;font-weight:600;">${totalMine}</td>
-        <td id="avg-${id}" style="color:var(--accent);font-weight:600;">${avgAll}</td>
-        <td><button class="save-btn" onclick="saveRating('${id}')">Save</button></td>
-      `;
-      tbody.appendChild(row);
-    });
-
-    statusEl.textContent = "Ready. Score away ✨";
-  }
-
-  window.saveRating = async (id) => {
-    if (!currentReviewer) {
-      alert("Please enter your judge name first.");
-      return;
-    }
-
-    const techVal = parseInt(document.getElementById(`tech-${id}`).value || 0);
-    const creativeVal = parseInt(document.getElementById(`creative-${id}`).value || 0);
-    const entVal = parseInt(document.getElementById(`ent-${id}`).value || 0);
-    const total = techVal + creativeVal + entVal;
-
-    const ref = doc(db, "submissions", id);
-    const snap = await getDoc(ref);
-    const data = snap.data() || {};
-
-    const ratings = data.ratings || {};
-    ratings[currentReviewer] = {
-      technical: techVal,
-      creativity: creativeVal,
-      entertainment: entVal,
-      total: total
+    // same config you use elsewhere
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
+      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
+      projectId: "lenbrook-s-got-talent",
+      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+      messagingSenderId: "327419181483",
+      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
     };
 
-    // recompute global avg
-    const totals = Object.values(ratings).map(r => r.total);
-    const avg = totals.reduce((a,b)=>a+b,0) / totals.length;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    await updateDoc(ref, {
-      ratings,
-      averageScore: avg
+    const tableBody = document.querySelector("#submissionsTable tbody");
+    const status = document.getElementById("status");
+    const startReviewBtn = document.getElementById("startReviewBtn");
+    const reviewerNameInput = document.getElementById("reviewerName");
+    const tableCard = document.getElementById("tableCard");
+
+    let currentReviewer = null;
+
+    // snow
+    const snowLayer = document.getElementById('snowLayer');
+    function spawnFlake() {
+      const flake = document.createElement('div');
+      flake.className = 'flake';
+      flake.textContent = '•';
+      const size = (Math.random()*0.6 + 0.4) * 12;
+      flake.style.fontSize = size + 'px';
+      flake.style.left = Math.random()*100 + 'vw';
+      const dur = Math.random()*4 + 4;
+      flake.style.animationDuration = dur + 's';
+      snowLayer.appendChild(flake);
+      setTimeout(()=>flake.remove(), dur*1000);
+    }
+    setInterval(spawnFlake, 120);
+
+    startReviewBtn.addEventListener("click", () => {
+      const name = reviewerNameInput.value.trim();
+      if (!name) {
+        alert("Please enter your name first.");
+        return;
+      }
+      currentReviewer = name;
+      status.textContent = "Loading performances...";
+      loadSubmissions();
     });
 
-    document.getElementById(`total-${id}`).textContent = total;
-    document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
+    async function loadSubmissions() {
+      const snapshot = await getDocs(collection(db, "submissions"));
+      tableBody.innerHTML = "";
 
-    alert("Saved ✅");
-  };
-</script>
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const id = docSnap.id;
+
+        const r = (data.ratings && data.ratings[currentReviewer]) || {};
+        const yourTotal = r.total || 0;
+        const avg = data.averageScore ? data.averageScore.toFixed(1) : "-";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${data.name || ""}</td>
+          <td>${data.department || ""}</td>
+          <td>${data.description || ""}</td>
+          <td><video src="${data.videoURL}" controls></video></td>
+          <td><input class="score-input" type="number" id="tech-${id}" min="1" max="10" value="${r.technical ?? ""}"></td>
+          <td><input class="score-input" type="number" id="creative-${id}" min="1" max="10" value="${r.creativity ?? ""}"></td>
+          <td><input class="score-input" type="number" id="ent-${id}" min="1" max="10" value="${r.entertainment ?? ""}"></td>
+          <td id="total-${id}">${yourTotal}</td>
+          <td id="avg-${id}">${avg}</td>
+          <td><button class="save-btn" onclick="saveRating('${id}')">Save</button></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      tableCard.style.display = "block";
+      status.textContent = "✅ Loaded.";
+    }
+
+    window.saveRating = async (id) => {
+      if (!currentReviewer) return alert("Enter your name first.");
+
+      const tech = parseInt(document.getElementById(`tech-${id}`).value || 0);
+      const creative = parseInt(document.getElementById(`creative-${id}`).value || 0);
+      const ent = parseInt(document.getElementById(`ent-${id}`).value || 0);
+      const total = tech + creative + ent;
+
+      const ref = doc(db, "submissions", id);
+      const docSnap = await getDoc(ref);
+      const data = docSnap.data() || {};
+
+      const ratings = data.ratings || {};
+      ratings[currentReviewer] = { technical: tech, creativity: creative, entertainment: ent, total };
+
+      const allTotals = Object.values(ratings).map(r => r.total);
+      const avg = allTotals.reduce((a, b) => a + b, 0) / allTotals.length;
+
+      await updateDoc(ref, { ratings, averageScore: avg });
+
+      document.getElementById(`total-${id}`).textContent = total;
+      document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
+
+      alert(`Saved for ${currentReviewer}!`);
+    };
+  </script>
 </body>
 </html>
