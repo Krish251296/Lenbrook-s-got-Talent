@@ -1,443 +1,441 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lenbrook's Got Talent • Submit</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenbrook's Got Talent – Submission</title>
 
-<style>
-  /* ===== Background gradient + snow canvas layer ===== */
-  :root {
-    --bg-grad-from: #001f4d;
-    --bg-grad-to: #013b8a;
-    --card-bg: rgba(255,255,255,0.12);
-    --card-border: rgba(255,255,255,0.4);
-    --text-light: #fff;
-    --accent: #4dd0ff;
-    --accent-glow: rgba(77,208,255,0.6);
-    --pill-bg: rgba(255,255,255,0.18);
-    --pill-border: rgba(255,255,255,0.5);
-    --pill-hover-bg: rgba(255,255,255,0.3);
-  }
+  <style>
+    /* ===== GLOBAL THEME ===== */
 
-  * {
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-  }
+    :root {
+      --bg-start: #0a1633;
+      --bg-end: #1b2b5a;
+      --gold: #ffd86b;
+      --white: #fff;
+      --glass-bg: rgba(15, 26, 56, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --text-dim: #c7d2ff;
+      --danger: #ff6b6b;
+      --success: #6bff9a;
+    }
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    color: var(--text-light);
-    background: radial-gradient(circle at 20% 20%, #053a7a 0%, #00132e 60%) fixed,
-                linear-gradient(to bottom right, var(--bg-grad-from), var(--bg-grad-to)) fixed;
-    position: relative;
-    overflow-x: hidden;
-  }
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  canvas#snowCanvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-  }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: var(--white);
+      background: radial-gradient(circle at 20% 20%, var(--bg-end) 0%, var(--bg-start) 60%);
+      position: relative;
+      overflow-x: hidden;
+    }
 
-  /* soft color blobs / holiday glow accents */
-  .bg-glow {
-    position: fixed;
-    filter: blur(80px);
-    opacity: 0.4;
-    mix-blend-mode: screen;
-    pointer-events: none;
-    z-index: 1;
-  }
-  .glow-red {
-    background: radial-gradient(circle, rgba(255,72,72,0.6) 0%, transparent 70%);
-    width: 260px;
-    height: 260px;
-    top: 5%;
-    right: 5%;
-  }
-  .glow-green {
-    background: radial-gradient(circle, rgba(0,255,170,0.5) 0%, transparent 70%);
-    width: 220px;
-    height: 220px;
-    bottom: 8%;
-    left: 10%;
-  }
+    /* snowfall canvas sits behind everything */
+    #snowCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-  /* subtle “string lights” */
-  .lights {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right:0;
-    height: 60px;
-    background-repeat: repeat-x;
-    background-size: 200px 60px;
-    background-position: center top;
-    pointer-events:none;
-    z-index:2;
-    background-image:
-      radial-gradient(circle at 20px 40px, rgba(255,0,0,0.9) 0 6px, transparent 7px),
-      radial-gradient(circle at 60px 40px, rgba(0,255,170,0.9) 0 6px, transparent 7px),
-      radial-gradient(circle at 100px 40px, rgba(255,255,0,0.9) 0 6px, transparent 7px),
-      radial-gradient(circle at 140px 40px, rgba(0,180,255,0.9) 0 6px, transparent 7px);
-    animation: pulseLights 2s infinite;
-  }
-  @keyframes pulseLights {
-    0%,100% { filter: drop-shadow(0 0 4px #fff) brightness(1); }
-    50% { filter: drop-shadow(0 0 10px #fff) brightness(1.4); }
-  }
+    /* main page wrapper */
+    .page {
+      position: relative;
+      z-index: 1;
+      padding: 24px clamp(16px, 2vw, 32px) 64px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-  /* ===== layout ===== */
-  header.app-header {
-    position: relative;
-    z-index: 3;
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 24px clamp(16px,2vw,32px);
-  }
+    /* header row with logo + title cluster */
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 16px 24px;
+    }
 
-  .logo-area {
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    color:var(--text-light);
-  }
-  .logo-area img {
-    width:64px;
-    height:64px;
-    object-fit:contain;
-    border-radius:12px;
-    background:rgba(255,255,255,0.15);
-    box-shadow:0 8px 24px rgba(0,0,0,0.6);
-    border:1px solid rgba(255,255,255,0.4);
-    backdrop-filter: blur(6px);
-  }
-  .party-tag {
-    font-size:0.8rem;
-    font-weight:500;
-    margin-top:6px;
-    color:var(--accent);
-    text-shadow:0 0 8px var(--accent-glow);
-  }
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 180px;
+    }
 
-  .title-wrap {
-    flex:1;
-  }
-  .title-wrap h1 {
-    margin:0;
-    font-size:clamp(1.4rem,1vw,1.8rem);
-    font-weight:600;
-    line-height:1.2;
-    color:#fff;
-    text-shadow:0 4px 16px rgba(0,0,0,0.8);
-    letter-spacing: -0.03em;
-  }
-  .title-wrap .subtitle {
-    font-size:0.9rem;
-    font-weight:400;
-    color:rgba(255,255,255,0.8);
-    text-shadow:0 3px 12px rgba(0,0,0,0.8);
-    margin-top:4px;
-  }
+    .brand-block img {
+      width: 140px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+    }
 
-  main.app-main {
-    position: relative;
-    z-index: 3;
-    display:flex;
-    justify-content:center;
-    padding: 0 16px 80px;
-  }
+    .presented {
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 4px;
+      text-shadow: 0 0 6px rgba(255,216,107,0.5);
+      letter-spacing: 0.03em;
+    }
 
-  .card {
-    width:100%;
-    max-width:480px;
-    background: var(--card-bg);
-    border:1px solid var(--card-border);
-    border-radius:24px;
-    padding:24px 24px 32px;
-    box-shadow:
-      0 30px 80px rgba(0,0,0,0.8),
-      0 0 80px rgba(77,208,255,0.25);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    position:relative;
-  }
+    .title-block {
+      flex: 1;
+      min-width: 250px;
+    }
 
-  .card h2 {
-    margin:0 0 8px;
-    text-align:center;
-    font-size:1.2rem;
-    font-weight:600;
-    color:#fff;
-    text-shadow:0 4px 16px rgba(0,0,0,0.8);
-    letter-spacing:-0.03em;
-  }
+    .page-title {
+      margin: 0;
+      font-size: clamp(1.4rem, 1vw + 1rem, 1.8rem);
+      font-weight: 600;
+      color: var(--gold);
+      text-shadow: 0 0 8px rgba(255,216,107,0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .card p.desc {
-    margin:0 0 20px;
-    text-align:center;
-    font-size:0.9rem;
-    color:rgba(255,255,255,0.8);
-    line-height:1.4;
-  }
+    .page-sub {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
 
-  form#submissionForm {
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-  }
+    /* glass card */
+    .card {
+      margin-top: 24px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.8),
+        0 0 40px rgba(255,216,107,0.07);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 24px clamp(16px,2vw,24px);
+      animation: fadeInUp 0.6s both;
+    }
 
-  .input-group label {
-    font-size:0.8rem;
-    font-weight:500;
-    color:rgba(255,255,255,0.9);
-    margin-bottom:4px;
-    display:block;
-  }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-shadow: 0 0 8px rgba(255,216,107,0.4);
+      letter-spacing: .03em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-  .frost-input,
-  .frost-textarea,
-  .file-row {
-    background: var(--pill-bg);
-    border:1px solid var(--pill-border);
-    border-radius:14px;
-    padding:12px 14px;
-    font-size:0.95rem;
-    color:#fff;
-    width:100%;
-    outline:none;
-    box-shadow:0 20px 40px rgba(0,0,0,0.6);
-    backdrop-filter: blur(12px) saturate(150%);
-  }
-  .frost-input::placeholder,
-  .frost-textarea::placeholder {
-    color:rgba(255,255,255,0.5);
-  }
-  .frost-textarea {
-    min-height:70px;
-    resize:none;
-  }
+    .hint {
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
 
-  .file-row input[type="file"] {
-    color:#fff;
-    font-size:0.8rem;
-  }
+    /* form layout */
+    form {
+      display: grid;
+      gap: 16px;
+      max-width: 480px;
+    }
 
-  .actions {
-    text-align:center;
-  }
-  .pill-btn {
-    appearance:none;
-    border:none;
-    outline:none;
-    cursor:pointer;
-    border-radius:999px;
-    padding:12px 20px;
-    min-width:160px;
-    font-size:1rem;
-    font-weight:600;
-    color:#00132e;
-    background:linear-gradient(135deg,#fff 0%,#c8f6ff 100%);
-    box-shadow:
-      0 20px 40px rgba(0,0,0,0.8),
-      0 0 30px rgba(255,255,255,0.5),
-      0 0 60px rgba(77,208,255,0.5);
-    border:1px solid rgba(255,255,255,0.7);
-    transition:all .15s;
-  }
-  .pill-btn:hover{
-    box-shadow:
-      0 24px 50px rgba(0,0,0,0.9),
-      0 0 40px rgba(255,255,255,0.6),
-      0 0 80px rgba(77,208,255,0.7);
-    transform:translateY(-1px) scale(1.02);
-  }
+    .field-group {
+      display: grid;
+      gap: 6px;
+    }
 
-  #statusMsg {
-    margin-top:16px;
-    font-size:0.9rem;
-    font-weight:500;
-    text-align:center;
-    color:var(--accent);
-    min-height:1.4em;
-    text-shadow:0 0 8px var(--accent-glow);
-  }
+    label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--white);
+    }
 
-  footer.app-footer {
-    position:relative;
-    z-index:3;
-    text-align:center;
-    color:rgba(255,255,255,0.4);
-    font-size:0.7rem;
-    padding:40px 16px 60px;
-  }
-</style>
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: var(--white);
+      outline: none;
+      box-shadow: 0 0 20px rgba(255,216,107,0.08);
+      transition: box-shadow .15s, border .15s, background .15s;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    input[type="file"]:focus {
+      border: 1px solid var(--gold);
+      box-shadow:
+        0 0 12px rgba(255,216,107,0.5),
+        0 0 48px rgba(255,216,107,0.15);
+      background: rgba(0,0,0,0.55);
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    /* button */
+    button[type="submit"] {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      background-image: radial-gradient(circle at 0% 0%, #fff7d2 0%, #ffd86b 40%, #a87815 100%);
+      color: #2a1a00;
+      font-weight: 600;
+      border-radius: 10px;
+      box-shadow:
+        0 12px 32px rgba(255,216,107,.4),
+        0 0 60px rgba(255,216,107,.2);
+      font-size: 0.95rem;
+      padding: 12px 16px;
+      line-height: 1.2;
+      transition: box-shadow .15s, transform .15s;
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow:
+        0 16px 40px rgba(255,216,107,.55),
+        0 0 70px rgba(255,216,107,.28);
+    }
+
+    /* status message */
+    #statusMsg {
+      font-size: 0.85rem;
+      font-weight: 500;
+      min-height: 1.2em;
+    }
+    .ok    { color: var(--success); text-shadow:0 0 6px rgba(107,255,154,.4); }
+    .error { color: var(--danger);  text-shadow:0 0 6px rgba(255,107,107,.4); }
+
+    /* utility footer note */
+    .foot-hint {
+      margin-top: 24px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* little "tab links" row */
+    .nav-row {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .nav-chip {
+      font-size: 0.8rem;
+      color: var(--gold);
+      background: rgba(255,216,107,0.08);
+      border: 1px solid rgba(255,216,107,0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,.8), 0 0 24px rgba(255,216,107,.2);
+      padding: 8px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 500;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: box-shadow .15s, transform .15s, background .15s;
+    }
+
+    .nav-chip:hover {
+      background: rgba(255,216,107,0.16);
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 16px 32px rgba(0,0,0,.9), 0 0 32px rgba(255,216,107,.4);
+    }
+
+    /* keyframe for card fade in */
+    @keyframes fadeInUp {
+      0% {opacity:0; transform:translateY(12px) scale(.98);}
+      100% {opacity:1; transform:translateY(0) scale(1);}
+    }
+  </style>
 </head>
+
 <body>
-<canvas id="snowCanvas"></canvas>
-<div class="bg-glow glow-red"></div>
-<div class="bg-glow glow-green"></div>
-<div class="lights"></div>
+  <!-- snowfall canvas -->
+  <canvas id="snowCanvas"></canvas>
 
-<header class="app-header">
-  <div class="logo-area">
-    <img src="logo.png" alt="Lenbrook's Got Talent Logo" />
-    <div class="party-tag">Presented by Party Patrol 🎉</div>
-  </div>
-  <div class="title-wrap">
-    <h1>Lenbrook's Got Talent</h1>
-    <div class="subtitle">Holiday Showcase • Talent Submission</div>
-  </div>
-</header>
-
-<main class="app-main">
-  <section class="card">
-    <h2>Submit Your Act ✨</h2>
-    <p class="desc">
-      Upload your performance video for the Christmas Lunch event.
-      Solo or team, all styles welcome!
-    </p>
-
-    <form id="submissionForm" enctype="multipart/form-data">
-      <div class="input-group">
-        <label>Team / Performer Name *</label>
-        <input class="frost-input" type="text" name="name" placeholder="e.g. AV Ninjas, or Sarah & Mike" required />
+  <main class="page">
+    <!-- header / brand -->
+    <header class="header-bar">
+      <div class="brand-block">
+        <!-- your logo file -->
+        <img src="logo.png" alt="Lenbrook's Got Talent Logo">
+        <div class="presented">Presented by Party Patrol ❄️</div>
       </div>
 
-      <div class="input-group">
-        <label>Optional Team Info / Departments</label>
-        <input class="frost-input" type="text" name="department" placeholder="e.g. IT + Marketing" />
+      <div class="title-block">
+        <h1 class="page-title">
+          🎤 Submit Your Act
+        </h1>
+        <p class="page-sub">
+          Upload your video for the Christmas Lunch showcase.
+          Teams & solo acts welcome. Be legendary. ✨
+        </p>
+      </div>
+    </header>
+
+    <!-- submission card -->
+    <section class="card">
+      <h2>📤 Performance Submission</h2>
+      <div class="hint">
+        Please share your team / participant name and your act.
+        Video max ~100MB. MP4 recommended.
       </div>
 
-      <div class="input-group">
-        <label>Talent Description *</label>
-        <textarea class="frost-textarea" name="description" placeholder="Describe the act... singing, dancing, comedy, etc." required></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>Upload Performance Video *</label>
-        <div class="file-row">
-          <input type="file" name="video" accept="video/*" required />
+      <form id="submissionForm" enctype="multipart/form-data">
+        <div class="field-group">
+          <label for="name">Team / Participant Name *</label>
+          <input type="text" id="name" name="name" placeholder="e.g. 'The Holiday Harmonies'" required />
         </div>
-      </div>
 
-      <div class="actions">
-        <button class="pill-btn" type="submit">Submit Video 🎬</button>
-      </div>
-    </form>
+        <div class="field-group">
+          <label for="description">Act Description *</label>
+          <textarea id="description" name="description" placeholder="Briefly describe your talent performance" required></textarea>
+        </div>
 
-    <div id="statusMsg"></div>
-  </section>
-</main>
+        <div class="field-group">
+          <label for="videoFile">Performance Video *</label>
+          <input type="file" id="videoFile" name="video" accept="video/*" required />
+        </div>
 
-<footer class="app-footer">
-  Lenbrook Holiday Event • 2025 • All sparkle, no stress ✨
-</footer>
+        <button type="submit">Submit Video ✨</button>
+        <div id="statusMsg"></div>
+      </form>
+    </section>
 
-<script>
-  // ===== Fast, dense snowfall background =====
-  (() => {
+    <div class="nav-row">
+      <a class="nav-chip" href="review.html">📝 Judge Panel</a>
+      <a class="nav-chip" href="leaderboard.html">🏆 Leaderboard</a>
+      <a class="nav-chip" href="admin.html">🔐 Admin</a>
+    </div>
+
+    <div class="foot-hint">
+      By submitting, you agree we can show this at the Lenbrook Christmas Lunch Event.
+    </div>
+  </main>
+
+  <!-- ===== JS: snowfall + upload logic ===== -->
+  <script>
+    // Snowfall animation (dense & faster)
     const canvas = document.getElementById("snowCanvas");
     const ctx = canvas.getContext("2d");
-    let w, h;
-    const flakes = [];
-    const FLAKE_COUNT = 160; // dense
+    let w, h, flakes;
 
-    function random(min, max){return Math.random()*(max-min)+min;}
-
-    function init() {
+    function initSnow() {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
-      flakes.length = 0;
-      for (let i=0; i<FLAKE_COUNT; i++){
-        flakes.push({
-          x: random(0, w),
-          y: random(0, h),
-          r: random(1, 3.2),
-          d: random(0.5, 1.5), // density factor
-          vx: random(-0.6, 0.6),
-          vy: random(0.8, 2.4) // faster fall
-        });
-      }
+      flakes = Array.from({ length: 140 }).map(() => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 2 + 1,
+        dY: Math.random() * 1 + 0.5,
+        dX: Math.random() * 0.6 - 0.3
+      }));
     }
 
-    function draw(){
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle="#fff";
-      ctx.shadowColor="rgba(255,255,255,0.8)";
-      ctx.shadowBlur=8;
-      for (const flake of flakes){
+    function drawSnow() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      ctx.shadowColor = "rgba(255,255,255,0.6)";
+      ctx.shadowBlur = 8;
+      flakes.forEach(f => {
         ctx.beginPath();
-        ctx.arc(flake.x, flake.y, flake.r, 0, Math.PI*2);
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
         ctx.fill();
-      }
-      update();
-      requestAnimationFrame(draw);
-    }
-
-    function update(){
-      for (const flake of flakes){
-        flake.x += flake.vx + Math.sin(Date.now()*0.001 + flake.d)*0.3; // little swirl
-        flake.y += flake.vy * flake.d;
-        if (flake.y>h){
-          flake.y = -5;
-          flake.x = random(0,w);
-        }
-        if (flake.x>w) flake.x=0;
-        if (flake.x<0) flake.x=w;
-      }
-    }
-
-    window.addEventListener("resize", init);
-    init();
-    draw();
-  })();
-</script>
-
-<script>
-  // ===== Submission logic (your existing fetch-to-Cloud Function approach) =====
-  const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app/"; // you said this works
-  const form = document.getElementById("submissionForm");
-  const statusMsg = document.getElementById("statusMsg");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    statusMsg.textContent = "Uploading video... please wait ✨";
-
-    const formData = new FormData(form);
-
-    try {
-      const response = await fetch(FUNCTION_URL, {
-        method: "POST",
-        body: formData,
       });
-
-      const text = await response.text();
-      let result;
-      try {
-        result = JSON.parse(text);
-      } catch {
-        throw new Error(text);
-      }
-
-      if (response.ok) {
-        statusMsg.textContent = "✅ Submission successful! Thank you!";
-        form.reset();
-      } else {
-        statusMsg.textContent = "⚠️ Error: " + (result.error || "Unknown error");
-      }
-    } catch (err) {
-      statusMsg.textContent = "❌ Upload failed: " + err.message;
+      updateSnow();
+      requestAnimationFrame(drawSnow);
     }
-  });
-</script>
 
+    function updateSnow() {
+      flakes.forEach(f => {
+        f.y += f.dY;
+        f.x += f.dX;
+        if (f.y > h) { f.y = -5; f.x = Math.random() * w; }
+        if (f.x > w) { f.x = 0; }
+        if (f.x < 0) { f.x = w; }
+      });
+    }
+
+    window.addEventListener("resize", initSnow);
+    initSnow();
+    drawSnow();
+  </script>
+
+  <script>
+    // ===== UPLOAD LOGIC (unchanged, same endpoint) =====
+    const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app/"; // your Cloud Run / Function URL
+
+    const form = document.getElementById("submissionForm");
+    const statusMsg = document.getElementById("statusMsg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusMsg.className = "";
+      statusMsg.textContent = "⏳ Uploading video... please wait.";
+
+      const name = document.getElementById("name").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const file = document.getElementById("videoFile").files[0];
+
+      if (!file) {
+        statusMsg.className = "error";
+        statusMsg.textContent = "Please select a video file!";
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append("video", file);
+        formData.append("name", name);
+        formData.append("description", description);
+
+        const response = await fetch(FUNCTION_URL, {
+          method: "POST",
+          body: formData
+        });
+
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch {
+          throw new Error(text);
+        }
+
+        if (response.ok) {
+          statusMsg.className = "ok";
+          statusMsg.textContent = "✅ Submission successful! Thank you!";
+          form.reset();
+        } else {
+          statusMsg.className = "error";
+          statusMsg.textContent = "Error: " + (result.error || "Unknown error");
+        }
+      } catch (err) {
+        statusMsg.className = "error";
+        statusMsg.textContent = "Upload failed: " + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
