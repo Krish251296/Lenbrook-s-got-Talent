@@ -1,473 +1,548 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lenbrook's Got Talent • Judge Panel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenbrook's Got Talent – Judge Panel</title>
 
-<style>
-  :root {
-    --bg-grad-from: #001f4d;
-    --bg-grad-to: #013b8a;
-    --card-bg: rgba(255,255,255,0.12);
-    --card-border: rgba(255,255,255,0.4);
-    --text-light: #fff;
-    --accent: #4dd0ff;
-    --accent-glow: rgba(77,208,255,0.6);
-    --pill-bg: rgba(255,255,255,0.18);
-    --pill-border: rgba(255,255,255,0.5);
-    --pill-hover-bg: rgba(255,255,255,0.3);
-  }
+  <style>
+    :root {
+      --bg-start: #0a1633;
+      --bg-end: #1b2b5a;
+      --gold: #ffd86b;
+      --white: #fff;
+      --glass-bg: rgba(15, 26, 56, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --text-dim: #c7d2ff;
+      --danger: #ff6b6b;
+      --success: #6bff9a;
+    }
 
-  * {
-    box-sizing:border-box;
-    -webkit-font-smoothing: antialiased;
-  }
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  body {
-    margin:0;
-    min-height:100vh;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-    color:var(--text-light);
-    background: radial-gradient(circle at 20% 20%, #053a7a 0%, #00132e 60%) fixed,
-                linear-gradient(to bottom right, var(--bg-grad-from), var(--bg-grad-to)) fixed;
-    position:relative;
-    overflow-x:hidden;
-  }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: var(--white);
+      background: radial-gradient(circle at 20% 20%, var(--bg-end) 0%, var(--bg-start) 60%);
+      position: relative;
+      overflow-x: hidden;
+    }
 
-  canvas#snowCanvas {
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    z-index:1;
-  }
-  .bg-glow {position:fixed;filter:blur(80px);opacity:.4;mix-blend-mode:screen;pointer-events:none;z-index:1;}
-  .glow-red {background:radial-gradient(circle,rgba(255,72,72,0.6)0%,transparent70%);width:260px;height:260px;top:5%;right:5%;}
-  .glow-green {background:radial-gradient(circle,rgba(0,255,170,0.5)0%,transparent70%);width:220px;height:220px;bottom:8%;left:10%;}
-  .lights {
-    position:fixed;top:0;left:0;right:0;height:60px;
-    background-repeat:repeat-x;background-size:200px 60px;background-position:center top;
-    pointer-events:none;z-index:2;
-    background-image:
-      radial-gradient(circle at 20px 40px, rgba(255,0,0,0.9) 0 6px, transparent 7px),
-      radial-gradient(circle at 60px 40px, rgba(0,255,170,0.9) 0 6px, transparent 7px),
-      radial-gradient(circle at 100px 40px, rgba(255,255,0,0.9) 0 6px, transparent 7px),
-      radial-gradient(circle at 140px 40px, rgba(0,180,255,0.9) 0 6px, transparent 7px);
-    animation:pulseLights 2s infinite;
-  }
-  @keyframes pulseLights {
-    0%,100%{filter:drop-shadow(0 0 4px #fff) brightness(1);}
-    50%{filter:drop-shadow(0 0 10px #fff) brightness(1.4);}
-  }
+    #snowCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-  header.app-header{
-    position:relative;z-index:3;
-    display:flex;align-items:flex-start;gap:16px;
-    padding:24px clamp(16px,2vw,32px);
-    flex-wrap:wrap;
-  }
+    .page {
+      position: relative;
+      z-index: 1;
+      padding: 24px clamp(16px, 2vw, 32px) 64px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-  .logo-area{
-    display:flex;flex-direction:column;align-items:flex-start;color:var(--text-light);
-  }
-  .logo-area img{
-    width:64px;height:64px;object-fit:contain;
-    border-radius:12px;
-    background:rgba(255,255,255,0.15);
-    box-shadow:0 8px 24px rgba(0,0,0,0.6);
-    border:1px solid rgba(255,255,255,0.4);
-    backdrop-filter: blur(6px);
-  }
-  .party-tag{
-    font-size:.8rem;font-weight:500;margin-top:6px;
-    color:var(--accent);text-shadow:0 0 8px var(--accent-glow);
-  }
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 16px 24px;
+    }
 
-  .title-wrap{flex:1;min-width:200px}
-  .title-wrap h1{
-    margin:0;font-size:clamp(1.4rem,1vw,1.8rem);font-weight:600;line-height:1.2;color:#fff;
-    text-shadow:0 4px 16px rgba(0,0,0,0.8);letter-spacing:-0.03em;
-  }
-  .title-wrap .subtitle{
-    font-size:.9rem;font-weight:400;color:rgba(255,255,255,0.8);
-    text-shadow:0 3px 12px rgba(0,0,0,0.8);margin-top:4px;
-  }
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 180px;
+    }
 
-  .judge-box {
-    position:relative;z-index:3;
-    background:var(--card-bg);
-    border:1px solid var(--card-border);
-    border-radius:18px;
-    padding:16px 20px;
-    box-shadow:0 30px 80px rgba(0,0,0,0.8),0 0 80px rgba(77,208,255,0.25);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    color:#fff;
-    max-width:320px;
-  }
+    .brand-block img {
+      width: 140px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+    }
 
-  .judge-box label{
-    font-size:.8rem;font-weight:500;color:rgba(255,255,255,0.9);display:block;margin-bottom:4px;
-  }
-  .frost-input{
-    width:100%;
-    background:var(--pill-bg);
-    border:1px solid var(--pill-border);
-    border-radius:14px;
-    padding:10px 12px;
-    font-size:.9rem;
-    color:#fff;
-    outline:none;
-    box-shadow:0 20px 40px rgba(0,0,0,0.6);
-    backdrop-filter: blur(12px) saturate(150%);
-  }
+    .presented {
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 4px;
+      text-shadow: 0 0 6px rgba(255,216,107,0.5);
+      letter-spacing: 0.03em;
+    }
 
-  .pill-btn{
-    appearance:none;border:none;outline:none;cursor:pointer;
-    border-radius:999px;
-    padding:10px 16px;
-    font-size:.9rem;
-    font-weight:600;
-    color:#00132e;
-    background:linear-gradient(135deg,#fff 0%,#c8f6ff 100%);
-    box-shadow:0 20px 40px rgba(0,0,0,0.8),
-               0 0 30px rgba(255,255,255,0.5),
-               0 0 60px rgba(77,208,255,0.5);
-    border:1px solid rgba(255,255,255,0.7);
-    transition:all .15s;
-    margin-top:8px;
-    width:100%;
-  }
-  .pill-btn:hover{
-    box-shadow:0 24px 50px rgba(0,0,0,0.9),
-               0 0 40px rgba(255,255,255,0.6),
-               0 0 80px rgba(77,208,255,0.7);
-    transform:translateY(-1px) scale(1.02);
-  }
+    .title-block {
+      flex: 1;
+      min-width: 250px;
+    }
 
-  main.app-main{
-    position:relative;z-index:3;
-    padding:0 16px 80px;
-  }
+    .page-title {
+      margin: 0;
+      font-size: clamp(1.4rem, 1vw + 1rem, 1.8rem);
+      font-weight: 600;
+      color: var(--gold);
+      text-shadow: 0 0 8px rgba(255,216,107,0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-  #status{
-    text-align:center;
-    font-size:.9rem;
-    font-weight:500;
-    color:var(--accent);
-    text-shadow:0 0 8px var(--accent-glow);
-    min-height:1.4em;
-    margin:24px 0 16px;
-  }
+    .page-sub {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
 
-  .table-wrapper{
-    overflow-x:auto;
-    background:var(--card-bg);
-    border:1px solid var(--card-border);
-    border-radius:18px;
-    box-shadow:0 30px 80px rgba(0,0,0,0.8),0 0 80px rgba(77,208,255,0.25);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-  }
+    .id-block {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
 
-  table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:900px;
-    color:#fff;
-  }
-  th,td{
-    text-align:center;
-    padding:12px 10px;
-    border-bottom:1px solid rgba(255,255,255,0.15);
-    font-size:.85rem;
-  }
-  th{
-    background:rgba(0,0,0,0.3);
-    font-weight:600;
-    color:#fff;
-    white-space:nowrap;
-  }
-  video{
-    width:160px;
-    max-height:120px;
-    border-radius:10px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.8);
-    border:1px solid rgba(255,255,255,0.4);
-    background:#000;
-  }
+    .id-block input {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--white);
+      outline: none;
+      min-width: 200px;
+      box-shadow: 0 0 20px rgba(255,216,107,0.08);
+      transition: box-shadow .15s, border .15s, background .15s;
+      margin-right: 8px;
+    }
 
-  input[type="number"]{
-    width:60px;
-    padding:8px;
-    text-align:center;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.5);
-    background:rgba(255,255,255,0.1);
-    color:#fff;
-    box-shadow:0 12px 24px rgba(0,0,0,0.7);
-    outline:none;
-  }
+    .id-block input:focus {
+      border: 1px solid var(--gold);
+      box-shadow:
+        0 0 12px rgba(255,216,107,0.5),
+        0 0 48px rgba(255,216,107,0.15);
+      background: rgba(0,0,0,0.55);
+    }
 
-  .save-btn{
-    appearance:none;border:none;outline:none;cursor:pointer;
-    border-radius:999px;
-    padding:8px 14px;
-    font-size:.8rem;
-    font-weight:600;
-    color:#00132e;
-    background:linear-gradient(135deg,#fff 0%,#c8f6ff 100%);
-    box-shadow:0 20px 40px rgba(0,0,0,0.8),
-               0 0 30px rgba(255,255,255,0.5),
-               0 0 60px rgba(77,208,255,0.5);
-    border:1px solid rgba(255,255,255,0.7);
-    transition:all .15s;
-    white-space:nowrap;
-  }
-  .save-btn:hover{
-    box-shadow:0 24px 50px rgba(0,0,0,0.9),
-               0 0 40px rgba(255,255,255,0.6),
-               0 0 80px rgba(77,208,255,0.7);
-    transform:translateY(-1px) scale(1.02);
-  }
+    .pill-btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      background-image: radial-gradient(circle at 0% 0%, #fff7d2 0%, #ffd86b 40%, #a87815 100%);
+      color: #2a1a00;
+      font-weight: 600;
+      border-radius: 999px;
+      box-shadow:
+        0 12px 32px rgba(255,216,107,.4),
+        0 0 60px rgba(255,216,107,.2);
+      font-size: 0.8rem;
+      padding: 8px 14px;
+      line-height: 1.2;
+      transition: box-shadow .15s, transform .15s;
+      white-space: nowrap;
+    }
 
-  footer.app-footer{
-    position:relative;z-index:3;
-    text-align:center;
-    color:rgba(255,255,255,0.4);
-    font-size:.7rem;
-    padding:40px 16px 60px;
-  }
-</style>
+    .pill-btn:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow:
+        0 16px 40px rgba(255,216,107,.55),
+        0 0 70px rgba(255,216,107,.28);
+    }
+
+    /* status bar */
+    #status {
+      margin-top: 16px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      min-height: 1.2em;
+      color: var(--text-dim);
+      text-shadow: 0 0 8px rgba(0,0,0,.8);
+    }
+    .ok    { color: var(--success); text-shadow:0 0 6px rgba(107,255,154,.4); }
+    .error { color: var(--danger);  text-shadow:0 0 6px rgba(255,107,107,.4); }
+
+    /* table wrapper card */
+    .card {
+      margin-top: 24px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.8),
+        0 0 40px rgba(255,216,107,0.07);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 16px;
+      animation: fadeInUp 0.6s both;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+      color: var(--white);
+    }
+
+    th {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      background: rgba(255,216,107,0.08);
+      color: var(--gold);
+      border-bottom: 1px solid rgba(255,216,107,0.4);
+      text-align: left;
+      padding: 10px;
+      white-space: nowrap;
+    }
+
+    td {
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 12px 10px;
+      font-size: 0.85rem;
+      vertical-align: top;
+      color: var(--white);
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.03);
+    }
+
+    video {
+      width: 180px;
+      border-radius: 10px;
+      box-shadow:0 12px 32px rgba(0,0,0,.8),
+                 0 0 24px rgba(255,216,107,.25);
+      outline:1px solid rgba(255,216,107,.3);
+      max-height: 140px;
+      object-fit: cover;
+    }
+
+    .score-input {
+      width: 58px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      color: var(--white);
+      outline: none;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255,216,107,0.08);
+      transition: box-shadow .15s, border .15s, background .15s;
+    }
+
+    .score-input:focus {
+      border:1px solid var(--gold);
+      box-shadow:
+        0 0 12px rgba(255,216,107,0.5),
+        0 0 48px rgba(255,216,107,0.15);
+      background: rgba(0,0,0,0.55);
+    }
+
+    .save-btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      background-image: radial-gradient(circle at 0% 0%, #fff7d2 0%, #ffd86b 40%, #a87815 100%);
+      color: #2a1a00;
+      font-weight: 600;
+      border-radius: 8px;
+      box-shadow:
+        0 12px 32px rgba(255,216,107,.4),
+        0 0 60px rgba(255,216,107,.2);
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      line-height: 1.2;
+      transition: box-shadow .15s, transform .15s;
+      white-space: nowrap;
+    }
+
+    .save-btn:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow:
+        0 16px 40px rgba(255,216,107,.55),
+        0 0 70px rgba(255,216,107,.28);
+    }
+
+    .totals-cell {
+      font-weight:600;
+      color: var(--gold);
+      text-shadow:0 0 10px rgba(255,216,107,.4);
+      min-width: 48px;
+      text-align: center;
+    }
+
+    .avg-cell {
+      font-weight:500;
+      color: var(--text-dim);
+      text-shadow:0 0 8px rgba(0,0,0,.8);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .nav-row {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .nav-chip {
+      font-size: 0.8rem;
+      color: var(--gold);
+      background: rgba(255,216,107,0.08);
+      border: 1px solid rgba(255,216,107,0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,.8), 0 0 24px rgba(255,216,107,.2);
+      padding: 8px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 500;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: box-shadow .15s, transform .15s, background .15s;
+    }
+
+    .nav-chip:hover {
+      background: rgba(255,216,107,0.16);
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 16px 32px rgba(0,0,0,.9), 0 0 32px rgba(255,216,107,.4);
+    }
+
+    @keyframes fadeInUp {
+      0% {opacity:0; transform:translateY(12px) scale(.98);}
+      100% {opacity:1; transform:translateY(0) scale(1);}
+    }
+  </style>
 </head>
 <body>
-<canvas id="snowCanvas"></canvas>
-<div class="bg-glow glow-red"></div>
-<div class="bg-glow glow-green"></div>
-<div class="lights"></div>
+  <canvas id="snowCanvas"></canvas>
 
-<header class="app-header">
-  <div class="logo-area">
-    <img src="logo.png" alt="Lenbrook's Got Talent Logo" />
-    <div class="party-tag">Presented by Party Patrol 🎉</div>
-  </div>
-  <div class="title-wrap">
-    <h1>Lenbrook's Got Talent</h1>
-    <div class="subtitle">Holiday Showcase • Judge Panel</div>
-  </div>
+  <main class="page">
+    <header class="header-bar">
+      <div class="brand-block">
+        <img src="logo.png" alt="Lenbrook's Got Talent Logo">
+        <div class="presented">Presented by Party Patrol ❄️</div>
+      </div>
 
-  <div class="judge-box">
-    <label for="reviewerName">Your Judge Name</label>
-    <input id="reviewerName" class="frost-input" type="text" placeholder="Ex: Karen D." />
-    <button id="startReviewBtn" class="pill-btn">Start / Refresh</button>
-  </div>
-</header>
+      <div class="title-block">
+        <h1 class="page-title">
+          📝 Judge Panel
+        </h1>
+        <p class="page-sub">
+          Score Technical Skill, Creativity, and Entertainment (1-10 each).
+          Your ratings are private. Average is shared.
+        </p>
 
-<main class="app-main">
-  <div id="status">Enter your judge name, then Start.</div>
+        <div class="id-block">
+          <input id="reviewerName" type="text" placeholder="Your name (for judging records)" />
+          <button class="pill-btn" id="startBtn">Start Judging</button>
+        </div>
+        <div id="status">Please enter your name and click "Start Judging".</div>
+      </div>
+    </header>
 
-  <div class="table-wrapper">
-    <table id="submissionsTable">
-      <thead>
-        <tr>
-          <th>Team / Participant</th>
-          <th>Info</th>
-          <th>Description</th>
-          <th>Video</th>
-          <th>Technical Skill</th>
-          <th>Creativity</th>
-          <th>Entertainment</th>
-          <th>Total (You)</th>
-          <th>Avg (All)</th>
-          <th>Save</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</main>
+    <section class="card">
+      <div style="overflow-x:auto;">
+        <table id="submissionsTable">
+          <thead>
+            <tr>
+              <th>Team / Participant</th>
+              <th>Description</th>
+              <th>Video</th>
+              <th>Technical</th>
+              <th>Creativity</th>
+              <th>Entertainment</th>
+              <th>Total (You)</th>
+              <th>Avg (All)</th>
+              <th>Save</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
 
-<footer class="app-footer">
-  Lenbrook Holiday Event • 2025 • Judging in progress 🎄
-</footer>
+    <div class="nav-row">
+      <a class="nav-chip" href="index.html">⬅ Submit an Act</a>
+      <a class="nav-chip" href="leaderboard.html">🏆 Leaderboard</a>
+      <a class="nav-chip" href="admin.html">🔐 Admin</a>
+    </div>
+  </main>
 
-<script>
-  // Snow
-  (() => {
-    const canvas=document.getElementById("snowCanvas");
-    const ctx=canvas.getContext("2d");
-    let w,h;
-    const flakes=[];
-    const FLAKE_COUNT=160;
-    function rand(min,max){return Math.random()*(max-min)+min;}
-    function init(){
+  <!-- Snow -->
+  <script>
+    const canvas = document.getElementById("snowCanvas");
+    const ctx = canvas.getContext("2d");
+    let w,h,flakes;
+    function initSnow(){
       w=canvas.width=window.innerWidth;
       h=canvas.height=window.innerHeight;
-      flakes.length=0;
-      for(let i=0;i<FLAKE_COUNT;i++){
-        flakes.push({
-          x:rand(0,w),
-          y:rand(0,h),
-          r:rand(1,3.2),
-          d:rand(0.5,1.5),
-          vx:rand(-0.6,0.6),
-          vy:rand(0.8,2.4)
-        });
-      }
+      flakes=Array.from({length:140}).map(()=>({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        r:Math.random()*2+1,
+        dY:Math.random()*1+0.5,
+        dX:Math.random()*0.6-0.3
+      }));
     }
-    function draw(){
+    function drawSnow(){
       ctx.clearRect(0,0,w,h);
-      ctx.fillStyle="#fff";
-      ctx.shadowColor="rgba(255,255,255,0.8)";
+      ctx.fillStyle="rgba(255,255,255,0.9)";
+      ctx.shadowColor="rgba(255,255,255,0.6)";
       ctx.shadowBlur=8;
-      for(const f of flakes){
+      flakes.forEach(f=>{
         ctx.beginPath();
         ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
         ctx.fill();
-      }
-      update();
-      requestAnimationFrame(draw);
+      });
+      flakes.forEach(f=>{
+        f.y+=f.dY;
+        f.x+=f.dX;
+        if(f.y>h){f.y=-5;f.x=Math.random()*w;}
+        if(f.x>w){f.x=0;}
+        if(f.x<0){f.x=w;}
+      });
+      requestAnimationFrame(drawSnow);
     }
-    function update(){
-      for(const f of flakes){
-        f.x+=f.vx+Math.sin(Date.now()*0.001+f.d)*0.3;
-        f.y+=f.vy*f.d;
-        if(f.y>h){f.y=-5;f.x=rand(0,w);}
-        if(f.x>w)f.x=0;
-        if(f.x<0)f.x=w;
-      }
-    }
-    window.addEventListener("resize",init);
-    init();draw();
-  })();
-</script>
+    window.addEventListener("resize",initSnow);
+    initSnow();
+    drawSnow();
+  </script>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    doc,
-    getDoc,
-    updateDoc,
-  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <!-- Firebase judge logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  // keep your config
-  const firebaseConfig = {
-    apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
-    authDomain: "lenbrook-s-got-talent.firebaseapp.com",
-    projectId: "lenbrook-s-got-talent",
-    storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
-    messagingSenderId: "327419181483",
-    appId: "1:327419181483:web:c78bde1ba35d3bf037faee",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const reviewerInput = document.getElementById("reviewerName");
-  const startBtn = document.getElementById("startReviewBtn");
-  const statusEl = document.getElementById("status");
-  const tableBody = document.querySelector("#submissionsTable tbody");
-
-  let currentReviewer = null;
-
-  startBtn.addEventListener("click", () => {
-    const name = reviewerInput.value.trim();
-    if (!name) {
-      alert("Please enter your judge name.");
-      return;
-    }
-    currentReviewer = name;
-    statusEl.textContent = "Loading submissions for " + currentReviewer + "...";
-    loadSubmissions();
-  });
-
-  async function loadSubmissions() {
-    const snap = await getDocs(collection(db, "submissions"));
-    tableBody.innerHTML = "";
-
-    snap.forEach((docSnap) => {
-      const data = docSnap.data();
-      const id = docSnap.id;
-
-      const userRatings = data.ratings?.[currentReviewer] || {};
-      const total = userRatings.total || 0;
-      const avg = data.averageScore ? data.averageScore.toFixed(1) : "-";
-
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td style="font-weight:600;color:#fff;">${data.name || ""}</td>
-        <td style="color:rgba(255,255,255,0.8);">${data.department || ""}</td>
-        <td style="color:rgba(255,255,255,0.8);">${data.description || ""}</td>
-        <td>
-          <video src="${data.videoURL}" controls></video>
-        </td>
-        <td>
-          <input type="number" id="tech-${id}" min="1" max="10"
-            value="${userRatings.technical || ""}">
-        </td>
-        <td>
-          <input type="number" id="creative-${id}" min="1" max="10"
-            value="${userRatings.creativity || ""}">
-        </td>
-        <td>
-          <input type="number" id="ent-${id}" min="1" max="10"
-            value="${userRatings.entertainment || ""}">
-        </td>
-        <td id="total-${id}" style="font-weight:600;color:#fff;">${total}</td>
-        <td id="avg-${id}" style="color:var(--accent);text-shadow:0 0 8px var(--accent-glow);">${avg}</td>
-        <td>
-          <button class="save-btn" onclick="saveRating('${id}')">💾 Save</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    });
-
-    statusEl.textContent = "✅ Loaded submissions.";
-  }
-
-  // expose saveRating so onclick works
-  window.saveRating = async (id) => {
-    if (!currentReviewer) {
-      alert("Enter judge name and click Start first.");
-      return;
-    }
-
-    const tech = parseInt(document.getElementById(`tech-${id}`).value || 0);
-    const creative = parseInt(document.getElementById(`creative-${id}`).value || 0);
-    const ent = parseInt(document.getElementById(`ent-${id}`).value || 0);
-    const total = tech + creative + ent;
-
-    const ref = doc(db, "submissions", id);
-    const docSnap = await getDoc(ref);
-    const prevData = docSnap.data() || {};
-
-    const ratings = prevData.ratings || {};
-    ratings[currentReviewer] = {
-      technical: tech,
-      creativity: creative,
-      entertainment: ent,
-      total,
+    // SAME CONFIG YOU ALREADY USE
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
+      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
+      projectId: "lenbrook-s-got-talent",
+      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+      messagingSenderId: "327419181483",
+      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
     };
 
-    const allTotals = Object.values(ratings).map((r) => r.total);
-    const avg =
-      allTotals.reduce((a, b) => a + b, 0) / (allTotals.length || 1);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    await updateDoc(ref, {
-      ratings,
-      averageScore: avg,
+    const startBtn = document.getElementById("startBtn");
+    const reviewerInput = document.getElementById("reviewerName");
+    const statusEl = document.getElementById("status");
+    const tableBody = document.querySelector("#submissionsTable tbody");
+
+    let currentReviewer = null;
+    let loadedOnce = false;
+
+    startBtn.addEventListener("click", () => {
+      const nameVal = reviewerInput.value.trim();
+      if (!nameVal) {
+        statusEl.className = "error";
+        statusEl.textContent = "Please enter your name to continue.";
+        return;
+      }
+      currentReviewer = nameVal;
+      statusEl.className = "";
+      statusEl.textContent = "Loading submissions for " + currentReviewer + "...";
+      loadSubmissions();
     });
 
-    document.getElementById(`total-${id}`).textContent = total;
-    document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
+    async function loadSubmissions() {
+      const snap = await getDocs(collection(db, "submissions"));
+      tableBody.innerHTML = "";
 
-    alert(`✅ Saved for ${currentReviewer}!`);
-  };
-</script>
+      snap.forEach((docSnap) => {
+        const data = docSnap.data();
+        const id = docSnap.id;
+
+        // pull this judge's previous scores
+        const judgeRatings = data.ratings?.[currentReviewer] || {};
+        const techVal = judgeRatings.technical ?? "";
+        const creatVal = judgeRatings.creativity ?? "";
+        const entVal = judgeRatings.entertainment ?? "";
+        const totalVal = judgeRatings.total ?? 0;
+
+        // global average
+        const avgVal = data.averageScore ? data.averageScore.toFixed(1) : "-";
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="min-width:140px;font-weight:600;color:var(--gold);text-shadow:0 0 10px rgba(255,216,107,.4);">
+            ${data.name || ""}
+          </td>
+          <td style="min-width:160px;color:var(--text-dim);">${data.description || ""}</td>
+          <td style="min-width:200px;">
+            <video src="${data.videoURL}" controls></video>
+          </td>
+          <td><input class="score-input" type="number" id="tech-${id}" min="1" max="10" value="${techVal}"></td>
+          <td><input class="score-input" type="number" id="creative-${id}" min="1" max="10" value="${creatVal}"></td>
+          <td><input class="score-input" type="number" id="ent-${id}" min="1" max="10" value="${entVal}"></td>
+          <td class="totals-cell" id="total-${id}">${totalVal}</td>
+          <td class="avg-cell" id="avg-${id}">${avgVal}</td>
+          <td>
+            <button class="save-btn" onclick="saveRating('${id}')">💾 Save</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      statusEl.className = "ok";
+      statusEl.textContent = "✅ Loaded. Enter scores and hit Save.";
+      loadedOnce = true;
+    }
+
+    // expose saveRating
+    window.saveRating = async (id) => {
+      if (!currentReviewer) {
+        statusEl.className = "error";
+        statusEl.textContent = "Please enter your name and click Start Judging first.";
+        return;
+      }
+
+      const tech = parseInt(document.getElementById(`tech-${id}`).value || 0);
+      const creat = parseInt(document.getElementById(`creative-${id}`).value || 0);
+      const ent = parseInt(document.getElementById(`ent-${id}`).value || 0);
+
+      const total = tech + creat + ent;
+
+      const ref = doc(db, "submissions", id);
+      const snap = await getDoc(ref);
+      const data = snap.data() || {};
+
+      const ratings = data.ratings || {};
+      ratings[currentReviewer] = {
+        technical: tech,
+        creativity: creat,
+        entertainment: ent,
+        total
+      };
+
+      const allTotals = Object.values(ratings).map(r => r.total);
+      const avg = allTotals.reduce((a, b) => a + b, 0) / allTotals.length;
+
+      await updateDoc(ref, {
+        ratings,
+        averageScore: avg
+      });
+
+      document.getElementById(`total-${id}`).textContent = total;
+      document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
+
+      statusEl.className = "ok";
+      statusEl.textContent = `✅ Saved for ${currentReviewer}!`;
+    };
+  </script>
 </body>
 </html>
