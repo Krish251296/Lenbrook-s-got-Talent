@@ -21,6 +21,7 @@
       --radius-md: 10px;
     }
 
+    /* snowfall animation */
     @keyframes snow-fall {
       0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
       10%  { opacity: 1; }
@@ -32,15 +33,16 @@
       min-height: 100vh;
       color: var(--text-primary);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
-      background: radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
-                  radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
-                  linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
+      background:
+        radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
+        radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
+        linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
       background-repeat: no-repeat;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* floating glows */
+    /* top glow */
     .bg-glow {
       position: absolute;
       top: 0;
@@ -53,25 +55,27 @@
         rgba(0,0,0,0) 70%);
       filter: blur(60px);
       pointer-events: none;
+      z-index: 0;
     }
 
-    /* extra subtle glow bottom */
+    /* bottom glow — keep it dark and inside viewport so no white bar */
     .bg-glow-bottom {
       position: absolute;
-      bottom: -20vmin;
+      bottom: 0;
       left: 50%;
       width: 80vmin;
-      height: 80vmin;
-      transform: translateX(-50%);
+      height: 40vmin;
+      transform: translate(-50%, 20%);
       background: radial-gradient(circle,
-        rgba(0,140,255,0.25) 0%,
+        rgba(0,0,0,0.6) 0%,
         rgba(0,0,0,0) 70%);
       filter: blur(80px);
-      opacity: 0.4;
+      opacity: 1;
       pointer-events: none;
+      z-index: 0;
     }
 
-    /* animated snow container */
+    /* snow layer */
     .snow-wrap {
       position: absolute;
       inset: 0;
@@ -85,8 +89,9 @@
       color: #fff;
       font-size: 10px;
       filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
-      opacity: 0.8;
+      opacity: 0.9;
       animation: snow-fall linear infinite;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
     }
 
     /* ---------- LAYOUT ---------- */
@@ -115,19 +120,18 @@
     }
 
     .brand-logo {
-      width: clamp(140px, 22vw, 240px); /* bigger now */
+      width: clamp(180px, 30vw, 280px); /* bigger */
       height: auto;
       display: block;
-      border-radius: var(--radius-md);
     }
 
-    /* glow + reflection under logo */
+    /* glow under logo */
     .brand-logo-glow {
       position: absolute;
       left: 50%;
       top: 100%;
       transform: translate(-50%, -10px);
-      width: 140%;
+      width: 160%;
       height: 60px;
       background: radial-gradient(ellipse at center,
         rgba(130,180,255,0.45) 0%,
@@ -306,10 +310,10 @@
         border-radius: var(--radius-lg);
       }
       .brand-logo {
-        width: clamp(150px, 40vw, 240px);
+        width: clamp(200px, 45vw, 300px);
       }
       .brand-logo-glow {
-        width: 160%;
+        width: 180%;
         filter: blur(40px);
       }
     }
@@ -317,11 +321,11 @@
 </head>
 <body>
 
-  <!-- glows -->
+  <!-- soft glows -->
   <div class="bg-glow"></div>
   <div class="bg-glow-bottom"></div>
 
-  <!-- snow (JS will fill flakes) -->
+  <!-- snow layer -->
   <div class="snow-wrap" id="snowLayer"></div>
 
   <main class="page-shell">
@@ -392,13 +396,13 @@
   </main>
 
   <script type="module">
-    // --- snow generator: denser now ---
+    // --- snow generator: denser, nicer ---
     const snowLayer = document.getElementById('snowLayer');
     function spawnFlake() {
       const flake = document.createElement('div');
       flake.className = 'flake';
       flake.textContent = '•';
-      const size = (Math.random()*0.6 + 0.4) * 12; // 4.8px - 12px
+      const size = (Math.random()*0.6 + 0.4) * 12; // ~5px - 12px
       flake.style.fontSize = size + 'px';
       flake.style.left = Math.random()*100 + 'vw';
       const dur = Math.random()*4 + 4; // 4-8s fall
@@ -406,10 +410,10 @@
       snowLayer.appendChild(flake);
       setTimeout(()=>flake.remove(), dur*1000);
     }
-    // higher rate
-    setInterval(spawnFlake, 120);
+    // thicker snowfall
+    setInterval(spawnFlake, 90);
 
-    // --- form submission logic (unchanged, just moved visually) ---
+    // --- form submission logic (unchanged) ---
     const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo";
     const form = document.getElementById("submissionForm");
     const statusMsg = document.getElementById("statusMsg");
