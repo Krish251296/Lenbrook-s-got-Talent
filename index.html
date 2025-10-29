@@ -3,414 +3,401 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent - Submit Your Video</title>
+  <title>Lenbrook's Got Talent • Submit Performance</title>
 
   <style>
-    /* ---------- GLOBAL THEME ---------- */
-    :root {
-      --bg-start: #0b1220;
-      --bg-end: #1a2a4a;
-      --glass-bg: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.22);
-      --text-primary: #ffffff;
-      --text-dim: rgba(255,255,255,0.6);
-      --accent: #4da3ff;
-      --accent-bright: #91c4ff;
-      --radius-xl: 24px;
-      --radius-lg: 16px;
-      --radius-md: 10px;
-    }
-
-    @keyframes snow-fall {
-      0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
-      10%  { opacity: 1; }
-      100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
+    /* --- Global layout / background fix (kills white bar) --- */
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 20%, #2e3a60 0%, #0f1424 70%);
+      background-color: #0f1424;
+      color: #fff;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     }
 
     body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text-primary);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
-      background: radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
-                  radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
-                  linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
-      background-repeat: no-repeat;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* floating glows */
-    .bg-glow {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 60vmin;
-      height: 60vmin;
-      transform: translate(-50%, -30%);
-      background: radial-gradient(circle,
-        rgba(130,180,255,0.45) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(60px);
-      pointer-events: none;
-    }
-
-    /* extra subtle glow bottom */
-    .bg-glow-bottom {
-      position: absolute;
-      bottom: -20vmin;
-      left: 50%;
-      width: 80vmin;
-      height: 80vmin;
-      transform: translateX(-50%);
-      background: radial-gradient(circle,
-        rgba(0,140,255,0.25) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(80px);
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    /* animated snow container */
-    .snow-wrap {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 5;
-    }
-    .flake {
-      position: absolute;
-      top: -10vh;
-      color: #fff;
-      font-size: 10px;
-      filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
-      opacity: 0.8;
-      animation: snow-fall linear infinite;
-    }
-
-    /* ---------- LAYOUT ---------- */
-    .page-shell {
-      position: relative;
-      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: clamp(1rem, 2vw, 2rem);
-      max-width: 1400px;
-      margin: 0 auto 4rem auto;
-    }
-
-    /* Logo block */
-    .brand-block {
+      padding: 2rem 1rem 4rem;
       position: relative;
-      text-align: center;
-      margin-top: 2rem;
-      margin-bottom: 2rem;
+      box-sizing: border-box;
     }
 
-    .brand-logo-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-
-    .brand-logo {
-      width: clamp(140px, 22vw, 240px); /* bigger now */
-      height: auto;
-      display: block;
-      border-radius: var(--radius-md);
-    }
-
-    /* glow + reflection under logo */
-    .brand-logo-glow {
-      position: absolute;
-      left: 50%;
-      top: 100%;
-      transform: translate(-50%, -10px);
-      width: 140%;
-      height: 60px;
-      background: radial-gradient(ellipse at center,
-        rgba(130,180,255,0.45) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(30px);
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .brand-tagline {
-      font-size: clamp(1.25rem, 1vw, 1.4rem);
-      font-weight: 500;
-      color: var(--text-primary);
-      text-align: center;
-      margin-top: 2rem;
-      line-height: 1.3;
-    }
-
-    .brand-subline {
-      font-size: 0.95rem;
-      font-weight: 400;
-      color: var(--text-dim);
-      margin-top: 0.5rem;
-      text-align: center;
-      line-height: 1.4;
-      max-width: 320px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Glass card for form */
-    .glass-card {
-      position: relative;
+    /* --- Snow layers (thicker snow) --- */
+    .snow,
+    .snow::before,
+    .snow::after {
+      content: "";
+      position: fixed;
+      left: 0;
+      top: 0;
       width: 100%;
-      max-width: 440px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-xl);
-      padding: 1.5rem 1.5rem 2rem;
-      box-shadow:
-        0 30px 120px rgba(0,0,0,0.8),
-        0 2px 3px rgba(255,255,255,0.1) inset;
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      height: 100%;
+      pointer-events: none;
+      background-repeat: repeat;
+      background-size: 3px 3px;
+      image-rendering: pixelated;
+      z-index: 0;
     }
 
-    .glass-header {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--accent-bright);
-      margin-bottom: 0.25rem;
-      text-align: left;
-      display: flex;
-      align-items: baseline;
-      gap: .5rem;
-    }
-    .glass-header span.badge {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.25);
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: .7rem;
-      font-weight: 500;
-      color: var(--text-primary);
+    .snow {
+      background-image: radial-gradient(rgba(255,255,255,0.9) 1.2px, transparent 1.2px);
+      animation: snowMoveA 6s linear infinite;
+      opacity: 0.6;
     }
 
-    .glass-desc {
-      font-size: .9rem;
-      line-height: 1.4;
-      color: var(--text-dim);
-      margin-bottom: 1.25rem;
+    .snow::before {
+      background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px);
+      animation: snowMoveB 10s linear infinite;
+      opacity: 0.4;
     }
 
-    form {
+    .snow::after {
+      background-image: radial-gradient(rgba(255,255,255,0.3) 0.8px, transparent 0.8px);
+      animation: snowMoveC 14s linear infinite;
+      opacity: 0.25;
+    }
+
+    @keyframes snowMoveA {
+      0%   { transform: translateY(-60px) translateX(0px); }
+      100% { transform: translateY(60px)  translateX(20px); }
+    }
+    @keyframes snowMoveB {
+      0%   { transform: translateY(-80px) translateX(0px); }
+      100% { transform: translateY(80px)  translateX(-20px); }
+    }
+    @keyframes snowMoveC {
+      0%   { transform: translateY(-100px) translateX(0px); }
+      100% { transform: translateY(100px)  translateX(10px); }
+    }
+
+    /* --- Logo hero --- */
+    .site-hero {
+      position: relative;
+      z-index: 2;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+      text-align: center;
     }
 
-    .field-label {
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      padding: 0;
+      border-radius: 24px;
+    }
+
+    .logo-wrap img {
+      width: 220px; /* enlarged */
+      max-width: 60vw;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6));
+    }
+
+    .tagline {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      font-weight: 400;
+      margin-top: 0.75rem;
+      line-height: 1.4;
+    }
+
+    /* --- Card container --- */
+    .card-shell {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      background: radial-gradient(circle at 20% 20%, rgba(60,72,110,.6) 0%, rgba(20,24,40,.6) 70%);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      box-shadow:
+        0 60px 120px rgba(0,0,0,0.85),
+        0 8px 24px rgba(0,0,0,0.6),
+        0 0 120px rgba(88,130,255,0.18) inset;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 2rem 1.5rem 2.5rem;
+      color: #fff;
+    }
+    @media(min-width:768px){
+      .card-shell { padding: 2rem 2.5rem 3rem; }
+    }
+
+    /* --- Section chips + heading --- */
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: 1rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px;
+      padding: .4rem .75rem;
       font-size: .8rem;
       font-weight: 500;
-      color: var(--text-primary);
-      margin-bottom: .25rem;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    }
+    .chip .emoji {
+      font-size: .9rem;
+    }
+
+    .card-shell h1 {
+      margin: 0 0 .5rem 0;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.03em;
+      text-shadow: 0 2px 4px rgba(0,0,0,.8);
+    }
+
+    .intro-copy {
+      margin: 0 0 1.5rem 0;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.8);
+      font-size: .95rem;
+      max-width: 60ch;
+    }
+
+    /* --- Form styles --- */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .group-top-line {
       display: flex;
       justify-content: space-between;
+      width: 100%;
+      font-size: .8rem;
+      margin-bottom: .4rem;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      line-height: 1.4;
     }
 
-    .input-shell {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: var(--radius-md);
-      padding: .75rem .9rem;
-      color: var(--text-primary);
-      font-size: .9rem;
+    label {
+      color: rgba(255,255,255,0.9);
+      font-size: .8rem;
       font-weight: 500;
-      width: 100%;
+    }
+
+    .badge-req {
+      color: #ff8080;
+      font-weight: 500;
+    }
+    .badge-opt {
+      color: rgba(255,255,255,0.4);
+      font-weight: 400;
+      font-style: italic;
+    }
+    .hint {
+      font-size: .7rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.4);
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px;
+      color: #fff;
+      font-size: .9rem;
+      line-height: 1.4;
+      padding: .9rem .8rem;
       outline: none;
       box-shadow:
-        0 0 20px rgba(77,163,255,0) inset,
-        0 0 20px rgba(0,0,0,0.6);
-      transition: border .15s, box-shadow .15s;
-    }
-    .input-shell:focus {
-      border: 1px solid var(--accent);
-      box-shadow:
-        0 0 20px rgba(77,163,255,0.5),
-        0 0 60px rgba(77,163,255,0.25);
-    }
-
-    textarea.input-shell {
-      resize: none;
-      min-height: 70px;
-      line-height: 1.4;
-    }
-
-    .file-shell {
-      border: 1px dashed rgba(255,255,255,0.3);
-      background: rgba(0,0,0,0.4);
-      border-radius: var(--radius-md);
-      padding: 1rem;
-      text-align: center;
-      color: var(--text-dim);
-      font-size: .8rem;
-      line-height: 1.4;
-    }
-
-    .submit-btn {
-      appearance: none;
-      border: 0;
-      outline: 0;
-      cursor: pointer;
-      border-radius: var(--radius-lg);
-      padding: .9rem 1rem;
-      font-size: .95rem;
-      font-weight: 600;
-      line-height: 1.2;
-      color: #000;
-      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
-      box-shadow:
         0 20px 40px rgba(0,0,0,0.8),
-        0 2px 2px rgba(255,255,255,0.4) inset;
-      transition: box-shadow .15s, transform .15s;
+        0 1px 2px rgba(255,255,255,0.05) inset;
     }
-    .submit-btn:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 30px 60px rgba(0,0,0,0.9),
-        0 2px 2px rgba(255,255,255,0.45) inset;
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: rgba(255,255,255,0.4);
     }
-    .submit-btn:active {
-      transform: translateY(0);
+    input[type="text"]:focus,
+    textarea:focus,
+    input[type="file"]:focus {
+      border-color: rgba(134,179,255,0.8);
       box-shadow:
-        0 15px 30px rgba(0,0,0,0.8),
-        0 2px 2px rgba(255,255,255,0.4) inset;
+        0 0 20px rgba(134,179,255,.4),
+        0 40px 80px rgba(0,0,0,.9);
     }
 
-    #statusMsg {
-      font-size: 0.8rem;
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    /* --- Submit button --- */
+    .submit-row {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      margin-top: 2rem;
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(
+        90deg,
+        rgba(88,130,255,1) 0%,
+        rgba(164,120,255,1) 100%
+      );
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border: 0;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      box-shadow:
+        0 30px 60px rgba(0,0,0,.9),
+        0 8px 24px rgba(88,130,255,.4),
+        0 0 60px rgba(164,120,255,.6);
+      transition: box-shadow .18s, transform .18s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+    }
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 40px 80px rgba(0,0,0,1),
+        0 10px 32px rgba(88,130,255,.55),
+        0 0 80px rgba(164,120,255,.8);
+    }
+
+    .status-line {
+      font-size: .8rem;
       font-weight: 500;
-      color: var(--accent-bright);
-      min-height: 1.2em;
-      margin-top: .25rem;
       text-align: center;
+      color: rgba(255,255,255,0.7);
+      margin-top: 1rem;
+      min-height: 1.2em;
     }
 
-    /* responsive tweaks */
-    @media(max-width:600px){
-      .page-shell {
-        padding-top: 2rem;
-        padding-bottom: 4rem;
-      }
-      .glass-card {
-        max-width: 95%;
-        padding: 1.25rem 1rem 1.5rem;
-        border-radius: var(--radius-lg);
-      }
-      .brand-logo {
-        width: clamp(150px, 40vw, 240px);
-      }
-      .brand-logo-glow {
-        width: 160%;
-        filter: blur(40px);
-      }
+    /* make sure content sits above snow */
+    main {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
     }
   </style>
 </head>
 <body>
+  <!-- snow overlay -->
+  <div class="snow"></div>
 
-  <!-- glows -->
-  <div class="bg-glow"></div>
-  <div class="bg-glow-bottom"></div>
+  <!-- centered logo hero -->
+  <header class="site-hero">
+    <div class="logo-wrap">
+      <img src="logo.png" alt="Lenbrook's Got Talent Logo" />
+    </div>
+    <div class="tagline">
+      Holiday Showcase · Presented by Party Patrol 🎉
+    </div>
+  </header>
 
-  <!-- snow (JS will fill flakes) -->
-  <div class="snow-wrap" id="snowLayer"></div>
-
-  <main class="page-shell">
-
-    <!-- centered brand logo + tagline -->
-    <section class="brand-block">
-      <div class="brand-logo-wrapper">
-        <img src="logo.png" alt="Lenbrook's Got Talent" class="brand-logo" />
-        <div class="brand-logo-glow"></div>
+  <main>
+    <section class="card-shell">
+      <div class="chips-row">
+        <div class="chip">
+          <span class="emoji">🎄</span>
+          <span>Holiday Showcase</span>
+        </div>
       </div>
 
-      <div class="brand-tagline">
-        Holiday Showcase
-      </div>
-      <div class="brand-subline">
-        Submit your performance and tell us who’s performing.
-      </div>
-    </section>
-
-    <!-- frosted glass card form -->
-    <section class="glass-card">
-      <div class="glass-header">
-        <div>Performance Details</div>
-        <span class="badge">Upload</span>
-      </div>
-
-      <div class="glass-desc">
-        Please fill in your act info and upload your video.
-      </div>
+      <h1>Submit your performance</h1>
+      <p class="intro-copy">
+        Upload your video and tell us who's performing. This info will be used for the Christmas lunch event lineup.
+      </p>
 
       <form id="submissionForm" enctype="multipart/form-data">
-        <div>
-          <label class="field-label">
-            <span>Team / Participant Name</span>
-          </label>
-          <input class="input-shell" type="text" name="name" placeholder="e.g. 'The Loud Elves' or 'Jane & Alex'" required />
-        </div>
-
-        <div>
-          <label class="field-label">
-            <span>Collaboration / Departments (optional)</span>
-          </label>
-          <input class="input-shell" type="text" name="department" placeholder="e.g. Sales + IT" />
-        </div>
-
-        <div>
-          <label class="field-label">
-            <span>Performance Description</span>
-            <span style="color:var(--text-dim);font-weight:400;">what's the act?</span>
-          </label>
-          <textarea class="input-shell" name="description" placeholder="Short description of your talent..."></textarea>
-        </div>
-
-        <div>
-          <label class="field-label">
-            <span>Upload Video</span>
-          </label>
-          <div class="file-shell">
-            <input type="file" name="video" accept="video/*" required style="color:white; text-align:center; width:100%;" />
+        <!-- Team / Participant Name -->
+        <div class="form-group">
+          <div class="group-top-line">
+            <label for="nameInput">Team / Participant Name</label>
+            <span class="badge-req">required</span>
           </div>
+          <input
+            id="nameInput"
+            type="text"
+            name="name"
+            placeholder="The Holiday Harmonies"
+            required
+          />
         </div>
 
-        <button class="submit-btn" type="submit">Submit Performance ⟶</button>
+        <!-- Departments / Collab -->
+        <div class="form-group">
+          <div class="group-top-line">
+            <label for="deptInput">Collaboration / Departments</label>
+            <span class="badge-opt">optional</span>
+          </div>
+          <input
+            id="deptInput"
+            type="text"
+            name="department"
+            placeholder="Example: Sales + IT Duo"
+          />
+        </div>
 
-        <div id="statusMsg"></div>
+        <!-- Description -->
+        <div class="form-group">
+          <div class="group-top-line">
+            <label for="descInput">Talent Description</label>
+            <span class="hint">short intro for the MC</span>
+          </div>
+          <textarea
+            id="descInput"
+            name="description"
+            placeholder="Briefly describe your performance..."
+          ></textarea>
+        </div>
+
+        <!-- Video -->
+        <div class="form-group">
+          <div class="group-top-line">
+            <label for="videoInput">Performance Video</label>
+            <span class="badge-req">required</span>
+          </div>
+          <input id="videoInput" type="file" name="video" accept="video/*" required />
+        </div>
+
+        <div class="submit-row">
+          <button type="submit">
+            <span>Submit Performance</span>
+            <span aria-hidden="true">🚀</span>
+          </button>
+          <div id="statusMsg" class="status-line"></div>
+        </div>
       </form>
     </section>
   </main>
 
-  <script type="module">
-    // --- snow generator: denser now ---
-    const snowLayer = document.getElementById('snowLayer');
-    function spawnFlake() {
-      const flake = document.createElement('div');
-      flake.className = 'flake';
-      flake.textContent = '•';
-      const size = (Math.random()*0.6 + 0.4) * 12; // 4.8px - 12px
-      flake.style.fontSize = size + 'px';
-      flake.style.left = Math.random()*100 + 'vw';
-      const dur = Math.random()*4 + 4; // 4-8s fall
-      flake.style.animationDuration = dur + 's';
-      snowLayer.appendChild(flake);
-      setTimeout(()=>flake.remove(), dur*1000);
-    }
-    // higher rate
-    setInterval(spawnFlake, 120);
-
-    // --- form submission logic (unchanged, just moved visually) ---
-    const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo";
+  <!-- Firebase upload logic -->
+  <script>
+    const FUNCTION_URL = "https://uploadvideo-43f5xuljna-uc.a.run.app"; // your Cloud Run/Function endpoint
     const form = document.getElementById("submissionForm");
     const statusMsg = document.getElementById("statusMsg");
 
@@ -423,7 +410,7 @@
       try {
         const response = await fetch(FUNCTION_URL, {
           method: "POST",
-          body: formData,
+          body: formData
         });
 
         const text = await response.text();
@@ -435,7 +422,7 @@
         }
 
         if (response.ok) {
-          statusMsg.textContent = "✅ Submission received!";
+          statusMsg.textContent = "✅ Submission successful!";
           form.reset();
         } else {
           statusMsg.textContent = "Error: " + (result.error || "Unknown error");
