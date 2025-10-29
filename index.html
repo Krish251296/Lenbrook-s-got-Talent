@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Lenbrook’s Got Talent • Submit Your Performance</title>
 <style>
-  /* --- Modern system font stack --- */
   :root {
     --bg-grad-start: #0a1424;
     --bg-grad-end: #1d2a44;
@@ -38,69 +37,77 @@
     overflow-x: hidden;
   }
 
-  /* snowfall canvas layer */
-  .snow-layer {
+  /**************** SNOW ****************/
+  /* We’ll layer 2 different densities/speeds for “more snow” */
+  .snow-layer,
+  .snow-layer2 {
     pointer-events: none;
     position: fixed;
     inset: 0;
-    background-image: radial-gradient(circle at 20px 20px, rgba(255,255,255,0.9) 0 2px, transparent 3px),
-                      radial-gradient(circle at 80px 60px, rgba(255,255,255,0.5) 0 1px, transparent 2px),
-                      radial-gradient(circle at 200px 120px, rgba(255,255,255,0.8) 0 1.5px, transparent 2px);
-    background-size: 250px 250px;
-    animation: snowFloat 6s linear infinite;
-    opacity: 0.45;
     mix-blend-mode: screen;
     z-index: 10;
   }
-  @keyframes snowFloat {
-    0%   { background-position-y: 0px;   }
-    100% { background-position-y: 250px; }
+
+  /* layer 1: slightly bigger flakes, slower */
+  .snow-layer {
+    background-image:
+      radial-gradient(circle at 20px 20px, rgba(255,255,255,0.9) 0 2px, transparent 3px),
+      radial-gradient(circle at 80px 60px, rgba(255,255,255,0.5) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 200px 120px, rgba(255,255,255,0.8) 0 1.8px, transparent 3px);
+    background-size: 220px 220px;
+    animation: snowFloat1 5s linear infinite;
+    opacity: 0.5;
   }
 
-  /* nav / header bar */
+  /* layer 2: finer, faster */
+  .snow-layer2 {
+    background-image:
+      radial-gradient(circle at 40px 40px, rgba(255,255,255,0.9) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 120px 90px, rgba(255,255,255,0.4) 0 1px, transparent 2px),
+      radial-gradient(circle at 260px 160px, rgba(255,255,255,0.7) 0 1.2px, transparent 2px),
+      radial-gradient(circle at 180px 30px, rgba(255,255,255,0.8) 0 1px, transparent 2px);
+    background-size: 260px 260px;
+    animation: snowFloat2 3.5s linear infinite;
+    opacity: 0.55;
+  }
+
+  @keyframes snowFloat1 {
+    0%   { background-position-y: 0px;   }
+    100% { background-position-y: 220px; }
+  }
+  @keyframes snowFloat2 {
+    0%   { background-position-y: 0px;   }
+    100% { background-position-y: 260px; }
+  }
+
+  /*************** HEADER (top-left logo only) ***************/
   .topbar {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: flex-start;
     padding: 20px 24px;
     width: 100%;
+    position: relative;
+    z-index: 20;
   }
 
-  .logo-wrap {
-    display: flex;
+  .logo-only {
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    border-radius: 16px;
+    /* bigger logo block now */
+    width: 100px;
+    height: 100px;
   }
 
-  .logo-img {
-    width: 72px; /* bigger like you asked */
-    height: 72px;
+  .logo-only img {
+    width: 88px;
+    height: 88px;
     object-fit: contain;
     border-radius: 12px;
-    background: rgba(255,255,255,0.07);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.2);
-  }
-
-  .brand-block {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-  }
-
-  .brand-title {
-    font-size: clamp(1rem, 0.25vw + 0.9rem, 1.05rem);
-    font-weight: 600;
-    color: var(--text-primary);
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-  }
-
-  .brand-sub {
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    font-weight: 400;
   }
 
   /* page layout */
@@ -112,6 +119,8 @@
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
+    position: relative;
+    z-index: 20;
   }
 
   /* glass card */
@@ -142,6 +151,8 @@
     padding: 6px 12px;
     margin-bottom: 16px;
   }
+
+  /* we removed the 2nd pill "Company Talent Edition", so badge is just one pill now */
 
   .title {
     font-size: 1.15rem;
@@ -220,6 +231,8 @@
     cursor: pointer;
     box-shadow: 0 20px 40px rgba(36,107,255,0.5);
     transition: all 0.12s;
+    width: 100%;
+    text-align: center;
   }
   .submit-btn:hover {
     background: radial-gradient(circle at 20% 20%, var(--accent-hover) 0%, #3a7dff 60%);
@@ -248,19 +261,20 @@
 
   /* responsive tweaks */
   @media (max-width: 480px) {
-    .logo-img {
-      width: 60px;
-      height: 60px;
+    .logo-only {
+      width: 80px;
+      height: 80px;
+      border-radius: 14px;
     }
-    .brand-title {
-      font-size: 0.95rem;
+    .logo-only img {
+      width: 72px;
+      height: 72px;
     }
-    .brand-sub {
-      font-size: 0.7rem;
-    }
+
     .card {
       padding: 24px 20px 20px;
     }
+
     .title {
       font-size: 1rem;
     }
@@ -268,31 +282,27 @@
 </style>
 </head>
 <body>
+<!-- denser layered snow -->
 <div class="snow-layer"></div>
+<div class="snow-layer2"></div>
 
 <header class="topbar">
-  <div class="logo-wrap">
-    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo-img" />
-    <div class="brand-block">
-      <div class="brand-title">
-        <span>Lenbrook’s Got Talent</span>
-        <span style="color:var(--text-dim);font-weight:400;">2025</span>
-      </div>
-      <div class="brand-sub">Presented by Party Patrol</div>
-    </div>
+  <!-- Just the logo, bigger -->
+  <div class="logo-only">
+    <img src="logo.png" alt="Lenbrook's Got Talent" />
   </div>
 </header>
 
 <main class="page-shell">
   <section class="card">
+    <!-- Badge: now only "Holiday Showcase" -->
     <div class="holiday-badge">
       <span>🎄 Holiday Showcase</span>
-      <span style="color:var(--text-dim)">Company Talent Edition</span>
     </div>
 
     <h2 class="title">Submit your performance</h2>
     <p class="subtitle">
-      Upload your video and tell us who’s performing. This will go to the judges for scoring at the holiday lunch.
+      Upload your video and tell us who’s performing.
     </p>
 
     <form id="submissionForm" enctype="multipart/form-data">
@@ -309,7 +319,11 @@
           <span>Collaboration / Departments</span>
           <span style="color:var(--text-dim);font-weight:400;">optional</span>
         </label>
-        <input class="input-field" type="text" id="collab" name="departments" placeholder="Example: Sales + IT Duo" />
+        <input class="input-field"
+               type="text"
+               id="collab"
+               name="departments"
+               placeholder="Example: Sales + IT Duo" />
       </div>
 
       <div class="field-block">
@@ -317,7 +331,9 @@
           <span>Talent Description</span>
           <span style="color:var(--text-dim);font-weight:400;">what are we about to see?</span>
         </label>
-        <textarea id="description" name="description" placeholder="Short intro for the MC..."></textarea>
+        <textarea id="description"
+                  name="description"
+                  placeholder="Short intro for the MC..."></textarea>
       </div>
 
       <div class="field-block">
@@ -328,7 +344,9 @@
         <input class="file-field" type="file" id="videoFile" name="video" accept="video/*" required />
       </div>
 
-      <button class="submit-btn" type="submit">Submit Performance 🚀</button>
+      <button class="submit-btn" type="submit">
+        Submit Performance 🚀
+      </button>
       <div id="statusMsg" class="statusMsg"></div>
     </form>
   </section>
@@ -365,7 +383,6 @@
       if (response.ok) {
         statusMsg.style.color = "#4da3ff";
         statusMsg.textContent = "✅ Submitted! Thank you!";
-
         form.reset();
       } else {
         statusMsg.style.color = "#ff6b6b";
