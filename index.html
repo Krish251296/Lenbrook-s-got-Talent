@@ -214,20 +214,58 @@
     }
     setInterval(spawnFlake,80);
 
-    const FUNCTION_URL="https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo";
-    const form=document.getElementById("submissionForm");
-    const statusMsg=document.getElementById("statusMsg");
-    form.addEventListener("submit",async e=>{
-      e.preventDefault();statusMsg.textContent="Uploading...";
-      const data=new FormData(form);
-      try{
-        const r=await fetch(FUNCTION_URL,{method:"POST",body:data});
-        const t=await r.text();let j;
-        try{j=JSON.parse(t);}catch{throw new Error(t);}
-        if(r.ok){statusMsg.textContent="✅ Submission received!";form.reset();}
-        else{statusMsg.textContent="Error: "+(j.error||"Unknown error");}
-      }catch(err){statusMsg.textContent="Upload failed: "+err.message;}
+const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/getUploadUrl";
+const form = document.getElementById("submissionForm");
+const statusMsg = document.getElementById("statusMsg");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  statusMsg.textContent = "Preparing upload...";
+
+  const formData = new FormData(form);
+  const file = formData.get("video");
+  const fileName = file.name;
+  const contentType = file.type;
+
+  try {
+    // Step 1: Get signed upload URL
+    const res1 = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fileName, contentType }),
     });
+    const { uploadUrl, publicUrl, token } = await res1.json();
+
+    // Step 2: Upload directly to Storage
+    statusMsg.textContent = "Uploading video...";
+    await fetch(uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": contentType },
+      body: file,
+    });
+
+    // Step 3: Store submission in Firestore
+    await fetch("https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/submissions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fields: {
+          name: { stringValue: formData.get("name") },
+          department: { stringValue: formData.get("department") || "" },
+          description: { stringValue: formData.get("description") || "" },
+          videoURL: { stringValue: publicUrl },
+        },
+      }),
+    });
+
+    statusMsg.textContent = "✅ Submission received!";
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    statusMsg.textContent = "Upload failed: " + err.message;
+  }
+});
+
   </script>
 </body>
 </html>
