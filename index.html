@@ -228,41 +228,42 @@ form.addEventListener("submit", async (e) => {
   const contentType = file.type;
 
   try {
-    // Step 1: Get signed upload URL
-    const res1 = await fetch(FUNCTION_URL, {
+    // 🔹 Step 1: ask backend for signed URL
+    const res = await fetch(FUNCTION_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fileName, contentType }),
     });
-    const { uploadUrl, publicUrl, token } = await res1.json();
+    if (!res.ok) throw new Error(await res.text());
+    const { uploadUrl, publicPath } = await res.json();
 
-    // Step 2: Upload directly to Storage
+    // 🔹 Step 2: upload directly to Storage
     statusMsg.textContent = "Uploading video...";
-    await fetch(uploadUrl, {
-      method: "PUT",
-      headers: { "Content-Type": contentType },
-      body: file,
-    });
+    await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": contentType }, body: file });
 
-    // Step 3: Store submission in Firestore
-    await fetch("https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/submissions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fields: {
-          name: { stringValue: formData.get("name") },
-          department: { stringValue: formData.get("department") || "" },
-          description: { stringValue: formData.get("description") || "" },
-          videoURL: { stringValue: publicUrl },
-        },
-      }),
-    });
+    // 🔹 Step 3: construct public URL
+    const videoURL = `https://storage.googleapis.com/lenbrook-s-got-talent.appspot.com/${publicPath.split("/").slice(3).join("/")}`;
 
-    statusMsg.textContent = "✅ Submission received!";
+    // 🔹 Step 4: store metadata in Firestore
+    const { name, department, description } = Object.fromEntries(formData.entries());
+    const payload = {
+      name,
+      department,
+      description,
+      videoURL,
+      timestamp: new Date().toISOString(),
+    };
+
+    await fetch(
+      "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/submissions",
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fields: Object.fromEntries(Object.entries(payload).map(([k,v]) => [k,{stringValue:String(v)}])) }) }
+    );
+
+    statusMsg.textContent = "✅ Upload complete!";
     form.reset();
   } catch (err) {
     console.error(err);
-    statusMsg.textContent = "Upload failed: " + err.message;
+    statusMsg.textContent = "❌ Upload failed: " + err.message;
   }
 });
 
