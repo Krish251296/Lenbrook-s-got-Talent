@@ -244,7 +244,7 @@
       snowLayer.appendChild(flake);
       setTimeout(()=>flake.remove(), dur*1000);
     }
-    setInterval(spawnFlake, 90);
+    setInterval(spawnFlake, 70);
 
     async function loadBoard() {
       const snapshot = await getDocs(collection(db, "submissions"));
