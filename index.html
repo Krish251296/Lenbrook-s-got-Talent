@@ -7,153 +7,205 @@
 
   <style>
     :root {
-      --bg1: #0b1220;
-      --bg2: #162544;
-      --bg3: #203a60;
-      --glass: rgba(255,255,255,0.08);
-      --border: rgba(255,255,255,0.2);
-      --text: #fff;
-      --dim: rgba(255,255,255,0.6);
-      --accent: #64a8ff;
-      --accent2: #b3d4ff;
-      --radius: 18px;
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes snow-fall {
-      0% { transform: translateY(-10vh) translateX(0); opacity: 0; }
-      10% { opacity: 1; }
-      100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
+      --bg-start: #0b1220;
+      --bg-end: #1a2a4a;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --text-primary: #ffffff;
+      --text-dim: rgba(255,255,255,0.6);
+      --accent: #4da3ff;
+      --accent-bright: #91c4ff;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 10px;
     }
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-      background: linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
-      background-size: 400% 400%;
-      animation: gradientShift 20s ease infinite;
-      color: var(--text);
       min-height: 100vh;
+      color: var(--text-primary);
+      font-family: "SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
+        linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
       overflow-x: hidden;
-      position: relative;
     }
 
-    .snow-wrap {
-      position: absolute; inset: 0;
-      overflow: hidden; pointer-events: none; z-index: 5;
-    }
-    .flake {
-      position: absolute; top: -10vh;
-      color: #fff;
-      text-shadow: 0 0 10px rgba(255,255,255,0.9);
-      opacity: .95;
-      animation: snow-fall linear infinite;
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      gap: 2rem;
     }
 
-    main{
-  position:relative;
-  z-index:10;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  min-height:100dvh;
-  gap:1.8rem;
-  padding:clamp(1rem,3vw,2.5rem);
-}
-
-
-    .brand-logo { 
-      width: clamp(250px, 35vw, 350px);
-      display: block; margin: 0 auto 2rem;
-      filter: drop-shadow(0 0 20px rgba(100,150,255,0.3));
+    .brand-logo {
+      width: clamp(220px, 35vw, 320px);
+      height: auto;
+      display: block;
+      margin-bottom: 1rem;
     }
 
     .brand-tagline {
-      font-size: 1.5rem; font-weight: 500;
-      margin-bottom: .5rem;
+      font-size: 2rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--text-primary);
     }
 
     .brand-subline {
-      font-size: .95rem; color: var(--dim);
-      margin-bottom: 2rem;
+      font-size: 1rem;
+      text-align: center;
+      color: var(--text-dim);
+      max-width: 380px;
+      margin: 0 auto;
     }
 
     .glass-card {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(18px) saturate(140%);
-      border-radius: var(--radius);
-      padding: 2rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 1.8rem;
       width: 100%;
-      max-width: 420px;
-      transition: transform .3s ease, box-shadow .3s ease;
-    }
-    .glass-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 25px 70px rgba(0,0,0,0.8),
-                  0 0 25px rgba(120,160,255,0.3);
+      max-width: 440px;
+      box-shadow:
+        0 20px 80px rgba(0, 0, 0, 0.6),
+        inset 0 1px 2px rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) saturate(150%);
     }
 
-    label { font-size: .9rem; font-weight: 500; }
-    .input-shell, textarea {
-      width: 100%; padding: .8rem;
-      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    .field-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .input-shell, textarea.input-shell {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-md);
       border: 1px solid rgba(255,255,255,0.25);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-size: .9rem; font-weight: 500;
-      margin-top: .3rem;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s ease;
     }
-    textarea { resize: none; min-height: 70px; }
 
+    .input-shell:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(77,163,255,0.4);
+    }
+
+    textarea.input-shell {
+      resize: none;
+      min-height: 70px;
+    }
+
+    /* Apple-style file input */
     .file-shell {
-      border: 1px dashed rgba(255,255,255,0.3);
-      background: rgba(0,0,0,0.4);
-      border-radius: var(--radius);
-      padding: 1rem; text-align: center;
-      color: var(--dim);
+      border: 1px dashed rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .file-shell:hover {
+      background: rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
     }
 
-    .btn{
-  appearance:none;
-  border:0;
-  cursor:pointer;
-  width:100%;
-  border-radius:var(--r-lg);
-  padding:1rem 1.2rem;
-  margin-top:.4rem;
-  font-size:1rem;
-  font-weight:700;
-  color:#fff;
-  background:linear-gradient(135deg,#4da3ff 0%,#6ec3ff 50%,#86a8ff 100%);
-  box-shadow:0 6px 20px rgba(77,163,255,.4);
-  transition:all .25s ease;
-  letter-spacing:.03em;
-  backdrop-filter:blur(8px) saturate(180%);
-}
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(77,163,255,.65);
-  background:linear-gradient(135deg,#6ec3ff 0%,#4da3ff 40%,#86a8ff 100%);
-}
-.btn:active{
-  transform:scale(.97);
-  box-shadow:0 4px 10px rgba(0,0,0,.7) inset;
-}
+    input[type="file"] {
+      width: 100%;
+      color: white;
+      text-align: center;
+    }
 
-@media (max-height:700px){
-  main{justify-content:flex-start; padding-top:2rem;}
-}
-    
+    /* Modern Apple-style button */
+    .btn {
+      position: relative;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(145deg, #4e9cff, #1b62d2);
+      box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.4),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0.1) 20%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 10px 25px rgba(30, 100, 255, 0.55),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+      box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    }
+
+    #statusMsg {
+      font-size: 0.8rem;
+      color: var(--accent-bright);
+      text-align: center;
+      margin-top: 0.5rem;
+      min-height: 1.2em;
+    }
+
+    @media (max-width: 600px) {
+      .glass-card {
+        max-width: 90%;
+        padding: 1.4rem;
+      }
+    }
+
+    @media (max-height: 700px) {
+      main {
+        justify-content: flex-start;
+        padding-top: 2rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="snow-wrap" id="snowLayer"></div>
   <main>
     <img src="logo.png" alt="Lenbrook's Got Talent" class="brand-logo" />
     <div class="brand-tagline">Holiday Showcase</div>
@@ -161,51 +213,53 @@
 
     <section class="glass-card">
       <form id="submissionForm" enctype="multipart/form-data">
-        <label>Team / Participant Name</label>
-        <input class="input-shell" name="name" required placeholder="e.g. The Loud Elves" />
-        <label>Collaboration / Departments (optional)</label>
-        <input class="input-shell" name="department" placeholder="e.g. Sales + IT" />
-        <label>Performance Description</label>
-        <textarea name="description" class="input-shell" placeholder="Short description..."></textarea>
-        <label>Upload Video</label>
-        <div class="file-shell">
-          <input type="file" name="video" accept="video/*" required />
+        <div>
+          <label class="field-label">Team / Participant Name</label>
+          <input class="input-shell" type="text" name="name" placeholder="e.g. The Loud Elves" required />
         </div>
-        <button type="submit">Submit Performance ⟶</button>
+        <div>
+          <label class="field-label">Collaboration / Departments (optional)</label>
+          <input class="input-shell" type="text" name="department" placeholder="e.g. Sales + IT" />
+        </div>
+        <div>
+          <label class="field-label">Performance Description</label>
+          <textarea class="input-shell" name="description" placeholder="Short description..."></textarea>
+        </div>
+        <div>
+          <label class="field-label">Upload Video</label>
+          <div class="file-shell">
+            <input type="file" name="video" accept="video/*" required />
+          </div>
+        </div>
+        <button class="btn" type="submit">Submit Performance →</button>
         <div id="statusMsg"></div>
       </form>
     </section>
   </main>
 
   <script type="module">
-    const snowLayer=document.getElementById("snowLayer");
-    function spawnFlake(){
-      if(snowLayer.childElementCount>160)return;
-      const f=document.createElement("div");
-      f.className="flake";f.textContent="•";
-      const s=(Math.random()*0.6+0.6)*12;
-      f.style.fontSize=s+"px";
-      f.style.left=Math.random()*100+"vw";
-      const dur=Math.random()*4+4;
-      f.style.animationDuration=dur+"s";
-      snowLayer.appendChild(f);
-      setTimeout(()=>f.remove(),dur*1000);
-    }
-    setInterval(spawnFlake,80);
+    const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo";
+    const form = document.getElementById("submissionForm");
+    const statusMsg = document.getElementById("statusMsg");
 
-    const FUNCTION_URL="https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/uploadVideo";
-    const form=document.getElementById("submissionForm");
-    const statusMsg=document.getElementById("statusMsg");
-    form.addEventListener("submit",async e=>{
-      e.preventDefault();statusMsg.textContent="Uploading...";
-      const data=new FormData(form);
-      try{
-        const r=await fetch(FUNCTION_URL,{method:"POST",body:data});
-        const t=await r.text();let j;
-        try{j=JSON.parse(t);}catch{throw new Error(t);}
-        if(r.ok){statusMsg.textContent="✅ Submission received!";form.reset();}
-        else{statusMsg.textContent="Error: "+(j.error||"Unknown error");}
-      }catch(err){statusMsg.textContent="Upload failed: "+err.message;}
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusMsg.textContent = "Uploading...";
+
+      const formData = new FormData(form);
+      try {
+        const response = await fetch(FUNCTION_URL, { method: "POST", body: formData });
+        const text = await response.text();
+        const result = JSON.parse(text || "{}");
+        if (response.ok) {
+          statusMsg.textContent = "✅ Submission received!";
+          form.reset();
+        } else {
+          statusMsg.textContent = "Error: " + (result.error || "Unknown error");
+        }
+      } catch (err) {
+        statusMsg.textContent = "Upload failed: " + err.message;
+      }
     });
   </script>
 </body>
