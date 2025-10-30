@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lenbrook's Got Talent - Submit Your Video</title>
 
   <style>
@@ -52,20 +52,20 @@
       text-shadow: 0 0 10px rgba(255,255,255,0.9);
       opacity: .95;
       animation: snow-fall linear infinite;
+      will-change: transform;
     }
 
-    main{
-  position:relative;
-  z-index:10;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  min-height:100dvh;
-  gap:1.8rem;
-  padding:clamp(1rem,3vw,2.5rem);
-}
-
+    main {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      gap: 1.8rem;
+      padding: clamp(1rem, 3vw, 2.5rem);
+    }
 
     .brand-logo { 
       width: clamp(250px, 35vw, 350px);
@@ -93,6 +93,7 @@
       max-width: 420px;
       transition: transform .3s ease, box-shadow .3s ease;
     }
+
     .glass-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 25px 70px rgba(0,0,0,0.8),
@@ -115,45 +116,59 @@
       border: 1px dashed rgba(255,255,255,0.3);
       background: rgba(0,0,0,0.4);
       border-radius: var(--radius);
-      padding: 1rem; text-align: center;
+      padding: 1rem;
+      text-align: center;
       color: var(--dim);
+      transition: all 0.2s ease-in-out;
+    }
+    .file-shell:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(100,150,255,0.4);
+    }
+    input[type="file"] {
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 500;
+      border: none;
     }
 
-    .btn{
-  appearance:none;
-  border:0;
-  cursor:pointer;
-  width:100%;
-  border-radius:var(--r-lg);
-  padding:1rem 1.2rem;
-  margin-top:.4rem;
-  font-size:1rem;
-  font-weight:700;
-  color:#fff;
-  background:linear-gradient(135deg,#4da3ff 0%,#6ec3ff 50%,#86a8ff 100%);
-  box-shadow:0 6px 20px rgba(77,163,255,.4);
-  transition:all .25s ease;
-  letter-spacing:.03em;
-  backdrop-filter:blur(8px) saturate(180%);
-}
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(77,163,255,.65);
-  background:linear-gradient(135deg,#6ec3ff 0%,#4da3ff 40%,#86a8ff 100%);
-}
-.btn:active{
-  transform:scale(.97);
-  box-shadow:0 4px 10px rgba(0,0,0,.7) inset;
-}
+    /* Modern glossy button (same as review.html style) */
+    button[type="submit"] {
+      background: radial-gradient(circle at 20% 20%, #fff 0%, #a6c8ff 60%, #5b8dff 100%);
+      color: #000;
+      border: 0;
+      border-radius: 12px;
+      padding: .9rem 1.2rem;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 6px 20px rgba(77,163,255,0.4);
+    }
 
-@media (max-height:700px){
-  main{justify-content:flex-start; padding-top:2rem;}
-}
-    
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(77,163,255,0.65);
+      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #86a8ff 60%, #5b8dff 100%);
+    }
+
+    #statusMsg {
+      font-size: 0.85rem;
+      color: var(--accent2);
+      margin-top: .5rem;
+      text-align: center;
+    }
+
+    @media (max-height:700px){
+      main{justify-content:flex-start; padding-top:2rem;}
+    }
   </style>
 </head>
 <body>
   <div class="snow-wrap" id="snowLayer"></div>
+
   <main>
     <img src="logo.png" alt="Lenbrook's Got Talent" class="brand-logo" />
     <div class="brand-tagline">Holiday Showcase</div>
@@ -163,14 +178,18 @@
       <form id="submissionForm" enctype="multipart/form-data">
         <label>Team / Participant Name</label>
         <input class="input-shell" name="name" required placeholder="e.g. The Loud Elves" />
+
         <label>Collaboration / Departments (optional)</label>
         <input class="input-shell" name="department" placeholder="e.g. Sales + IT" />
+
         <label>Performance Description</label>
         <textarea name="description" class="input-shell" placeholder="Short description..."></textarea>
+
         <label>Upload Video</label>
         <div class="file-shell">
           <input type="file" name="video" accept="video/*" required />
         </div>
+
         <button type="submit">Submit Performance ⟶</button>
         <div id="statusMsg"></div>
       </form>
