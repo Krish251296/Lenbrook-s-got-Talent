@@ -2,221 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lenbrook's Got Talent - Leaderboard</title>
-
   <style>
-    :root {
-      --bg-start: #0b1220;
-      --bg-end: #1a2a4a;
-      --glass-bg: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.22);
-      --text-primary: #ffffff;
-      --text-dim: rgba(255,255,255,0.6);
-      --accent-bright: #91c4ff;
-      --radius-xl: 24px;
-      --radius-md: 10px;
+    :root{
+      --bg1:#0b1220; --bg2:#162544; --bg3:#203a60;
+      --glass:rgba(255,255,255,.08); --border:rgba(255,255,255,.22);
+      --text:#fff; --dim:rgba(255,255,255,.65);
+      --accent:#ffd166; --accent2:#a3d9ff;
+      --r-xl:22px; --r-lg:14px;
     }
+    *{box-sizing:border-box}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes snow-fall{0%{transform:translateY(-10vh) translateX(0);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(25px);opacity:0}}
+    body{
+      margin:0; min-height:100dvh; color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size:400% 400%; animation:gradientShift 22s ease infinite;
+      overflow-x:hidden; position:relative;
+    }
+    .snow-wrap{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:5}
+    .flake{position:absolute; top:-10vh; color:#fff; text-shadow:0 0 10px rgba(255,255,255,.9); opacity:.95; animation:snow-fall linear infinite}
 
-    @keyframes snow-fall {
-      0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
-      10%  { opacity: 1; }
-      100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
-    }
+    .wrap{position:relative; z-index:10; padding:clamp(18px,2vw,28px); max-width:1200px; margin:0 auto}
+    .top{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px}
+    .logo{width:clamp(160px,22vw,230px); height:auto; display:block; filter:drop-shadow(0 0 14px rgba(100,150,255,.35))}
+    .tag{color:var(--accent2); font-weight:600}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text-primary);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
-        radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
-        linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
-      background-repeat: no-repeat;
-      position: relative;
-      overflow-x: hidden;
+    .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px}
+    .card{
+      background:var(--glass); border:1px solid var(--border); border-radius:var(--r-xl);
+      padding:1rem; backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%);
+      box-shadow:0 24px 90px rgba(0,0,0,.75)
     }
-
-    .bg-glow {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 60vmin;
-      height: 60vmin;
-      transform: translate(-50%, -30%);
-      background: radial-gradient(circle,
-        rgba(130,180,255,0.45) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(60px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .bg-glow-bottom {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 80vmin;
-      height: 40vmin;
-      transform: translate(-50%, 0%);
-      background: radial-gradient(circle,
-        rgba(0,0,0,0.6) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(80px);
-      opacity: 1;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .snow-wrap {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 5;
-    }
-    .flake {
-  position: absolute;
-  top: -10vh;
-  color: #fff;
-  font-size: 10px;
-  opacity: 0.95;
-  text-shadow: 0 0 8px rgba(255,255,255,0.8), 0 0 15px rgba(180,220,255,0.5);
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.9));
-  animation: snow-fall linear infinite;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
-}
-
-
-    .page-shell {
-      position: relative;
-      z-index: 10;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: clamp(1rem,2vw,2rem) clamp(1rem,2vw,2rem) 4rem;
-    }
-
-    header {
-      text-align: center;
-      margin-top: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    .brand-logo-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-    .brand-logo {
-      width: clamp(140px, 30vw, 240px);
-      height: auto;
-      display: block;
-    }
-    .brand-logo-glow {
-      position: absolute;
-      left: 50%;
-      top: 100%;
-      transform: translate(-50%, -10px);
-      width: 140%;
-      height: 60px;
-      background: radial-gradient(ellipse at center,
-        rgba(130,180,255,0.45) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(30px);
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .headline {
-      font-size: clamp(1.2rem,1vw,1.4rem);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-top: 1.5rem;
-    }
-    .subtext {
-      font-size: .9rem;
-      color: var(--text-dim);
-      margin-top: .5rem;
-      line-height: 1.4;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .board-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-xl);
-      box-shadow:
-        0 30px 120px rgba(0,0,0,0.8),
-        0 2px 3px rgba(255,255,255,0.1) inset;
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
-      padding: 1rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .85rem;
-      color: var(--text-primary);
-      text-align: left;
-    }
-    th {
-      background: rgba(255,255,255,0.07);
-      font-weight: 600;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding: .75rem .5rem;
-    }
-    td {
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: .75rem .5rem;
-      vertical-align: top;
-    }
-
-    .scoreCell {
-      font-weight:600;
-      color:var(--accent-bright);
-      text-align:center;
-    }
+    .title{font-weight:800; font-size:1.05rem; margin-bottom:.4rem}
+    .desc{color:var(--dim); font-size:.92rem; margin-bottom:.6rem; min-height:2.2em}
+    .score{display:flex; align-items:baseline; gap:.5rem}
+    .num{font-size:1.8rem; font-weight:900; color:var(--accent)}
+    .meta{color:var(--dim); font-size:.85rem}
+    video{width:100%; border-radius:12px; outline:1px solid rgba(255,255,255,.18); margin-top:.6rem}
   </style>
 </head>
 <body>
-  <div class="bg-glow"></div>
-  <div class="bg-glow-bottom"></div>
-  <div class="snow-wrap" id="snowLayer"></div>
+  <div class="snow-wrap" id="snowLayer" aria-hidden="true"></div>
 
-  <div class="page-shell">
-    <header>
-      <div class="brand-logo-wrapper">
-        <img src="logo.png" class="brand-logo" alt="Lenbrook's Got Talent" />
-        <div class="brand-logo-glow"></div>
-      </div>
-      <div class="headline">Leaderboard</div>
-      <div class="subtext">
-        Highest average total score so far.
-      </div>
-    </header>
+  <div class="wrap">
+    <div class="top">
+      <img src="logo.png" class="logo" alt="Lenbrook's Got Talent" />
+      <div class="tag" id="countTag">Loading…</div>
+    </div>
 
-    <section class="board-card">
-      <table id="leaderTable">
-        <thead>
-          <tr>
-            <th style="width:50%;">Team / Participant</th>
-            <th style="width:35%;">Description</th>
-            <th style="width:15%; text-align:center;">Avg Score</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+    <div class="grid" id="grid"></div>
   </div>
 
   <script type="module">
+    /* Snow */
+    const snowLayer=document.getElementById('snowLayer');
+    function flake(){
+      if(snowLayer.childElementCount>220)return;
+      const el=document.createElement('div'); el.className='flake'; el.textContent='•';
+      el.style.fontSize=((Math.random()*0.7+0.55)*12)+'px';
+      el.style.left=(Math.random()*100)+'vw';
+      el.style.animationDuration=(Math.random()*4+4)+'s';
+      snowLayer.appendChild(el); setTimeout(()=>el.remove(),8000);
+    }
+    setInterval(flake,75);
+
+    /* Firebase */
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { 
-      getFirestore, collection, getDocs 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
@@ -230,53 +85,35 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const tableBody = document.querySelector("#leaderTable tbody");
+    const grid = document.getElementById("grid");
+    const countTag = document.getElementById("countTag");
 
-    // snow
-    const snowLayer = document.getElementById('snowLayer');
-    function spawnFlake() {
-      const flake = document.createElement('div');
-      flake.className = 'flake';
-      flake.textContent = '•';
-      const size = (Math.random()*0.6 + 0.6) * 12;
-      flake.style.fontSize = size + 'px';
-      flake.style.left = Math.random()*100 + 'vw';
-      const dur = Math.random()*4 + 4;
-      flake.style.animationDuration = dur + 's';
-      snowLayer.appendChild(flake);
-      setTimeout(()=>flake.remove(), dur*1000);
-    }
-    setInterval(spawnFlake, 70);
-
-    async function loadBoard() {
-      const snapshot = await getDocs(collection(db, "submissions"));
-
-      const rows = [];
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const avg = data.averageScore || 0;
-        rows.push({
-          name: data.name || "",
-          desc: data.description || "",
-          avg
-        });
+    async function load(){
+      const snap = await getDocs(collection(db,"submissions"));
+      const items = [];
+      snap.forEach(doc=>{
+        const d = doc.data()||{};
+        const ratings = d.ratings? Object.values(d.ratings):[];
+        const votes = ratings.length;
+        const avg = d.averageScore ?? (votes? ratings.reduce((a,b)=>a+(b.total||0),0)/votes : 0);
+        items.push({ id:doc.id, name:d.name||"Untitled", description:d.description||"", videoURL:d.videoURL||"", avg, votes });
       });
+      items.sort((a,b)=> (b.avg||0) - (a.avg||0));
 
-      rows.sort((a,b) => b.avg - a.avg);
-
-      tableBody.innerHTML = "";
-      rows.forEach((row) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.name}</td>
-          <td style="font-size:.8rem;line-height:1.4;color:var(--text-primary);white-space:pre-wrap;">${row.desc}</td>
-          <td class="scoreCell">${row.avg ? row.avg.toFixed(1) : "-"}</td>
-        `;
-        tableBody.appendChild(tr);
-      });
+      countTag.textContent = `${items.length} performances`;
+      grid.innerHTML = items.map(x=>`
+        <div class="card">
+          <div class="title">${x.name}</div>
+          <div class="desc">${x.description}</div>
+          <div class="score">
+            <div class="num">${x.avg ? x.avg.toFixed(1) : '-'}</div>
+            <div class="meta">avg • ${x.votes} ${x.votes===1?'vote':'votes'}</div>
+          </div>
+          ${x.videoURL ? `<video src="${x.videoURL}" controls></video>` : ``}
+        </div>
+      `).join("");
     }
-
-    loadBoard();
+    load();
   </script>
 </body>
 </html>
