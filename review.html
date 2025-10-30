@@ -2,299 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenbrook's Got Talent - Judge Panel</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lenbrook's Got Talent - Review Panel</title>
   <style>
-    :root {
-      --bg-start: #0b1220;
-      --bg-end: #1a2a4a;
-      --glass-bg: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.22);
-      --text-primary: #ffffff;
-      --text-dim: rgba(255,255,255,0.6);
-      --accent: #4da3ff;
-      --accent-bright: #91c4ff;
-      --radius-xl: 24px;
-      --radius-lg: 16px;
-      --radius-md: 10px;
+    :root{
+      --bg1:#0b1220; --bg2:#162544; --bg3:#203a60;
+      --glass:rgba(255,255,255,.08); --border:rgba(255,255,255,.22);
+      --text:#fff; --dim:rgba(255,255,255,.65);
+      --accent:#64a8ff; --accent2:#b3d4ff; --ok:#59d390;
+      --r-xl:22px; --r-lg:14px; --r-md:10px;
     }
+    *{box-sizing:border-box}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes snow-fall{0%{transform:translateY(-10vh) translateX(0);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(25px);opacity:0}}
+    body{
+      margin:0; min-height:100dvh; color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size:400% 400%; animation:gradientShift 22s ease infinite;
+      overflow-x:hidden; position:relative;
+    }
+    .snow-wrap{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:5}
+    .flake{position:absolute; top:-10vh; color:#fff; text-shadow:0 0 10px rgba(255,255,255,.9); opacity:.95; animation:snow-fall linear infinite}
 
-    @keyframes snow-fall {
-      0%   { transform: translateY(-10vh) translateX(0); opacity: 0; }
-      10%  { opacity: 1; }
-      100% { transform: translateY(110vh) translateX(20px); opacity: 0; }
-    }
+    .wrap{position:relative; z-index:10; padding:clamp(18px,2vw,28px); max-width:1200px; margin:0 auto}
+    .header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px}
+    .logo{width:clamp(160px,22vw,230px); height:auto; display:block; filter:drop-shadow(0 0 14px rgba(100,150,255,.35))}
+    .pill{background:var(--glass); border:1px solid var(--border); border-radius:999px; padding:.5rem .8rem; display:flex; gap:.6rem; align-items:center}
+    .pill input{background:transparent; border:0; outline:0; color:var(--text); font-weight:600}
+    .pill button{background:#fff; color:#000; border:0; border-radius:999px; padding:.4rem .8rem; font-weight:700; cursor:pointer}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text-primary);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(80,120,255,0.35) 0%, rgba(0,0,0,0) 60%),
-        radial-gradient(circle at 80% 20%, rgba(0,255,255,0.12) 0%, rgba(0,0,0,0) 60%),
-        linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
-      background-repeat: no-repeat;
-      position: relative;
-      overflow-x: hidden;
+    .table{
+      width:100%; border-collapse:separate; border-spacing:0 10px;
     }
+    thead th{
+      text-align:left; font-size:.85rem; letter-spacing:.02em; font-weight:700; color:var(--dim); padding:0 .6rem .4rem .6rem;
+    }
+    tbody tr{
+      background:var(--glass); border:1px solid var(--border); border-radius:var(--r-xl);
+      overflow:hidden; backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%);
+    }
+    tbody td{
+      padding:12px; vertical-align:middle;
+    }
+    tbody tr + tr{margin-top:10px}
+    video{width:220px; max-width:36vw; border-radius:12px; outline:1px solid rgba(255,255,255,.18)}
+    input[type="number"]{
+      width:72px; padding:.55rem .6rem; border-radius:10px; border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.06); color:#fff; font-weight:700; text-align:center;
+    }
+    .btn{
+      background:radial-gradient(circle at 20% 20%, #fff 0%, #a6c8ff 60%, #5b8dff 100%);
+      color:#000; border:0; border-radius:12px; padding:.6rem .9rem; font-weight:800; cursor:pointer
+    }
+    .ok{color:var(--ok); font-weight:700}
+    .status{margin:.6rem 0 1rem; color:var(--accent2); font-weight:600}
 
-    .bg-glow {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 60vmin;
-      height: 60vmin;
-      transform: translate(-50%, -30%);
-      background: radial-gradient(circle,
-        rgba(130,180,255,0.45) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(60px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .bg-glow-bottom {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 80vmin;
-      height: 40vmin;
-      transform: translate(-50%, 0%);
-      background: radial-gradient(circle,
-        rgba(0,0,0,0.6) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(80px);
-      opacity: 1;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .snow-wrap {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 5;
-    }
-.flake {
-  position: absolute;
-  top: -10vh;
-  color: #fff;
-  font-size: 10px;
-  opacity: 0.95;
-  text-shadow: 0 0 8px rgba(255,255,255,0.8), 0 0 15px rgba(180,220,255,0.5);
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.9));
-  animation: snow-fall linear infinite;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Helvetica Neue", sans-serif;
-}
-
-
-    .page-shell {
-      position: relative;
-      z-index: 10;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: clamp(1rem,2vw,2rem) clamp(1rem,2vw,2rem) 4rem;
-    }
-
-    header {
-      text-align: center;
-      margin-top: 2rem;
-      margin-bottom: 2rem;
-    }
-    .brand-logo-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-    .brand-logo {
-      width: clamp(140px, 22vw, 240px);
-      height: auto;
-      display: block;
-    }
-    .brand-logo-glow {
-      position: absolute;
-      left: 50%;
-      top: 100%;
-      transform: translate(-50%, -10px);
-      width: 140%;
-      height: 60px;
-      background: radial-gradient(ellipse at center,
-        rgba(130,180,255,0.45) 0%,
-        rgba(0,0,0,0) 70%);
-      filter: blur(30px);
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .headline {
-      font-size: clamp(1.2rem,1vw,1.4rem);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-top: 1.5rem;
-    }
-    .subtext {
-      font-size: .9rem;
-      color: var(--text-dim);
-      margin-top: .5rem;
-      line-height: 1.4;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .statusText {
-      font-size: .8rem;
-      font-weight: 500;
-      color: var(--accent-bright);
-      text-align: center;
-      min-height: 1.2em;
-      margin-top: .75rem;
-    }
-
-    /* table card */
-    .judge-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-xl);
-      box-shadow:
-        0 30px 120px rgba(0,0,0,0.8),
-        0 2px 3px rgba(255,255,255,0.1) inset;
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
-      padding: 1rem;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      min-width: 900px;
-      border-collapse: collapse;
-      font-size: .8rem;
-      color: var(--text-primary);
-      text-align: center;
-    }
-    th {
-      background: rgba(255,255,255,0.07);
-      font-weight: 600;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding: .75rem .5rem;
-      white-space: nowrap;
-    }
-    td {
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: .75rem .5rem;
-      vertical-align: top;
-    }
-
-    video {
-      width: 180px;
-      max-height: 120px;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.4);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.9);
-    }
-
-    input[type="number"] {
-      width: 60px;
-      padding: 6px 8px;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-size: .8rem;
-      outline: none;
-      text-align: center;
-    }
-    input[type="number"]:focus {
-      border-color: var(--accent);
-      box-shadow:
-        0 0 20px rgba(77,163,255,0.5),
-        0 0 60px rgba(77,163,255,0.25);
-    }
-
-    .save-btn {
-      appearance: none;
-      border: 0;
-      outline: 0;
-      cursor: pointer;
-      border-radius: var(--radius-md);
-      padding: .6rem .8rem;
-      font-size: .8rem;
-      font-weight: 600;
-      color: #000;
-      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
-      box-shadow:
-        0 20px 40px rgba(0,0,0,0.8),
-        0 2px 2px rgba(255,255,255,0.4) inset;
-      min-width: 80px;
-    }
-
-    .miniText {
-      font-size:.7rem;
-      color:var(--text-dim);
-      line-height:1.4;
-      white-space:nowrap;
-    }
-
-    #status {
-      font-size:.8rem;
-      font-weight:500;
-      color:var(--accent-bright);
-      text-align:center;
-      margin-top:1rem;
-      min-height:1.2em;
+    @media (max-width:900px){
+      .hide-sm{display:none}
+      video{width:180px}
     }
   </style>
 </head>
 <body>
-  <div class="bg-glow"></div>
-  <div class="bg-glow-bottom"></div>
-  <div class="snow-wrap" id="snowLayer"></div>
+  <div class="snow-wrap" id="snowLayer" aria-hidden="true"></div>
 
-  <div class="page-shell">
-    <header>
-      <div class="brand-logo-wrapper">
-        <img src="logo.png" class="brand-logo" alt="Lenbrook's Got Talent" />
-        <div class="brand-logo-glow"></div>
+  <div class="wrap">
+    <div class="header">
+      <img src="logo.png" class="logo" alt="Lenbrook's Got Talent" />
+      <div class="pill">
+        <span>Reviewer:</span>
+        <input id="reviewerName" placeholder="Your name" />
+        <button id="startBtn">Start</button>
       </div>
-      <div class="headline">Judge Panel</div>
-      <div class="subtext">
-        Rate each act for Technical Skill, Creativity, and Entertainment.
-      </div>
-      <div class="statusText" id="authStatus"></div>
-    </header>
+    </div>
 
-    <section class="judge-card">
-      <table id="submissionsTable">
-        <thead>
-          <tr>
-            <th>Team / Participant</th>
-            <th>Description</th>
-            <th>Video</th>
-            <th>Technical</th>
-            <th>Creativity</th>
-            <th>Entertainment</th>
-            <th>Total (You)</th>
-            <th>Avg (All)</th>
-            <th>Save</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div id="status"></div>
-    </section>
+    <div id="status" class="status">Enter your name and press Start.</div>
+
+    <table class="table" id="submissionsTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>Team / Participant</th>
+          <th class="hide-sm">Description</th>
+          <th>Video</th>
+          <th>Technical</th>
+          <th>Creativity</th>
+          <th>Entertainment</th>
+          <th>Your Total</th>
+          <th>Avg (All)</th>
+          <th>Save</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { 
-      getFirestore, collection, getDocs, doc, getDoc, updateDoc 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    /* Snow */
+    const snowLayer = document.getElementById('snowLayer');
+    function flake(){
+      if(snowLayer.childElementCount>220) return;
+      const el=document.createElement('div'); el.className='flake'; el.textContent='•';
+      el.style.fontSize=((Math.random()*0.7+0.55)*12)+'px';
+      el.style.left=(Math.random()*100)+'vw';
+      el.style.animationDuration=(Math.random()*4+4)+'s';
+      snowLayer.appendChild(el); setTimeout(()=>el.remove(),8000);
+    }
+    setInterval(flake,75);
 
-    // same config you already had
+    /* Firebase */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
       authDomain: "lenbrook-s-got-talent.firebaseapp.com",
@@ -307,111 +126,68 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Prompt reviewer name once (unchanged logic)
-    let currentReviewer = sessionStorage.getItem("reviewerName");
-    if (!currentReviewer) {
-      currentReviewer = prompt("Please enter your judge name:");
-      if (!currentReviewer) {
-        currentReviewer = "Anonymous Judge";
-      }
-      sessionStorage.setItem("reviewerName", currentReviewer);
-    }
-    document.getElementById("authStatus").textContent = "Scoring as: " + currentReviewer;
+    const startBtn = document.getElementById("startBtn");
+    const reviewerInput = document.getElementById("reviewerName");
+    const status = document.getElementById("status");
+    const table = document.getElementById("submissionsTable");
+    const tbody = table.querySelector("tbody");
+    let currentReviewer = null;
 
-    const tableBody = document.querySelector("#submissionsTable tbody");
-    const statusEl = document.getElementById("status");
+    startBtn.addEventListener("click", () => {
+      const name = reviewerInput.value.trim();
+      if(!name){ alert("Please enter your name first."); return; }
+      currentReviewer = name;
+      status.textContent = "Loading submissions…";
+      table.style.display = "table";
+      loadSubmissions();
+    });
 
-    // Snow
-    const snowLayer = document.getElementById('snowLayer');
-    function spawnFlake() {
-      const flake = document.createElement('div');
-      flake.className = 'flake';
-      flake.textContent = '•';
-      const size = (Math.random()*0.6 + 0.6) * 12;
-      flake.style.fontSize = size + 'px';
-      flake.style.left = Math.random()*100 + 'vw';
-      const dur = Math.random()*4 + 4;
-      flake.style.animationDuration = dur + 's';
-      snowLayer.appendChild(flake);
-      setTimeout(()=>flake.remove(), dur*1000);
-    }
-    setInterval(spawnFlake, 70);
-
-    // Load submissions
-    async function loadSubmissions() {
-      statusEl.textContent = "Loading...";
-      const snapshot = await getDocs(collection(db, "submissions"));
-      tableBody.innerHTML = "";
-
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const id = docSnap.id;
-
-        const myRating = data.ratings?.[currentReviewer] || {};
-        const myTotal = myRating.total || 0;
-        const avg = data.averageScore ? data.averageScore.toFixed(1) : "-";
-
+    async function loadSubmissions(){
+      const snap = await getDocs(collection(db, "submissions"));
+      tbody.innerHTML = "";
+      snap.forEach(docSnap=>{
+        const d = docSnap.data(); const id = docSnap.id;
+        const my = d.ratings?.[currentReviewer] || {};
+        const total = my.total ?? 0;
+        const avg = d.averageScore ? Number(d.averageScore).toFixed(1) : "-";
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>
-            <div style="font-weight:600;color:#fff;">${data.name || ""}</div>
-            <div class="miniText">${data.department || ""}</div>
-          </td>
-          <td style="text-align:left;max-width:200px;">
-            <div style="font-size:.8rem;line-height:1.4;color:var(--text-primary);white-space:pre-wrap;">${data.description || ""}</div>
-          </td>
-          <td>
-            <video src="${data.videoURL}" controls></video>
-          </td>
-          <td><input type="number" id="tech-${id}" min="1" max="10" value="${myRating.technical || ""}"></td>
-          <td><input type="number" id="creative-${id}" min="1" max="10" value="${myRating.creativity || ""}"></td>
-          <td><input type="number" id="ent-${id}" min="1" max="10" value="${myRating.entertainment || ""}"></td>
-          <td id="total-${id}" style="font-weight:600;">${myTotal}</td>
-          <td id="avg-${id}" style="font-weight:600;color:var(--accent-bright);">${avg}</td>
-          <td><button class="save-btn" onclick="saveRating('${id}')">Save</button></td>
+          <td><strong>${d.name||""}</strong></td>
+          <td class="hide-sm">${d.description||""}</td>
+          <td><video src="${d.videoURL||""}" controls></video></td>
+          <td><input type="number" id="tech-${id}" min="1" max="10" value="${my.technical??""}"></td>
+          <td><input type="number" id="creative-${id}" min="1" max="10" value="${my.creativity??""}"></td>
+          <td><input type="number" id="ent-${id}" min="1" max="10" value="${my.entertainment??""}"></td>
+          <td id="total-${id}" class="ok">${total}</td>
+          <td id="avg-${id}">${avg}</td>
+          <td><button class="btn" onclick="saveRating('${id}')">Save</button></td>
         `;
-        tableBody.appendChild(tr);
+        tbody.appendChild(tr);
       });
-
-      statusEl.textContent = "Ready.";
+      status.textContent = "✅ Loaded submissions. Enter scores and Save.";
     }
 
-    // Save rating
     window.saveRating = async (id) => {
-      const tech = parseInt(document.getElementById(`tech-${id}`).value || 0);
-      const creative = parseInt(document.getElementById(`creative-${id}`).value || 0);
-      const ent = parseInt(document.getElementById(`ent-${id}`).value || 0);
-      const total = tech + creative + ent;
+      if(!currentReviewer){ alert("Please enter your name first."); return; }
+      const tech = parseInt(document.getElementById(`tech-${id}`).value||0,10);
+      const cre  = parseInt(document.getElementById(`creative-${id}`).value||0,10);
+      const ent  = parseInt(document.getElementById(`ent-${id}`).value||0,10);
+      const total = tech+cre+ent;
 
-      const ref = doc(db, "submissions", id);
-      const snap = await getDoc(ref);
-      const data = snap.data() || {};
+      const ref = doc(db,"submissions",id);
+      const snap = await getDoc(ref); const data = snap.data()||{};
+      const ratings = data.ratings||{};
+      ratings[currentReviewer] = { technical:tech, creativity:cre, entertainment:ent, total };
 
-      const ratings = data.ratings || {};
-      ratings[currentReviewer] = {
-        technical: tech,
-        creativity: creative,
-        entertainment: ent,
-        total
-      };
+      const allTotals = Object.values(ratings).map(r=>r.total||0);
+      const avg = allTotals.length? allTotals.reduce((a,b)=>a+b,0)/allTotals.length : 0;
 
-      const allTotals = Object.values(ratings).map(r => r.total || 0);
-      const avg =
-        allTotals.reduce((a,b)=>a+b,0) / (allTotals.length || 1);
-
-      await updateDoc(ref, {
-        ratings,
-        averageScore: avg
-      });
+      await updateDoc(ref,{ ratings, averageScore: avg });
 
       document.getElementById(`total-${id}`).textContent = total;
       document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
-
-      statusEl.textContent = `Saved for ${id}`;
-      setTimeout(()=>{ statusEl.textContent = "Ready."; },1500);
+      alert(`✅ Saved for ${currentReviewer}`);
     };
-
-    loadSubmissions();
   </script>
 </body>
 </html>
