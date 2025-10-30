@@ -54,11 +54,18 @@
       animation: snow-fall linear infinite;
     }
 
-    main { 
-      position: relative; z-index: 10;
-      display: flex; flex-direction: column;
-      align-items: center; padding: 3rem 1rem;
-    }
+    main{
+  position:relative;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100dvh;
+  gap:1.8rem;
+  padding:clamp(1rem,3vw,2.5rem);
+}
+
 
     .brand-logo { 
       width: clamp(250px, 35vw, 350px);
@@ -112,17 +119,33 @@
       color: var(--dim);
     }
 
-    button {
-      appearance: none; border: none;
-      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a6c8ff 60%, #5b8dff 100%);
-      color: #000; border-radius: var(--radius);
-      font-weight: 600; padding: .9rem 1rem;
-      cursor: pointer;
-      transition: transform .15s, box-shadow .15s;
-    }
-    button:hover { transform: translateY(-2px); }
+    .btn{
+  appearance:none;
+  border:0;
+  cursor:pointer;
+  width:100%;
+  border-radius:var(--r-lg);
+  padding:1rem 1.2rem;
+  margin-top:.4rem;
+  font-size:1rem;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(135deg,#4da3ff 0%,#6ec3ff 50%,#86a8ff 100%);
+  box-shadow:0 6px 20px rgba(77,163,255,.4);
+  transition:all .25s ease;
+  letter-spacing:.03em;
+  backdrop-filter:blur(8px) saturate(180%);
+}
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(77,163,255,.65);
+  background:linear-gradient(135deg,#6ec3ff 0%,#4da3ff 40%,#86a8ff 100%);
+}
+.btn:active{
+  transform:scale(.97);
+  box-shadow:0 4px 10px rgba(0,0,0,.7) inset;
+}
 
-    #statusMsg { margin-top: .8rem; text-align: center; color: var(--accent2); font-size: .9rem; }
 
   </style>
 </head>
