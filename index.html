@@ -24,7 +24,6 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
     @keyframes snow-fall {
       0% { transform: translateY(-10vh) translateX(0); opacity: 0; }
       10% { opacity: 1; }
@@ -96,7 +95,6 @@
       max-width: 420px;
       transition: transform .3s ease, box-shadow .3s ease;
     }
-
     .glass-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 25px 70px rgba(0,0,0,0.8),
@@ -113,7 +111,6 @@
       font-size: .9rem; font-weight: 500;
       margin-top: .3rem;
     }
-
     textarea { resize: none; min-height: 70px; }
 
     .file-shell {
@@ -121,11 +118,10 @@
       background: rgba(0,0,0,0.4);
       border-radius: var(--radius);
       padding: 1rem;
-      text-align: left;  /* moved left */
+      text-align: left;
       color: var(--dim);
       transition: all 0.2s ease-in-out;
     }
-
     .file-shell:hover {
       border-color: var(--accent);
       box-shadow: 0 0 15px rgba(100,150,255,0.4);
@@ -152,7 +148,6 @@
       transition: all 0.2s ease-in-out;
       box-shadow: 0 6px 20px rgba(77,163,255,0.4);
     }
-
     button[type="submit"]:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(77,163,255,0.65);
@@ -199,6 +194,7 @@
   </main>
 
   <script type="module">
+    /* ❄ Snowfall */
     const snowLayer=document.getElementById("snowLayer");
     function spawnFlake(){
       if(snowLayer.childElementCount>160)return;
@@ -214,59 +210,68 @@
     }
     setInterval(spawnFlake,80);
 
-const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/getUploadUrl";
-const form = document.getElementById("submissionForm");
-const statusMsg = document.getElementById("statusMsg");
+    /* 🚀 Upload Logic */
+    const FUNCTION_URL = "https://us-central1-lenbrook-s-got-talent.cloudfunctions.net/getUploadUrl";
+    const FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/submissions";
+    const form = document.getElementById("submissionForm");
+    const statusMsg = document.getElementById("statusMsg");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  statusMsg.textContent = "Preparing upload...";
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusMsg.textContent = "⏳ Requesting upload URL...";
 
-  const formData = new FormData(form);
-  const file = formData.get("video");
-  const fileName = file.name;
-  const contentType = file.type;
+      const formData = new FormData(form);
+      const file = formData.get("video");
+      const fileName = file.name;
+      const contentType = file.type;
 
-  try {
-    // 🔹 Step 1: ask backend for signed URL
-    const res = await fetch(FUNCTION_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fileName, contentType }),
+      try {
+        // Step 1️⃣ Get signed upload URL
+        const res = await fetch(FUNCTION_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileName, contentType }),
+        });
+        const { uploadUrl, publicPath, error } = await res.json();
+        if (error) throw new Error(error);
+
+        statusMsg.textContent = "⬆️ Uploading video...";
+
+        // Step 2️⃣ Upload to Firebase Storage
+        await fetch(uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": contentType },
+          body: file,
+        });
+
+        // Step 3️⃣ Create public URL (correct .firebasestorage.app)
+        const videoURL = `https://${publicPath.replace("gs://", "").replace("/", ".")}`;
+
+        // Step 4️⃣ Store metadata in Firestore
+        const payload = {
+          name: formData.get("name"),
+          department: formData.get("department") || "",
+          description: formData.get("description") || "",
+          videoURL,
+          timestamp: new Date().toISOString(),
+        };
+
+        await fetch(FIRESTORE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fields: Object.fromEntries(Object.entries(payload)
+              .map(([k, v]) => [k, { stringValue: v }]))
+          }),
+        });
+
+        statusMsg.textContent = "✅ Upload complete!";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        statusMsg.textContent = "❌ Upload failed: " + err.message;
+      }
     });
-    if (!res.ok) throw new Error(await res.text());
-    const { uploadUrl, publicPath } = await res.json();
-
-    // 🔹 Step 2: upload directly to Storage
-    statusMsg.textContent = "Uploading video...";
-    await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": contentType }, body: file });
-
-    // 🔹 Step 3: construct public URL
-    const videoURL = `https://storage.googleapis.com/lenbrook-s-got-talent.appspot.com/${publicPath.split("/").slice(3).join("/")}`;
-
-    // 🔹 Step 4: store metadata in Firestore
-    const { name, department, description } = Object.fromEntries(formData.entries());
-    const payload = {
-      name,
-      department,
-      description,
-      videoURL,
-      timestamp: new Date().toISOString(),
-    };
-
-    await fetch(
-      "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/submissions",
-      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fields: Object.fromEntries(Object.entries(payload).map(([k,v]) => [k,{stringValue:String(v)}])) }) }
-    );
-
-    statusMsg.textContent = "✅ Upload complete!";
-    form.reset();
-  } catch (err) {
-    console.error(err);
-    statusMsg.textContent = "❌ Upload failed: " + err.message;
-  }
-});
-
   </script>
 </body>
 </html>
