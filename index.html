@@ -24,6 +24,7 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
     @keyframes snow-fall {
       0% { transform: translateY(-10vh) translateX(0); opacity: 0; }
       10% { opacity: 1; }
@@ -52,7 +53,6 @@
       text-shadow: 0 0 10px rgba(255,255,255,0.9);
       opacity: .95;
       animation: snow-fall linear infinite;
-      will-change: transform;
     }
 
     main {
@@ -61,26 +61,29 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       min-height: 100dvh;
-      gap: 1.8rem;
-      padding: clamp(1rem, 3vw, 2.5rem);
+      gap: 1rem;
+      padding: 2rem 1rem 3rem;
     }
 
     .brand-logo { 
-      width: clamp(250px, 35vw, 350px);
-      display: block; margin: 0 auto 2rem;
+      width: clamp(240px, 30vw, 340px);
+      display: block;
+      margin: 1rem auto 1rem;
       filter: drop-shadow(0 0 20px rgba(100,150,255,0.3));
     }
 
     .brand-tagline {
-      font-size: 1.5rem; font-weight: 500;
-      margin-bottom: .5rem;
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
     }
 
     .brand-subline {
-      font-size: .95rem; color: var(--dim);
-      margin-bottom: 2rem;
+      font-size: .95rem;
+      color: var(--dim);
+      margin-bottom: 1.5rem;
     }
 
     .glass-card {
@@ -110,6 +113,7 @@
       font-size: .9rem; font-weight: 500;
       margin-top: .3rem;
     }
+
     textarea { resize: none; min-height: 70px; }
 
     .file-shell {
@@ -117,14 +121,16 @@
       background: rgba(0,0,0,0.4);
       border-radius: var(--radius);
       padding: 1rem;
-      text-align: center;
+      text-align: left;  /* moved left */
       color: var(--dim);
       transition: all 0.2s ease-in-out;
     }
+
     .file-shell:hover {
       border-color: var(--accent);
       box-shadow: 0 0 15px rgba(100,150,255,0.4);
     }
+
     input[type="file"] {
       background: transparent;
       color: #fff;
@@ -133,7 +139,6 @@
       border: none;
     }
 
-    /* Modern glossy button (same as review.html style) */
     button[type="submit"] {
       background: radial-gradient(circle at 20% 20%, #fff 0%, #a6c8ff 60%, #5b8dff 100%);
       color: #000;
@@ -166,6 +171,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="snow-wrap" id="snowLayer"></div>
 
@@ -178,18 +184,14 @@
       <form id="submissionForm" enctype="multipart/form-data">
         <label>Team / Participant Name</label>
         <input class="input-shell" name="name" required placeholder="e.g. The Loud Elves" />
-
         <label>Collaboration / Departments (optional)</label>
         <input class="input-shell" name="department" placeholder="e.g. Sales + IT" />
-
         <label>Performance Description</label>
         <textarea name="description" class="input-shell" placeholder="Short description..."></textarea>
-
         <label>Upload Video</label>
         <div class="file-shell">
           <input type="file" name="video" accept="video/*" required />
         </div>
-
         <button type="submit">Submit Performance ⟶</button>
         <div id="statusMsg"></div>
       </form>
