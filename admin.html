@@ -153,6 +153,7 @@
         <div class="item">
           <div class="name">${x.name||"Untitled"}</div>
           <div class="meta">Avg: <strong>${x.avg?x.avg.toFixed(1):"-"}</strong> • Votes: ${x.votes}</div>
+          ${x.members ? `<div class="meta"><strong>Members:</strong> ${x.members}</div>` : ``}
           ${x.description? `<div class="meta">${x.description}</div>`:``}
           ${x.videoURL ? `
   <video 
