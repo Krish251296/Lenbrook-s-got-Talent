@@ -154,7 +154,16 @@
           <div class="name">${x.name||"Untitled"}</div>
           <div class="meta">Avg: <strong>${x.avg?x.avg.toFixed(1):"-"}</strong> • Votes: ${x.votes}</div>
           ${x.description? `<div class="meta">${x.description}</div>`:``}
-          ${x.videoURL? `<video src="${x.videoURL}" controls></video>`:``}
+          ${x.videoURL ? `
+  <video 
+    src="${
+      x.videoURL.includes('firebasestorage')
+        ? x.videoURL
+        : `https://firebasestorage.googleapis.com/v0/b/lenbrook-s-got-talent.firebasestorage.app/o/${encodeURIComponent((x.videoURL || '').split('/').pop())}?alt=media`
+    }" 
+    controls preload="metadata">
+  </video>
+` : ``}
           <div class="meta">Doc ID: ${x.id}</div>
         </div>
       `).join("");
