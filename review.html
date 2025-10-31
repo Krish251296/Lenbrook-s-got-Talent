@@ -83,6 +83,7 @@
       <thead>
         <tr>
           <th>Name / Performance Name</th>
+          <th class="hide-sm">Performing Member/s</th>
           <th class="hide-sm">Description</th>
           <th>Video</th>
           <th>Technical</th>
@@ -153,6 +154,7 @@
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><strong>${d.name||""}</strong></td>
+          <td class="hide-sm">${d.members || ""}</td>
           <td class="hide-sm">${d.description||""}</td>
           <td>
   <video
