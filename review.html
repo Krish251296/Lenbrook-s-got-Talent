@@ -154,7 +154,14 @@
         tr.innerHTML = `
           <td><strong>${d.name||""}</strong></td>
           <td class="hide-sm">${d.description||""}</td>
-          <td><video src="${d.videoURL||""}" controls></video></td>
+          <td>
+  <video
+    src="${d.videoURL?.includes('firebasestorage') 
+      ? d.videoURL 
+      : `https://firebasestorage.googleapis.com/v0/b/lenbrook-s-got-talent.firebasestorage.app/o/${encodeURIComponent((d.videoURL||'').split('/').pop())}?alt=media`}" 
+    controls>
+  </video>
+</td>
           <td><input type="number" id="tech-${id}" min="1" max="10" value="${my.technical??""}"></td>
           <td><input type="number" id="creative-${id}" min="1" max="10" value="${my.creativity??""}"></td>
           <td><input type="number" id="ent-${id}" min="1" max="10" value="${my.entertainment??""}"></td>
