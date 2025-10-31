@@ -180,7 +180,7 @@
         <label>Name / Performance Name</label>
         <input class="input-shell" name="name" required placeholder="e.g. Jackie Rodgers / Festive Beats" />
         <label>Performing Member/s</label>
-        <input class="input-shell" name="department" placeholder="e.g. Jackie, Paul, Braedon" />
+        <input class="input-shell" name="members" placeholder="e.g. Jackie, Paul, Braedon" />
         <label>Performance Description</label>
         <textarea name="description" class="input-shell" placeholder="Short description..."></textarea>
         <label>Upload Video</label>
@@ -250,7 +250,7 @@ const videoURL = `https://firebasestorage.googleapis.com/v0/b/lenbrook-s-got-tal
         // Step 4️⃣ Store metadata in Firestore
         const payload = {
           name: formData.get("name"),
-          department: formData.get("department") || "",
+          members: formData.get("members") || "",
           description: formData.get("description") || "",
           videoURL,
           timestamp: new Date().toISOString(),
