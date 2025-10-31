@@ -244,8 +244,8 @@
           body: file,
         });
 
-        // Step 3️⃣ Create public URL (correct .firebasestorage.app)
-        const videoURL = `https://${publicPath.replace("gs://", "").replace("/", ".")}`;
+        // Step 3️⃣ Create real Firebase public URL
+const videoURL = `https://firebasestorage.googleapis.com/v0/b/lenbrook-s-got-talent.firebasestorage.app/o/${encodeURIComponent(publicPath.replace("gs://lenbrook-s-got-talent.firebasestorage.app/", ""))}?alt=media`;
 
         // Step 4️⃣ Store metadata in Firestore
         const payload = {
