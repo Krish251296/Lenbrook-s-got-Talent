@@ -40,7 +40,7 @@
     .desc{color:var(--dim); font-size:.92rem; margin-bottom:.6rem; min-height:2.2em}
     .score{display:flex; align-items:baseline; gap:.5rem}
     .num{font-size:1.8rem; font-weight:900; color:var(--accent)}
-    .meta{color:var(--dim); font-size:.85rem}
+    .meta{color:var(--dim); font-size:.85rem; line-height:1.4}
     video{width:100%; border-radius:12px; outline:1px solid rgba(255,255,255,.18); margin-top:.6rem}
   </style>
 </head>
@@ -93,11 +93,26 @@
       const items = [];
       snap.forEach(doc=>{
         const d = doc.data()||{};
-        const ratings = d.ratings? Object.values(d.ratings):[];
-        const votes = ratings.length;
-        const avg = d.averageScore ?? (votes? ratings.reduce((a,b)=>a+(b.total||0),0)/votes : 0);
-        items.push({ id:doc.id, name:d.name||"Untitled", description:d.description||"", videoURL:d.videoURL||"", avg, votes });
+        const ratingsArr = d.ratings ? Object.values(d.ratings) : [];
+        const votes = ratingsArr.length;
+
+        // 🔹 Total points across all reviewers
+        const totalPoints = ratingsArr.reduce((sum,r)=> sum + (r.total || 0), 0);
+
+        // 🔹 Average score (keep your existing logic, but now based on totals if needed)
+        const avg = d.averageScore ?? (votes ? totalPoints / votes : 0);
+
+        items.push({
+          id:doc.id,
+          name:d.name||"Untitled",
+          description:d.description||"",
+          videoURL:d.videoURL||"",
+          avg,
+          votes,
+          totalPoints
+        });
       });
+
       items.sort((a,b)=> (b.avg||0) - (a.avg||0));
 
       countTag.textContent = `${items.length} performances`;
@@ -107,7 +122,10 @@
           <div class="desc">${x.description}</div>
           <div class="score">
             <div class="num">${x.avg ? x.avg.toFixed(1) : '-'}</div>
-            <div class="meta">avg • ${x.votes} ${x.votes===1?'vote':'votes'}</div>
+            <div class="meta">
+              avg • ${x.votes} ${x.votes===1?'vote':'votes'}<br>
+              Total points: ${x.totalPoints}
+            </div>
           </div>
           ${x.videoURL ? `<video src="${x.videoURL}" controls></video>` : ``}
         </div>
