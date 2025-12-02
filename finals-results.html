@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lenbrook's Got Talent - Finals Results</title>
+  <style>
+    :root{
+      --bg1:#0b1220; --bg2:#162544; --bg3:#203a60;
+      --glass:rgba(255,255,255,.08); --border:rgba(255,255,255,.22);
+      --text:#fff; --dim:rgba(255,255,255,.65);
+      --accent:#ffd166; --accent2:#a3d9ff;
+      --r-xl:22px; --r-lg:14px;
+    }
+    *{box-sizing:border-box}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes snow-fall{0%{transform:translateY(-10vh) translateX(0);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(25px);opacity:0}}
+
+    body{
+      margin:0; min-height:100dvh; color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size:400% 400%; animation:gradientShift 22s ease infinite;
+      overflow-x:hidden; position:relative;
+    }
+    .snow-wrap{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:5}
+    .flake{position:absolute; top:-10vh; color:#fff; text-shadow:0 0 10px rgba(255,255,255,.9); opacity:.95; animation:snow-fall linear infinite}
+
+    .wrap{position:relative; z-index:10; padding:clamp(18px,2vw,28px); max-width:1000px; margin:0 auto}
+    .top{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px}
+    .logo{width:clamp(160px,22vw,230px); height:auto; display:block; filter:drop-shadow(0 0 14px rgba(100,150,255,.35))}
+    .tag{color:var(--accent2); font-weight:600}
+
+    .card{
+      background:var(--glass); border:1px solid var(--border); border-radius:var(--r-xl);
+      padding:1rem 1.2rem; backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%);
+      box-shadow:0 24px 90px rgba(0,0,0,.75); margin-top:0.5rem;
+    }
+
+    table{
+      width:100%; border-collapse:collapse; margin-top:0.5rem; font-size:0.9rem;
+    }
+    th,td{padding:0.6rem 0.5rem; text-align:left; border-bottom:1px solid rgba(255,255,255,0.08);}
+    th{font-size:0.8rem; letter-spacing:0.03em; color:var(--dim); text-transform:uppercase;}
+    tr.highlight{background:rgba(255,209,102,0.06);}
+    .ranknum{font-weight:800; font-size:1.05rem;}
+    .name{font-weight:700;}
+    .points{font-weight:800; color:var(--accent);}
+    .small{color:var(--dim); font-size:0.8rem;}
+
+    @media (max-width:700px){
+      table{font-size:0.8rem;}
+      th,td{padding:0.45rem 0.3rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="snow-wrap" id="snowLayer" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <img src="logo.png" class="logo" alt="Lenbrook's Got Talent" />
+      <div class="tag" id="summaryTag">Loading finals results…</div>
+    </div>
+
+    <div class="card">
+      <div class="small">
+        Each ballot ranks performances 1–5. We convert ranks to points (1st=5, 2nd=4, 3rd=3, 4th=2, 5th=1).
+        Table below is sorted by total points (higher = better).
+      </div>
+
+      <table id="resultsTable">
+        <thead>
+          <tr>
+            <th>Place</th>
+            <th>Performance</th>
+            <th>Avg Rank</th>
+            <th>Total Points</th>
+            <th>Ballots</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    /* Snow */
+    const snowLayer=document.getElementById('snowLayer');
+    function flake(){
+      if(snowLayer.childElementCount>220)return;
+      const el=document.createElement('div'); el.className='flake'; el.textContent='•';
+      el.style.fontSize=((Math.random()*0.7+0.55)*12)+'px';
+      el.style.left=(Math.random()*100)+'vw';
+      el.style.animationDuration=(Math.random()*4+4)+'s';
+      snowLayer.appendChild(el); setTimeout(()=>el.remove(),8000);
+    }
+    setInterval(flake,75);
+
+    /* Must match finals.html FINALISTS order/names */
+    const FINALISTS = [
+      { id: "finalist1", name: "Finalist 1 – e.g. Festive Beats" },
+      { id: "finalist2", name: "Finalist 2" },
+      { id: "finalist3", name: "Finalist 3" },
+      { id: "finalist4", name: "Finalist 4" },
+      { id: "finalist5", name: "Finalist 5" }
+    ];
+
+    const FIRESTORE_URL =
+      "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/finalVotes?pageSize=300";
+
+    const summaryTag = document.getElementById("summaryTag");
+    const tbody = document.querySelector("#resultsTable tbody");
+
+    function asNumber(field){
+      if(!field) return NaN;
+      if(field.integerValue !== undefined) return Number(field.integerValue);
+      if(field.stringValue !== undefined) return Number(field.stringValue);
+      return NaN;
+    }
+
+    async function loadResults(){
+      try{
+        const res = await fetch(FIRESTORE_URL);
+        if(!res.ok) throw new Error(await res.text() || "Firestore error");
+        const data = await res.json();
+        const docs = data.documents || [];
+
+        // Initialise aggregates
+        const stats = FINALISTS.map(f=>({
+          id: f.id,
+          name: f.name,
+          totalRank: 0,
+          totalPoints: 0,
+          ballots: 0
+        }));
+
+        for(const doc of docs){
+          const fields = doc.fields || {};
+          // For each finalist index 0..4
+          for(let i=0;i<FINALISTS.length;i++){
+            const rankField = fields["rank_"+i];
+            const rank = asNumber(rankField);
+            if(!Number.isFinite(rank) || rank < 1 || rank > FINALISTS.length) continue;
+            stats[i].totalRank += rank;
+            stats[i].ballots += 1;
+            const points = (FINALISTS.length + 1) - rank; // 5→1 pt, 1→5 pts
+            stats[i].totalPoints += points;
+          }
+        }
+
+        // compute averages
+        stats.forEach(s=>{
+          s.avgRank = s.ballots ? (s.totalRank / s.ballots) : null;
+        });
+
+        // sort by totalPoints desc, then avgRank asc
+        stats.sort((a,b)=>{
+          if(b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+          if(a.avgRank === null) return 1;
+          if(b.avgRank === null) return -1;
+          return a.avgRank - b.avgRank;
+        });
+
+        const totalBallots = stats.reduce((sum,s)=>Math.max(sum,s.ballots),0);
+        summaryTag.textContent = `Finals ballots counted: ${totalBallots}`;
+
+        tbody.innerHTML = stats.map((s, idx)=>`
+          <tr class="${idx<3 ? 'highlight' : ''}">
+            <td class="ranknum">#${idx+1}</td>
+            <td class="name">${s.name}</td>
+            <td>${s.avgRank !== null ? s.avgRank.toFixed(2) : '-'}</td>
+            <td class="points">${s.totalPoints}</td>
+            <td>${s.ballots}</td>
+          </tr>
+        `).join("");
+      }catch(err){
+        console.error(err);
+        summaryTag.textContent = "Error loading results: " + err.message;
+      }
+    }
+
+    loadResults();
+  </script>
+</body>
+</html>
