@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lenbrook's Got Talent - Ratings Report</title>
+  <style>
+    :root{
+      --bg1:#0b1220; --bg2:#162544; --bg3:#203a60;
+      --glass:rgba(255,255,255,.08); --border:rgba(255,255,255,.22);
+      --text:#fff; --dim:rgba(255,255,255,.65);
+      --accent:#64a8ff; --accent2:#ffd166;
+      --r-xl:22px; --r-lg:14px; --r-md:10px;
+    }
+    *{box-sizing:border-box}
+    @keyframes gradientShift{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    @keyframes snow-fall{
+      0%{transform:translateY(-10vh) translateX(0);opacity:0}
+      10%{opacity:1}
+      100%{transform:translateY(110vh) translateX(25px);opacity:0}
+    }
+    body{
+      margin:0; min-height:100dvh; color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size:400% 400%; animation:gradientShift 22s ease infinite;
+      overflow-x:hidden; position:relative;
+    }
+    .snow-wrap{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:5}
+    .flake{position:absolute; top:-10vh; color:#fff; text-shadow:0 0 10px rgba(255,255,255,.9); opacity:.95; animation:snow-fall linear infinite}
+
+    .wrap{
+      position:relative; z-index:10;
+      padding:clamp(18px,2vw,28px);
+      max-width:1200px; margin:0 auto 32px auto;
+    }
+    .top{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px; margin-bottom:18px;
+    }
+    .logo{
+      width:clamp(160px,22vw,230px); height:auto; display:block;
+      filter:drop-shadow(0 0 14px rgba(100,150,255,.35));
+    }
+    .tag{
+      color:var(--accent2); font-weight:600; text-align:right;
+      font-size:.9rem;
+    }
+
+    .report-note{
+      background:var(--glass); border:1px solid var(--border);
+      border-radius:var(--r-lg);
+      padding:.75rem 1rem; margin-bottom:14px;
+      font-size:.9rem; color:var(--dim);
+      backdrop-filter:blur(14px) saturate(140%);
+      -webkit-backdrop-filter:blur(14px) saturate(140%);
+    }
+
+    .card{
+      background:var(--glass); border:1px solid var(--border);
+      border-radius:var(--r-xl);
+      padding:1rem 1.1rem 1.1rem;
+      margin-bottom:14px;
+      backdrop-filter:blur(16px) saturate(140%);
+      -webkit-backdrop-filter:blur(16px) saturate(140%);
+      box-shadow:0 24px 90px rgba(0,0,0,.75);
+    }
+    .card-header{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:12px; margin-bottom:.5rem;
+    }
+    .title-block{
+      max-width:70%;
+    }
+    .perf-name{
+      font-weight:800; font-size:1.05rem; margin-bottom:.2rem;
+    }
+    .members{
+      font-size:.9rem; color:var(--dim);
+    }
+    .summary-pill{
+      min-width:150px;
+      text-align:right;
+      font-size:.85rem;
+    }
+    .summary-pill-main{
+      font-size:1.6rem; font-weight:900; color:var(--accent2);
+      line-height:1.1;
+    }
+    .summary-pill-sub{
+      color:var(--dim); margin-top:.15rem;
+    }
+
+    .desc{
+      font-size:.9rem; color:var(--dim); margin-bottom:.5rem;
+    }
+
+    .table-wrap{
+      overflow-x:auto; margin-top:.4rem;
+    }
+    table{
+      width:100%; border-collapse:collapse;
+      font-size:.85rem;
+    }
+    thead{
+      background:rgba(11,18,32,.8);
+    }
+    th, td{
+      padding:.45rem .5rem;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      text-align:center;
+      white-space:nowrap;
+    }
+    th{
+      font-weight:600; color:var(--dim); text-transform:uppercase;
+      font-size:.75rem; letter-spacing:.04em;
+    }
+    th:first-child, td:first-child{
+      text-align:left;
+    }
+
+    .no-ratings{
+      font-size:.85rem; color:var(--dim); font-style:italic;
+      padding:.4rem 0 .1rem;
+    }
+
+    @media (max-width:780px){
+      .card-header{
+        flex-direction:column; align-items:flex-start;
+      }
+      .title-block{max-width:100%;}
+      .summary-pill{text-align:left;}
+    }
+  </style>
+</head>
+<body>
+  <div class="snow-wrap" id="snowLayer" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <img src="logo.png" class="logo" alt="Lenbrook's Got Talent" />
+      <div class="tag" id="countTag">Loading ratings…</div>
+    </div>
+
+    <div class="report-note">
+      Internal ratings report (hidden URL). Shows each performance, all reviewers, and their scores
+      for Technical, Creativity, Entertainment, and Total.
+    </div>
+
+    <div id="reportContainer"></div>
+  </div>
+
+  <script type="module">
+    /* ❄ Snow */
+    const snowLayer=document.getElementById('snowLayer');
+    function flake(){
+      if(snowLayer.childElementCount>220)return;
+      const el=document.createElement('div'); el.className='flake'; el.textContent='•';
+      el.style.fontSize=((Math.random()*0.7+0.55)*12)+'px';
+      el.style.left=(Math.random()*100)+'vw';
+      el.style.animationDuration=(Math.random()*4+4)+'s';
+      snowLayer.appendChild(el); setTimeout(()=>el.remove(),8000);
+    }
+    setInterval(flake,75);
+
+    /* 🔥 Firebase (read-only) */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
+      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
+      projectId: "lenbrook-s-got-talent",
+      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
+      messagingSenderId: "327419181483",
+      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    const container = document.getElementById("reportContainer");
+    const countTag  = document.getElementById("countTag");
+
+    async function loadReport(){
+      const snap = await getDocs(collection(db,"submissions"));
+      const items = [];
+
+      snap.forEach(docSnap=>{
+        const d = docSnap.data() || {};
+        const ratingsObj = d.ratings || {};
+        const ratingsArr = Object.entries(ratingsObj); // [ [reviewerName, {technical,...}], ...]
+        const votes = ratingsArr.length;
+
+        const totalPoints = ratingsArr.reduce(
+          (sum,[,r]) => sum + (Number(r.total)||0),
+          0
+        );
+
+        const avgScore =
+          d.averageScore != null
+            ? Number(d.averageScore)
+            : (votes ? totalPoints / votes : 0);
+
+        items.push({
+          id: docSnap.id,
+          name: d.name || "Untitled",
+          members: d.members || d.department || "",
+          description: d.description || "",
+          ratingsArr,
+          votes,
+          totalPoints,
+          avgScore
+        });
+      });
+
+      // Highest avg first
+      items.sort((a,b)=>(b.avgScore||0)-(a.avgScore||0));
+
+      countTag.textContent = `${items.length} performances • ratings report`;
+
+      container.innerHTML = items.map(item=>{
+        const hasRatings = item.ratingsArr.length > 0;
+
+        const rows = hasRatings
+          ? item.ratingsArr.map(([reviewer,r])=>{
+              const t  = r.technical ?? "";
+              const c  = r.creativity ?? "";
+              const e  = r.entertainment ?? "";
+              const tt = r.total ?? ( (t||0)+(c||0)+(e||0) );
+              return `
+                <tr>
+                  <td>${reviewer}</td>
+                  <td>${t}</td>
+                  <td>${c}</td>
+                  <td>${e}</td>
+                  <td>${tt}</td>
+                </tr>
+              `;
+            }).join("")
+          : "";
+
+        return `
+          <section class="card">
+            <div class="card-header">
+              <div class="title-block">
+                <div class="perf-name">${item.name}</div>
+                ${item.members
+                  ? `<div class="members">Performing Member/s: ${item.members}</div>`
+                  : ``}
+              </div>
+              <div class="summary-pill">
+                <div class="summary-pill-main">
+                  ${item.avgScore ? item.avgScore.toFixed(1) : "-"}
+                </div>
+                <div class="summary-pill-sub">
+                  avg score • ${item.votes} ${item.votes===1?"vote":"votes"}<br/>
+                  total points: <strong>${item.totalPoints}</strong>
+                </div>
+              </div>
+            </div>
+
+            ${item.description
+              ? `<div class="desc">${item.description}</div>`
+              : ``}
+
+            ${
+              hasRatings
+              ? `
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Reviewer</th>
+                        <th>Technical</th>
+                        <th>Creativity</th>
+                        <th>Entertainment</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${rows}
+                    </tbody>
+                  </table>
+                </div>
+              `
+              : `<div class="no-ratings">No ratings yet for this performance.</div>`
+            }
+          </section>
+        `;
+      }).join("");
+    }
+
+    loadReport().catch(err=>{
+      console.error(err);
+      countTag.textContent = "Error loading report";
+      container.innerHTML = `<p style="color:#ffb3b3;">Failed to load ratings report: ${err.message}</p>`;
+    });
+  </script>
+</body>
+</html>
