@@ -3,18 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lenbrook's Got Talent - Review Panel</title>
+  <title>Lenbrook's Got Talent - Review Closed</title>
   <style>
     :root{
       --bg1:#0b1220; --bg2:#162544; --bg3:#203a60;
       --glass:rgba(255,255,255,.08); --border:rgba(255,255,255,.22);
       --text:#fff; --dim:rgba(255,255,255,.65);
-      --accent:#64a8ff; --accent2:#b3d4ff; --ok:#59d390;
+      --accent:#64a8ff; --accent2:#ffd166;
       --r-xl:22px; --r-lg:14px; --r-md:10px;
     }
     *{box-sizing:border-box}
-    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-    @keyframes snow-fall{0%{transform:translateY(-10vh) translateX(0);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(25px);opacity:0}}
+    @keyframes gradientShift{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    @keyframes snow-fall{
+      0%{transform:translateY(-10vh) translateX(0);opacity:0}
+      10%{opacity:1}
+      100%{transform:translateY(110vh) translateX(25px);opacity:0}
+    }
     body{
       margin:0; min-height:100dvh; color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -25,42 +33,68 @@
     .snow-wrap{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:5}
     .flake{position:absolute; top:-10vh; color:#fff; text-shadow:0 0 10px rgba(255,255,255,.9); opacity:.95; animation:snow-fall linear infinite}
 
-    .wrap{position:relative; z-index:10; padding:clamp(18px,2vw,28px); max-width:1200px; margin:0 auto}
-    .header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px}
-    .logo{width:clamp(160px,22vw,230px); height:auto; display:block; filter:drop-shadow(0 0 14px rgba(100,150,255,.35))}
-    .pill{background:var(--glass); border:1px solid var(--border); border-radius:999px; padding:.5rem .8rem; display:flex; gap:.6rem; align-items:center}
-    .pill input{background:transparent; border:0; outline:0; color:var(--text); font-weight:600}
-    .pill button{background:#fff; color:#000; border:0; border-radius:999px; padding:.4rem .8rem; font-weight:700; cursor:pointer}
+    .wrap{
+      position:relative; z-index:10;
+      padding:clamp(18px,2vw,28px);
+      max-width:900px; margin:0 auto;
+      min-height:100dvh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:1.5rem;
+    }
 
-    .table{
-      width:100%; border-collapse:separate; border-spacing:0 10px;
+    .logo{
+      width:clamp(180px,30vw,260px);
+      height:auto;
+      display:block;
+      filter:drop-shadow(0 0 18px rgba(100,150,255,.4));
     }
-    thead th{
-      text-align:left; font-size:.85rem; letter-spacing:.02em; font-weight:700; color:var(--dim); padding:0 .6rem .4rem .6rem;
-    }
-    tbody tr{
-      background:var(--glass); border:1px solid var(--border); border-radius:var(--r-xl);
-      overflow:hidden; backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%);
-    }
-    tbody td{
-      padding:12px; vertical-align:middle;
-    }
-    tbody tr + tr{margin-top:10px}
-    video{width:220px; max-width:36vw; border-radius:12px; outline:1px solid rgba(255,255,255,.18)}
-    input[type="number"]{
-      width:72px; padding:.55rem .6rem; border-radius:10px; border:1px solid rgba(255,255,255,.25);
-      background:rgba(255,255,255,.06); color:#fff; font-weight:700; text-align:center;
-    }
-    .btn{
-      background:radial-gradient(circle at 20% 20%, #fff 0%, #a6c8ff 60%, #5b8dff 100%);
-      color:#000; border:0; border-radius:12px; padding:.6rem .9rem; font-weight:800; cursor:pointer
-    }
-    .ok{color:var(--ok); font-weight:700}
-    .status{margin:.6rem 0 1rem; color:var(--accent2); font-weight:600}
 
-    @media (max-width:900px){
-      .hide-sm{display:none}
-      video{width:180px}
+    .card{
+      background:var(--glass);
+      border:1px solid var(--border);
+      border-radius:var(--r-xl);
+      padding:1.8rem 1.6rem;
+      backdrop-filter:blur(16px) saturate(140%);
+      -webkit-backdrop-filter:blur(16px) saturate(140%);
+      box-shadow:0 24px 90px rgba(0,0,0,.75);
+      max-width:520px;
+      width:100%;
+    }
+
+    .title{
+      font-size:1.4rem;
+      font-weight:800;
+      margin-bottom:.5rem;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.25rem .7rem;
+      border-radius:999px;
+      background:rgba(0,0,0,.4);
+      border:1px solid rgba(255,255,255,.25);
+      font-size:.75rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--accent2);
+      margin-bottom:.5rem;
+    }
+
+    .text-main{
+      font-size:.98rem;
+      color:var(--dim);
+      margin-bottom:.6rem;
+    }
+
+    .text-sub{
+      font-size:.86rem;
+      color:var(--dim);
     }
   </style>
 </head>
@@ -68,41 +102,27 @@
   <div class="snow-wrap" id="snowLayer" aria-hidden="true"></div>
 
   <div class="wrap">
-    <div class="header">
-      <img src="logo.png" class="logo" alt="Lenbrook's Got Talent" />
-      <div class="pill">
-        <span>Reviewer:</span>
-        <input id="reviewerName" placeholder="Your name" />
-        <button id="startBtn">Start</button>
-      </div>
-    </div>
+    <img src="logo.png" class="logo" alt="Lenbrook's Got Talent" />
 
-    <div id="status" class="status">Enter your name and press Start.</div>
-
-    <table class="table" id="submissionsTable" style="display:none;">
-      <thead>
-        <tr>
-          <th>Name / Performance Name</th>
-          <th class="hide-sm">Performing Member/s</th>
-          <th class="hide-sm">Description</th>
-          <th>Video</th>
-          <th>Technical</th>
-          <th>Creativity</th>
-          <th>Entertainment</th>
-          <th>Your Total</th>
-          <th>Avg (All)</th>
-          <th>Save</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <section class="card">
+      <div class="pill">Review Panel</div>
+      <div class="title">Judging is now closed</div>
+      <p class="text-main">
+        The review page is no longer available. All scores and comments
+        have been finalized for this year’s Lenbrook’s Got Talent.
+      </p>
+      <p class="text-sub">
+        If you need access to results, please use the internal
+        admin or leaderboard views instead.
+      </p>
+    </section>
   </div>
 
   <script type="module">
-    /* Snow */
-    const snowLayer = document.getElementById('snowLayer');
+    /* ❄ Keep the same snow style so it matches the rest of the site */
+    const snowLayer=document.getElementById('snowLayer');
     function flake(){
-      if(snowLayer.childElementCount>220) return;
+      if(snowLayer.childElementCount>220)return;
       const el=document.createElement('div'); el.className='flake'; el.textContent='•';
       el.style.fontSize=((Math.random()*0.7+0.55)*12)+'px';
       el.style.left=(Math.random()*100)+'vw';
@@ -110,93 +130,6 @@
       snowLayer.appendChild(el); setTimeout(()=>el.remove(),8000);
     }
     setInterval(flake,75);
-
-    /* Firebase */
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCzXbIghLheIWJHEgCCI_oOe5finmUIe1U",
-      authDomain: "lenbrook-s-got-talent.firebaseapp.com",
-      projectId: "lenbrook-s-got-talent",
-      storageBucket: "lenbrook-s-got-talent.firebasestorage.app",
-      messagingSenderId: "327419181483",
-      appId: "1:327419181483:web:c78bde1ba35d3bf037faee"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const startBtn = document.getElementById("startBtn");
-    const reviewerInput = document.getElementById("reviewerName");
-    const status = document.getElementById("status");
-    const table = document.getElementById("submissionsTable");
-    const tbody = table.querySelector("tbody");
-    let currentReviewer = null;
-
-    startBtn.addEventListener("click", () => {
-      const name = reviewerInput.value.trim();
-      if(!name){ alert("Please enter your name first."); return; }
-      currentReviewer = name;
-      status.textContent = "Loading submissions…";
-      table.style.display = "table";
-      loadSubmissions();
-    });
-
-    async function loadSubmissions(){
-      const snap = await getDocs(collection(db, "submissions"));
-      tbody.innerHTML = "";
-      snap.forEach(docSnap=>{
-        const d = docSnap.data(); const id = docSnap.id;
-        const my = d.ratings?.[currentReviewer] || {};
-        const total = my.total ?? 0;
-        const avg = d.averageScore ? Number(d.averageScore).toFixed(1) : "-";
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong>${d.name||""}</strong></td>
-          <td class="hide-sm">${d.members || ""}</td>
-          <td class="hide-sm">${d.description||""}</td>
-          <td>
-  <video
-    src="${d.videoURL?.includes('firebasestorage') 
-      ? d.videoURL 
-      : `https://firebasestorage.googleapis.com/v0/b/lenbrook-s-got-talent.firebasestorage.app/o/${encodeURIComponent((d.videoURL||'').split('/').pop())}?alt=media`}" 
-    controls>
-  </video>
-</td>
-          <td><input type="number" id="tech-${id}" min="1" max="10" value="${my.technical??""}"></td>
-          <td><input type="number" id="creative-${id}" min="1" max="10" value="${my.creativity??""}"></td>
-          <td><input type="number" id="ent-${id}" min="1" max="10" value="${my.entertainment??""}"></td>
-          <td id="total-${id}" class="ok">${total}</td>
-          <td id="avg-${id}">${avg}</td>
-          <td><button class="btn" onclick="saveRating('${id}')">Save</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-      status.textContent = "✅ Loaded submissions. Enter scores and Save.";
-    }
-
-    window.saveRating = async (id) => {
-      if(!currentReviewer){ alert("Please enter your name first."); return; }
-      const tech = parseInt(document.getElementById(`tech-${id}`).value||0,10);
-      const cre  = parseInt(document.getElementById(`creative-${id}`).value||0,10);
-      const ent  = parseInt(document.getElementById(`ent-${id}`).value||0,10);
-      const total = tech+cre+ent;
-
-      const ref = doc(db,"submissions",id);
-      const snap = await getDoc(ref); const data = snap.data()||{};
-      const ratings = data.ratings||{};
-      ratings[currentReviewer] = { technical:tech, creativity:cre, entertainment:ent, total };
-
-      const allTotals = Object.values(ratings).map(r=>r.total||0);
-      const avg = allTotals.length? allTotals.reduce((a,b)=>a+b,0)/allTotals.length : 0;
-
-      await updateDoc(ref,{ ratings, averageScore: avg });
-
-      document.getElementById(`total-${id}`).textContent = total;
-      document.getElementById(`avg-${id}`).textContent = avg.toFixed(1);
-      alert(`✅ Saved for ${currentReviewer}`);
-    };
   </script>
 </body>
 </html>
