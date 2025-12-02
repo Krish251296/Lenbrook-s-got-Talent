@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lenbrook's Got Talent - Finals Voting</title>
+
+  <style>
+    :root {
+      --bg1: #0b1220;
+      --bg2: #162544;
+      --bg3: #203a60;
+      --glass: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.2);
+      --text: #fff;
+      --dim: rgba(255,255,255,0.6);
+      --accent: #ffd166;
+      --accent2: #a3d9ff;
+      --radius: 18px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes snow-fall {
+      0% { transform: translateY(-10vh) translateX(0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(110vh) translateX(25px); opacity: 0; }
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+      background: linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size: 400% 400%;
+      animation: gradientShift 22s ease infinite;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .snow-wrap {
+      position: fixed; inset: 0;
+      overflow: hidden; pointer-events: none; z-index: 5;
+    }
+    .flake {
+      position: absolute; top: -10vh;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255,255,255,0.9);
+      opacity: .95;
+      animation: snow-fall linear infinite;
+    }
+
+    main {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100dvh;
+      gap: 1.5rem;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .logo {
+      width: clamp(220px, 32vw, 340px);
+      display: block;
+      margin: 0 auto 0.5rem;
+      filter: drop-shadow(0 0 18px rgba(100,150,255,0.35));
+    }
+
+    .title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--dim);
+      max-width: 520px;
+    }
+
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 520px;
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      box-shadow: 0 24px 90px rgba(0,0,0,0.8);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-size: 1.15rem;
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+
+    .finalist-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .finalist-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .rank-select {
+      min-width: 85px;
+      padding: 0.45rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .rank-select option {
+      color: #000;
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      margin-top: 1rem;
+      border: 0;
+      border-radius: 12px;
+      padding: 0.9rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      background: radial-gradient(circle at 20% 20%, #fff 0%, #ffd166 60%, #ff9f1c 100%);
+      color: #000;
+      box-shadow: 0 6px 20px rgba(255, 209, 102, 0.45);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(255, 209, 102, 0.7);
+    }
+
+    .status {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      text-align: center;
+      color: var(--accent2);
+      min-height: 1.2em;
+    }
+
+    @media (max-width: 600px){
+      main { padding-top: 1.5rem; }
+      .card { padding: 1.25rem 1rem 1.6rem; }
+      .finalist-row { flex-direction: column; align-items: flex-start; }
+      .rank-select { align-self: stretch; }
+    }
+  </style>
+</head>
+<body>
+  <div class="snow-wrap" id="snowLayer"></div>
+
+  <main>
+    <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
+    <div class="title">Finals Live Voting</div>
+    <div class="subtitle">
+      Rank each performance from <strong>1 (favourite)</strong> to <strong>5</strong>. 
+      Each rank can be used only once.
+    </div>
+
+    <section class="card">
+      <h2>Finalists</h2>
+      <div class="hint">
+        Please watch all performances, then assign ranks 1–5. You must use each rank once.
+      </div>
+
+      <form id="finalsForm">
+        <!-- Finalists rendered by JS -->
+        <div id="finalistsContainer"></div>
+
+        <button type="submit" class="btn">Submit Your Rankings ⟶</button>
+        <div id="statusMsg" class="status"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    /* ❄ Snow like other pages */
+    const snowLayer = document.getElementById("snowLayer");
+    function spawnFlake(){
+      if(snowLayer.childElementCount>220) return;
+      const el = document.createElement("div");
+      el.className = "flake";
+      el.textContent = "•";
+      el.style.fontSize = ((Math.random()*0.7+0.55)*12) + "px";
+      el.style.left = (Math.random()*100) + "vw";
+      el.style.animationDuration = (Math.random()*4+4) + "s";
+      snowLayer.appendChild(el);
+      setTimeout(()=>el.remove(), 8000);
+    }
+    setInterval(spawnFlake, 75);
+
+    /* 🏁 CONFIG: set your 5 finalists here */
+    const FINALISTS = [
+      { id: "finalist1", name: "Finalist 1 – e.g. Festive Beats" },
+      { id: "finalist2", name: "Finalist 2" },
+      { id: "finalist3", name: "Finalist 3" },
+      { id: "finalist4", name: "Finalist 4" },
+      { id: "finalist5", name: "Finalist 5" }
+    ];
+
+    const FIRESTORE_URL =
+      "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/finalVotes";
+
+    const form = document.getElementById("finalsForm");
+    const container = document.getElementById("finalistsContainer");
+    const statusMsg = document.getElementById("statusMsg");
+
+    // Render rows
+    FINALISTS.forEach((act, idx) => {
+      const row = document.createElement("div");
+      row.className = "finalist-row";
+      row.innerHTML = `
+        <div class="finalist-name">${idx+1}. ${act.name}</div>
+        <select class="rank-select" name="rank_${idx}">
+          <option value="">Rank…</option>
+          <option value="1">1 (favourite)</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      `;
+      container.appendChild(row);
+    });
+
+    function makeId(){
+      return "ballot_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusMsg.textContent = "";
+
+      // Collect ranks
+      const ranks = [];
+      for (let i = 0; i < FINALISTS.length; i++) {
+        const sel = form.elements["rank_"+i];
+        const v = sel.value.trim();
+        if (!v) {
+          alert("Please choose a rank for all performances.");
+          return;
+        }
+        ranks.push(parseInt(v, 10));
+      }
+
+      // Validate uniqueness 1–5
+      const set = new Set(ranks);
+      if (set.size !== FINALISTS.length) {
+        alert("Each rank 1–5 must be used exactly once. Please adjust your choices.");
+        return;
+      }
+
+      statusMsg.textContent = "Submitting your vote…";
+
+      try {
+        // Build Firestore document (all string/int fields)
+        const fields = {
+          ballotId: { stringValue: makeId() },
+          createdAt: { stringValue: new Date().toISOString() }
+        };
+
+        FINALISTS.forEach((act, idx) => {
+          fields["act_" + idx]  = { stringValue: act.name };
+          fields["actId_" + idx] = { stringValue: act.id };
+          fields["rank_" + idx] = { integerValue: String(ranks[idx]) };
+        });
+
+        const res = await fetch(FIRESTORE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fields })
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(txt || "Firestore error");
+        }
+
+        statusMsg.textContent = "✅ Thanks! Your vote has been recorded.";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        statusMsg.textContent = "❌ Failed to submit: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
