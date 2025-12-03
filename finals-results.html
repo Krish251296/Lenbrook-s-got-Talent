@@ -3,184 +3,538 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lenbrook's Got Talent - Finals Results</title>
+  <title>Lenbrook’s Got Talent – Finals Results</title>
+
   <style>
     :root{
-      --bg1:#0b1220; --bg2:#162544; --bg3:#203a60;
-      --glass:rgba(255,255,255,.08); --border:rgba(255,255,255,.22);
-      --text:#fff; --dim:rgba(255,255,255,.65);
-      --accent:#ffd166; --accent2:#a3d9ff;
-      --r-xl:22px; --r-lg:14px;
+      --bg1:#050716;
+      --bg2:#111827;
+      --bg3:#1f2937;
+      --glass:rgba(15,23,42,0.85);
+      --glass-soft:rgba(15,23,42,0.7);
+      --border:rgba(148,163,184,.5);
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#fbbf24;
+      --accent-soft:#fed7aa;
+      --accent2:#38bdf8;
+      --danger:#fb7185;
+      --success:#4ade80;
+      --radius-xl:22px;
+      --radius-lg:16px;
     }
-    *{box-sizing:border-box}
-    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-    @keyframes snow-fall{0%{transform:translateY(-10vh) translateX(0);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(25px);opacity:0}}
+
+    *{box-sizing:border-box;}
+
+    @keyframes gradientShift{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    @keyframes snow-fall{
+      0%{transform:translateY(-10vh) translateX(0);opacity:0}
+      10%{opacity:1}
+      100%{transform:translateY(110vh) translateX(25px);opacity:0}
+    }
+    @keyframes fadeInUp{
+      0%{opacity:0;transform:translateY(16px)}
+      100%{opacity:1;transform:translateY(0)}
+    }
 
     body{
-      margin:0; min-height:100dvh; color:var(--text);
+      margin:0;
+      min-height:100dvh;
       font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
-      background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
-      background-size:400% 400%; animation:gradientShift 22s ease infinite;
-      overflow-x:hidden; position:relative;
+      color:var(--text);
+      background:radial-gradient(circle at 0 0,rgba(56,189,248,.18),transparent 60%),
+                 radial-gradient(circle at 100% 0,rgba(244,114,182,.16),transparent 55%),
+                 linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+      background-size: 160% 160%;
+      animation:gradientShift 28s ease infinite;
+      overflow-x:hidden;
+      position:relative;
     }
-    .snow-wrap{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:5}
-    .flake{position:absolute; top:-10vh; color:#fff; text-shadow:0 0 10px rgba(255,255,255,.9); opacity:.95; animation:snow-fall linear infinite}
 
-    .wrap{position:relative; z-index:10; padding:clamp(18px,2vw,28px); max-width:1000px; margin:0 auto}
-    .top{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px}
-    .logo{width:clamp(160px,22vw,230px); height:auto; display:block; filter:drop-shadow(0 0 14px rgba(100,150,255,.35))}
-    .tag{color:var(--accent2); font-weight:600}
+    /* Snow */
+    .snow-wrap{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:4;
+    }
+    .flake{
+      position:absolute;
+      top:-10vh;
+      color:#fff;
+      text-shadow:0 0 10px rgba(255,255,255,.9);
+      opacity:.95;
+      animation:snow-fall linear infinite;
+    }
 
-    .card{
-      background:var(--glass); border:1px solid var(--border); border-radius:var(--r-xl);
-      padding:1rem 1.2rem; backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%);
-      box-shadow:0 24px 90px rgba(0,0,0,.75); margin-top:0.5rem;
+    /* Layout */
+    .page{
+      position:relative;
+      z-index:10;
+      max-width:1200px;
+      margin:0 auto;
+      padding:clamp(16px,2vw,28px);
+      padding-bottom:40px;
+    }
+
+    .top-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .logo-wrap{
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
+    .logo{
+      width:clamp(160px,22vw,230px);
+      height:auto;
+      display:block;
+      filter:drop-shadow(0 0 18px rgba(129,140,248,.55));
+    }
+    .title-block{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .title{
+      font-size:1.4rem;
+      font-weight:700;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .subtitle{
+      font-size:.9rem;
+      color:var(--muted);
+    }
+
+    .pill-tag{
+      background:rgba(15,23,42,.85);
+      border:1px solid rgba(148,163,184,.5);
+      border-radius:999px;
+      padding:.4rem .9rem;
+      font-size:.8rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      box-shadow:0 18px 40px rgba(0,0,0,.6);
+    }
+    .pill-dot{
+      width:8px;height:8px;border-radius:999px;
+      background:radial-gradient(circle,var(--accent) 0%,#b45309 70%);
+      box-shadow:0 0 10px rgba(248,250,252,.9);
+    }
+
+    /* Summary row */
+    .summary-row{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:14px;
+      margin-bottom:18px;
+      animation:fadeInUp .55s ease both;
+    }
+    .summary-card{
+      background:var(--glass);
+      border:1px solid var(--border);
+      border-radius:var(--radius-xl);
+      padding:.9rem 1rem;
+      box-shadow:0 20px 70px rgba(0,0,0,.75);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .summary-label{
+      font-size:.75rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+    }
+    .summary-value{
+      font-size:1.3rem;
+      font-weight:800;
+    }
+    .summary-sub{
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    /* Results panel */
+    .panel{
+      background:var(--glass-soft);
+      border-radius:24px;
+      border:1px solid rgba(148,163,184,.6);
+      padding:1.1rem 1.2rem 1.4rem;
+      box-shadow:0 32px 90px rgba(0,0,0,.85);
+      backdrop-filter:blur(18px) saturate(150%);
+      -webkit-backdrop-filter:blur(18px) saturate(150%);
+      animation:fadeInUp .55s ease .05s both;
+    }
+    .panel-header{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:.7rem;
+    }
+    .panel-title{
+      font-size:1rem;
+      font-weight:600;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .panel-hint{
+      font-size:.78rem;
+      color:var(--muted);
+    }
+
+    .scroll-wrap{
+      overflow:auto;
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.5);
+      background:radial-gradient(circle at 0 0,rgba(148,163,184,.12),transparent 60%),
+                 radial-gradient(circle at 100% 0,rgba(96,165,250,.12),transparent 55%),
+                 rgba(15,23,42,.96);
+      max-height:70vh;
     }
 
     table{
-      width:100%; border-collapse:collapse; margin-top:0.5rem; font-size:0.9rem;
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width:700px;
+      font-size:.9rem;
     }
-    th,td{padding:0.6rem 0.5rem; text-align:left; border-bottom:1px solid rgba(255,255,255,0.08);}
-    th{font-size:0.8rem; letter-spacing:0.03em; color:var(--dim); text-transform:uppercase;}
-    tr.highlight{background:rgba(255,209,102,0.06);}
-    .ranknum{font-weight:800; font-size:1.05rem;}
-    .name{font-weight:700;}
-    .points{font-weight:800; color:var(--accent);}
-    .small{color:var(--dim); font-size:0.8rem;}
+    thead{
+      position:sticky;
+      top:0;
+      z-index:1;
+      background:linear-gradient(to bottom,rgba(15,23,42,0.98),rgba(15,23,42,0.92));
+      box-shadow:0 1px 0 rgba(148,163,184,.35);
+    }
+    thead th{
+      text-align:left;
+      padding:.6rem .9rem;
+      font-weight:600;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      font-size:.72rem;
+      border-bottom:1px solid rgba(148,163,184,.4);
+    }
+    thead th:first-child{border-top-left-radius:18px;}
+    thead th:last-child{border-top-right-radius:18px;}
 
-    @media (max-width:700px){
-      table{font-size:0.8rem;}
-      th,td{padding:0.45rem 0.3rem;}
+    tbody tr{
+      transition:background .14s ease, transform .14s ease, box-shadow .14s ease;
+    }
+    tbody tr:nth-child(even){
+      background:rgba(15,23,42,.82);
+    }
+    tbody tr:nth-child(odd){
+      background:rgba(15,23,42,.9);
+    }
+    tbody tr:hover{
+      background:radial-gradient(circle at 0 0,rgba(248,250,252,.08),transparent 60%),
+                 rgba(15,23,42,.96);
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(15,23,42,.9);
+    }
+    tbody td{
+      padding:.7rem .9rem;
+      border-bottom:1px solid rgba(31,41,55,.8);
+      vertical-align:middle;
+    }
+    tbody tr:last-child td{
+      border-bottom:none;
+    }
+
+    .rank-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:26px;
+      padding:.18rem .55rem;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:700;
+      background:rgba(15,23,42,.9);
+      border:1px solid rgba(148,163,184,.6);
+    }
+    .rank-1{
+      background:radial-gradient(circle at 30% 0,var(--accent),#b45309);
+      color:#111827;
+      border:none;
+      box-shadow:0 0 18px rgba(251,191,36,.7);
+    }
+    .rank-2{
+      background:radial-gradient(circle at 30% 0,#e5e7eb,#9ca3af);
+      color:#111827;
+      border:none;
+    }
+    .rank-3{
+      background:radial-gradient(circle at 30% 0,#fed7aa,#c05621);
+      color:#111827;
+      border:none;
+    }
+
+    .perf-name{
+      font-weight:600;
+      font-size:.95rem;
+    }
+    .perf-meta{
+      font-size:.78rem;
+      color:var(--muted);
+    }
+
+    .points-pill{
+      display:inline-flex;
+      padding:.18rem .6rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.6);
+      font-size:.78rem;
+      align-items:center;
+      gap:.25rem;
+    }
+    .points-pill strong{
+      font-size:.9rem;
+    }
+
+    .bar-wrap{
+      width:120px;
+      height:6px;
+      border-radius:999px;
+      background:rgba(30,64,175,.65);
+      overflow:hidden;
+    }
+    .bar-fill{
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(to right,var(--accent2),var(--accent));
+      width:0;
+      transition:width .5s ease-out;
+    }
+
+    .no-data{
+      padding:1.2rem;
+      text-align:center;
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    @media(max-width:720px){
+      .top-bar{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .logo{
+        width:170px;
+      }
+      .panel{
+        padding:.9rem;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- snow -->
   <div class="snow-wrap" id="snowLayer" aria-hidden="true"></div>
 
-  <div class="wrap">
-    <div class="top">
-      <img src="logo.png" class="logo" alt="Lenbrook's Got Talent" />
-      <div class="tag" id="summaryTag">Loading finals results…</div>
-    </div>
+  <div class="page">
+    <!-- header -->
+    <header class="top-bar">
+      <div class="logo-wrap">
+        <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
+        <div class="title-block">
+          <div class="title">Finals Live Results</div>
+          <div class="subtitle">
+            Live ranking from audience ballots · 5 Performances
+          </div>
+        </div>
+      </div>
+      <div class="pill-tag">
+        <span class="pill-dot"></span>
+        <span id="statusText">Loading ballots…</span>
+      </div>
+    </header>
 
-    <div class="card">
-      <div class="small">
-        Each ballot ranks performances 1–5. We convert ranks to points (1st=5, 2nd=4, 3rd=3, 4th=2, 5th=1).
-        Table below is sorted by total points (higher = better).
+    <!-- summary -->
+    <section class="summary-row">
+      <div class="summary-card">
+        <div class="summary-label">Total Ballots</div>
+        <div class="summary-value" id="summaryBallots">–</div>
+        <div class="summary-sub">Valid audience submissions</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Performances</div>
+        <div class="summary-value" id="summaryPerformances">–</div>
+        <div class="summary-sub">Finalists on stage</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Top-ranked Act</div>
+        <div class="summary-value" id="summaryTopAct">–</div>
+        <div class="summary-sub" id="summaryTopDetails">Based on average rank</div>
+      </div>
+    </section>
+
+    <!-- results table -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Ranking Table</div>
+        <div class="panel-hint">
+          Lower average rank is better · points are based on your scoring logic
+        </div>
       </div>
 
-      <table id="resultsTable">
-        <thead>
-          <tr>
-            <th>Place</th>
-            <th>Performance</th>
-            <th>Avg Rank</th>
-            <th>Total Points</th>
-            <th>Ballots</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+      <div class="scroll-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Performance</th>
+              <th>Avg Rank</th>
+              <th>Total Points</th>
+              <th>Ballots</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody">
+            <tr>
+              <td colspan="5" class="no-data">Loading results…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 
-  <script>
-    /* Snow */
-    const snowLayer=document.getElementById('snowLayer');
+  <script type="module">
+    /* ❄ Snow */
+    const snowLayer = document.getElementById('snowLayer');
     function flake(){
-      if(snowLayer.childElementCount>220)return;
-      const el=document.createElement('div'); el.className='flake'; el.textContent='•';
-      el.style.fontSize=((Math.random()*0.7+0.55)*12)+'px';
-      el.style.left=(Math.random()*100)+'vw';
-      el.style.animationDuration=(Math.random()*4+4)+'s';
-      snowLayer.appendChild(el); setTimeout(()=>el.remove(),8000);
+      if(!snowLayer) return;
+      if(snowLayer.childElementCount>220) return;
+      const el = document.createElement('div');
+      el.className = 'flake';
+      el.textContent = '•';
+      el.style.fontSize = ((Math.random()*0.7+0.55)*12)+'px';
+      el.style.left = (Math.random()*100)+'vw';
+      el.style.animationDuration = (Math.random()*4+4)+'s';
+      snowLayer.appendChild(el);
+      setTimeout(()=>el.remove(),8000);
     }
     setInterval(flake,75);
 
-    /* Must match finals.html FINALISTS order/names */
-    const FINALISTS = [
-      { id: "finalist1", name: "Finalist 1 – e.g. Festive Beats" },
-      { id: "finalist2", name: "Finalist 2" },
-      { id: "finalist3", name: "Finalist 3" },
-      { id: "finalist4", name: "Finalist 4" },
-      { id: "finalist5", name: "Finalist 5" }
-    ];
+    /* 🏆 RENDER HELPERS (you keep using your existing Firestore logic) */
 
-    const FIRESTORE_URL =
-      "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/finalVotes?pageSize=300";
+    const resultsBody = document.getElementById("resultsBody");
+    const summaryBallots = document.getElementById("summaryBallots");
+    const summaryPerformances = document.getElementById("summaryPerformances");
+    const summaryTopAct = document.getElementById("summaryTopAct");
+    const summaryTopDetails = document.getElementById("summaryTopDetails");
+    const statusText = document.getElementById("statusText");
 
-    const summaryTag = document.getElementById("summaryTag");
-    const tbody = document.querySelector("#resultsTable tbody");
-
-    function asNumber(field){
-      if(!field) return NaN;
-      if(field.integerValue !== undefined) return Number(field.integerValue);
-      if(field.stringValue !== undefined) return Number(field.stringValue);
-      return NaN;
-    }
-
-    async function loadResults(){
-      try{
-        const res = await fetch(FIRESTORE_URL);
-        if(!res.ok) throw new Error(await res.text() || "Firestore error");
-        const data = await res.json();
-        const docs = data.documents || [];
-
-        // Initialise aggregates
-        const stats = FINALISTS.map(f=>({
-          id: f.id,
-          name: f.name,
-          totalRank: 0,
-          totalPoints: 0,
-          ballots: 0
-        }));
-
-        for(const doc of docs){
-          const fields = doc.fields || {};
-          // For each finalist index 0..4
-          for(let i=0;i<FINALISTS.length;i++){
-            const rankField = fields["rank_"+i];
-            const rank = asNumber(rankField);
-            if(!Number.isFinite(rank) || rank < 1 || rank > FINALISTS.length) continue;
-            stats[i].totalRank += rank;
-            stats[i].ballots += 1;
-            const points = (FINALISTS.length + 1) - rank; // 5→1 pt, 1→5 pts
-            stats[i].totalPoints += points;
-          }
-        }
-
-        // compute averages
-        stats.forEach(s=>{
-          s.avgRank = s.ballots ? (s.totalRank / s.ballots) : null;
-        });
-
-        // sort by totalPoints desc, then avgRank asc
-        stats.sort((a,b)=>{
-          if(b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-          if(a.avgRank === null) return 1;
-          if(b.avgRank === null) return -1;
-          return a.avgRank - b.avgRank;
-        });
-
-        const totalBallots = stats.reduce((sum,s)=>Math.max(sum,s.ballots),0);
-        summaryTag.textContent = `Finals ballots counted: ${totalBallots}`;
-
-        tbody.innerHTML = stats.map((s, idx)=>`
-          <tr class="${idx<3 ? 'highlight' : ''}">
-            <td class="ranknum">#${idx+1}</td>
-            <td class="name">${s.name}</td>
-            <td>${s.avgRank !== null ? s.avgRank.toFixed(2) : '-'}</td>
-            <td class="points">${s.totalPoints}</td>
-            <td>${s.ballots}</td>
-          </tr>
-        `).join("");
-      }catch(err){
-        console.error(err);
-        summaryTag.textContent = "Error loading results: " + err.message;
+    /**
+     * Call this from your existing code once you have
+     * an array of results like:
+     * [
+     *   { name: "Act Name", avgRank: 2.3, totalPoints: 412, ballots: 160 },
+     *   ...
+     * ]
+     */
+    function renderResults(results){
+      if(!results || !results.length){
+        resultsBody.innerHTML = `<tr><td colspan="5" class="no-data">No votes recorded yet.</td></tr>`;
+        statusText.textContent = "No ballots yet";
+        summaryBallots.textContent = "0";
+        summaryPerformances.textContent = "0";
+        summaryTopAct.textContent = "–";
+        summaryTopDetails.textContent = "Waiting for votes…";
+        return;
       }
+
+      // Sort by avgRank ascending (best first)
+      results.sort((a,b) => (a.avgRank ?? 999) - (b.avgRank ?? 999));
+
+      const totalBallots = results.reduce((max, r) => Math.max(max, r.ballots || 0), 0);
+      const maxPoints = results.reduce((max, r) => Math.max(max, r.totalPoints || 0), 0);
+
+      resultsBody.innerHTML = results.map((r, idx) => {
+        const rank = idx + 1;
+        const rankClass =
+          rank === 1 ? "rank-badge rank-1" :
+          rank === 2 ? "rank-badge rank-2" :
+          rank === 3 ? "rank-badge rank-3" :
+                       "rank-badge";
+
+        const barPercent = maxPoints ? Math.round((r.totalPoints||0)/maxPoints*100) : 0;
+
+        return `
+          <tr>
+            <td>
+              <span class="${rankClass}">#${rank}</span>
+            </td>
+            <td>
+              <div class="perf-name">${r.name || "Untitled"}</div>
+              ${r.extra ? `<div class="perf-meta">${r.extra}</div>` : ""}
+            </td>
+            <td>
+              <div class="points-pill">
+                <span>Avg rank</span>
+                <strong>${r.avgRank ? r.avgRank.toFixed(2) : "–"}</strong>
+              </div>
+            </td>
+            <td>
+              <div class="points-pill">
+                <span>Points</span>
+                <strong>${r.totalPoints ?? "–"}</strong>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar-fill" style="width:${barPercent}%;"></div>
+              </div>
+            </td>
+            <td>
+              <span class="perf-meta">${r.ballots || 0} ballots</span>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      // Summary cards
+      summaryBallots.textContent = totalBallots || "–";
+      summaryPerformances.textContent = results.length.toString();
+
+      const top = results[0];
+      if(top){
+        summaryTopAct.textContent = top.name || "Untitled";
+        summaryTopDetails.textContent =
+          `Avg rank ${top.avgRank ? top.avgRank.toFixed(2) : "–"} · ${top.ballots || 0} ballots`;
+      }
+      statusText.textContent = "Live results loaded";
     }
 
-    loadResults();
+    // 🔧 IMPORTANT:
+    // Paste your existing Firestore fetch + aggregation code below.
+    // When you've computed your array of result rows, call:
+    //   renderResults(myArrayOfResults);
+    //
+    // Example of what you should call (adapt to your existing logic):
+    //
+    // const results = [
+    //   { name: "Performance A", avgRank: 1.8, totalPoints: 430, ballots: 160 },
+    //   { name: "Performance B", avgRank: 2.4, totalPoints: 380, ballots: 160 },
+    //   ...
+    // ];
+    // renderResults(results);
+
+    // 👉 YOUR EXISTING FINALS Firestore CODE GOES HERE
+    // (Leave everything else above as-is.)
   </script>
 </body>
 </html>
