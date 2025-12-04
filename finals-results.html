@@ -627,17 +627,118 @@
       setUpdatedNow();
     }
 
-    // 👉 Your Firestore aggregation goes below.
-    // After you compute the array of result rows, call:
-    //
-    //   renderResults(myArrayOfResults);
-    //
-    // Example:
-    // const results = [
-    //   { name: "Performance A", avgRank: 1.8, totalPoints: 430, ballots: 160, extra: "Band · Holiday medley" },
-    //   { name: "Performance B", avgRank: 2.4, totalPoints: 380, ballots: 160, extra: "Solo · Vocals" }
-    // ];
-    // renderResults(results);
+    // --- Firestore finals aggregation ---
+
+    const FIRESTORE_URL =
+      "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/finalVotes";
+
+    async function fetchAllFinalVotes() {
+      const res = await fetch(FIRESTORE_URL + "?pageSize=200");
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || "Failed to fetch finalVotes");
+      }
+      const data = await res.json();
+      return data.documents || [];
+    }
+
+    function aggregateVotes(docs) {
+      // Map by actId (fallback to name)
+      const acts = new Map();
+      const totalBallots = docs.length;
+
+      for (const doc of docs) {
+        const fields = doc.fields || {};
+        const actsInThisBallot = new Set();
+
+        // assuming 5 finalists like on the finals page
+        for (let i = 0; i < 5; i++) {
+          const actNameField = fields["act_" + i];
+          const actIdField = fields["actId_" + i];
+          const rankField = fields["rank_" + i];
+
+          if (!rankField || !actNameField) continue;
+
+          const actName = actNameField.stringValue || "";
+          const actId =
+            (actIdField && actIdField.stringValue) || actName || "unknown";
+          const rawRank =
+            rankField.integerValue ?? rankField.stringValue ?? "";
+          const rank = parseInt(rawRank, 10);
+          if (!actName || !Number.isFinite(rank)) continue;
+
+          let stats = acts.get(actId);
+          if (!stats) {
+            stats = {
+              id: actId,
+              name: actName,
+              totalRank: 0,
+              totalPoints: 0,
+              ballots: 0
+            };
+            acts.set(actId, stats);
+          }
+
+          stats.totalRank += rank;
+
+          // Convert rank to points: 1st = 5 pts, 5th = 1 pt
+          stats.totalPoints += 6 - rank;
+
+          actsInThisBallot.add(actId);
+        }
+
+        // Each act included in this ballot gets +1 ballot count
+        for (const id of actsInThisBallot) {
+          const stats = acts.get(id);
+          if (stats) stats.ballots += 1;
+        }
+      }
+
+      const results = [];
+      for (const stats of acts.values()) {
+        const avgRank =
+          stats.ballots > 0 ? stats.totalRank / stats.ballots : null;
+        results.push({
+          name: stats.name,
+          avgRank,
+          totalPoints: stats.totalPoints,
+          ballots: stats.ballots
+        });
+      }
+
+      return { results, totalBallots };
+    }
+
+    async function loadFinalsResults() {
+      try {
+        statusText.textContent = "Loading ballots…";
+
+        const docs = await fetchAllFinalVotes();
+        const { results, totalBallots } = aggregateVotes(docs);
+
+        // Render table + summary cards
+        renderResults(results);
+
+        // Override total ballots to show number of documents (ballots)
+        summaryBallots.textContent = String(totalBallots);
+
+        if (!results.length) {
+          statusText.textContent = "No ballots yet";
+        } else {
+          statusText.textContent = "Live results loaded";
+        }
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "Error loading results";
+        resultsBody.innerHTML =
+          '<tr><td colspan="5" class="no-data">Failed to load results: ' +
+          (err.message || err) +
+          '</td></tr>';
+      }
+    }
+
+    // Run once on load
+    loadFinalsResults();
   </script>
 </body>
 </html>
