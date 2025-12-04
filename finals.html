@@ -348,18 +348,20 @@
       color: var(--muted);
     }
 
+    /* 🔧 UPDATED DROPDOWN STYLING */
     .rank-select {
       min-width: 0;
       padding: 0.45rem 0.6rem;
       border-radius: 999px;
       border: 1px solid rgba(148,163,184,0.9);
-      background: rgba(15,23,42,0.95);
-      color: #f9fafb;
+      background-color: #020617;   /* dark background */
+      color: #f9fafb;              /* light text */
       font-weight: 600;
       font-size: 0.86rem;
       text-align: center;
       appearance: none;
       position: relative;
+      cursor: pointer;
     }
 
     .rank-select.invalid {
@@ -368,7 +370,8 @@
     }
 
     .rank-select option {
-      color: #111827;
+      background-color: #020617;   /* dropdown menu background */
+      color: #f9fafb;              /* dropdown text color */
     }
 
     .error-text {
@@ -682,7 +685,7 @@
 
         if (!res.ok) {
           const txt = await res.text();
-          throw new Error(txt || "Firestore error");
+          throw new Error(txt || "Firestore error";
         }
 
         form.reset();
