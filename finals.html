@@ -685,7 +685,7 @@
 
         if (!res.ok) {
           const txt = await res.text();
-          throw new Error(txt || "Firestore error";
+          throw new Error(txt || "Firestore error");
         }
 
         form.reset();
