@@ -343,7 +343,7 @@
 
     async function getVotingOpen() {
       try {
-        const res = await fetch(CONFIG_URL);
+        const res = await fetch(CONFIG_URL, { cache: "no-store" });
         if (!res.ok) return true; // if config missing, default OPEN
         const data = await res.json();
         const fields = data.fields || {};
@@ -393,10 +393,13 @@
       if (isAdminResetMode) adminResetHint.style.display = "block";
     }
 
-    // Apply voting open/closed + device lock
-    (async function initStatus() {
-      const open = await getVotingOpen();
+    function applyUIState(open) {
       setStatus(open);
+
+      // Reset banners every time, so open/close toggles correctly
+      closedBanner.style.display = "none";
+      dupBanner.style.display = "none";
+      adminResetHint.style.display = "none";
 
       if (!open) {
         closedBanner.style.display = "block";
@@ -410,20 +413,20 @@
       }
 
       setFormEnabled(true);
+    }
+
+    // Initial status + device lock
+    (async function initStatus() {
+      const open = await getVotingOpen();
+      applyUIState(open);
     })();
 
-// 🔁 Live status check: if you close voting, their page updates within ~8s
-setInterval(async () => {
-  const open = await getVotingOpen();
-  setStatus(open);
+    // 🔁 Live status check: reflects open/closed within ~8s
+    setInterval(async () => {
+      const open = await getVotingOpen();
+      applyUIState(open);
+    }, 8000);
 
-  if (!open) {
-    closedBanner.style.display = "block";
-    setFormEnabled(false);
-  }
-}, 8000);
-
-    
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       clearErrors();
@@ -436,12 +439,8 @@ setInterval(async () => {
       }
 
       const open = await getVotingOpen();
-      setStatus(open);
-      if (!open) {
-        closedBanner.style.display = "block";
-        setFormEnabled(false);
-        return;
-      }
+      applyUIState(open);
+      if (!open) return;
 
       const ranks = [];
       const selects = [];
@@ -502,7 +501,7 @@ setInterval(async () => {
         statusMsg.textContent = "";
         successWrap.style.display = "block";
 
-        // Disable so they can’t submit twice; don't show reset hint to normal users
+        // Disable so they can’t submit twice; keep messaging clean
         setFormEnabled(false);
         dupBanner.style.display = "none";
         adminResetHint.style.display = "none";
