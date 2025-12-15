@@ -16,7 +16,6 @@
       --text:#e5e7eb;
       --muted:#9ca3af;
       --accent:#fbbf24;
-      --accent-soft:#fed7aa;
       --accent2:#38bdf8;
       --danger:#fb7185;
       --success:#4ade80;
@@ -119,7 +118,7 @@
     .subtitle{
       font-size:.9rem;
       color:var(--muted);
-      max-width:480px;
+      max-width:520px;
     }
 
     .pill-tag{
@@ -138,8 +137,11 @@
       background:radial-gradient(circle,var(--accent) 0%,#b45309 70%);
       box-shadow:0 0 10px rgba(248,250,252,.9);
     }
+    .pill-dot.closed{
+      background:radial-gradient(circle,var(--danger) 0%,#be123c 70%);
+      box-shadow:0 0 12px rgba(251,113,133,.9);
+    }
 
-    /* Summary row */
     .summary-row{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
@@ -159,15 +161,6 @@
       position:relative;
       overflow:hidden;
     }
-    .summary-card::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:radial-gradient(circle at 0 0,rgba(148,163,184,.3),transparent 55%);
-      opacity:.5;
-      mix-blend-mode:soft-light;
-      pointer-events:none;
-    }
     .summary-label{
       font-size:.75rem;
       text-transform:uppercase;
@@ -182,17 +175,7 @@
       font-size:.8rem;
       color:var(--muted);
     }
-    .summary-pill{
-      align-self:flex-start;
-      margin-top:.15rem;
-      border-radius:999px;
-      padding:.15rem .55rem;
-      font-size:.72rem;
-      border:1px solid rgba(148,163,184,.7);
-      background:rgba(15,23,42,.9);
-    }
 
-    /* Trophy badge */
     .trophy-pill{
       display:inline-flex;
       align-items:center;
@@ -206,35 +189,6 @@
       box-shadow:0 0 16px rgba(251,191,36,.7);
     }
 
-    /* Legend row */
-    .legend-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      font-size:.78rem;
-      color:var(--muted);
-      margin-bottom:12px;
-    }
-    .legend-left{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      flex-wrap:wrap;
-    }
-    .legend-tag{
-      border-radius:999px;
-      padding:.2rem .6rem;
-      border:1px solid rgba(148,163,184,.6);
-      background:rgba(15,23,42,.9);
-    }
-    .updated-text{
-      font-size:.78rem;
-      color:var(--muted);
-      text-align:right;
-    }
-
-    /* Results panel */
     .panel{
       background:var(--glass-soft);
       border-radius:24px;
@@ -261,6 +215,8 @@
     .panel-hint{
       font-size:.78rem;
       color:var(--muted);
+      max-width:520px;
+      text-align:right;
     }
 
     .scroll-wrap{
@@ -298,24 +254,15 @@
       font-size:.72rem;
       border-bottom:1px solid rgba(148,163,184,.5);
     }
-    thead th:first-child{border-top-left-radius:18px;}
-    thead th:last-child{border-top-right-radius:18px;}
 
     tbody tr{
       transition:background .16s ease, transform .14s ease, box-shadow .14s ease, opacity .18s ease;
       opacity:0;
       transform:translateY(12px);
     }
-    tbody tr.show{
-      opacity:1;
-      transform:translateY(0);
-    }
-    tbody tr:nth-child(even){
-      background:rgba(15,23,42,.84);
-    }
-    tbody tr:nth-child(odd){
-      background:rgba(15,23,42,.92);
-    }
+    tbody tr.show{ opacity:1; transform:translateY(0); }
+    tbody tr:nth-child(even){ background:rgba(15,23,42,.84); }
+    tbody tr:nth-child(odd){ background:rgba(15,23,42,.92); }
     tbody tr:hover{
       background:radial-gradient(circle at 0 0,rgba(248,250,252,.08),transparent 60%),
                  rgba(15,23,42,.98);
@@ -326,9 +273,6 @@
       padding:.7rem .9rem;
       border-bottom:1px solid rgba(31,41,55,.85);
       vertical-align:middle;
-    }
-    tbody tr:last-child td{
-      border-bottom:none;
     }
 
     .rank-badge{
@@ -360,14 +304,8 @@
       border:none;
     }
 
-    .perf-name{
-      font-weight:600;
-      font-size:.95rem;
-    }
-    .perf-meta{
-      font-size:.78rem;
-      color:var(--muted);
-    }
+    .perf-name{ font-weight:600; font-size:.95rem; }
+    .perf-meta{ font-size:.78rem; color:var(--muted); }
 
     .points-pill{
       display:inline-flex;
@@ -379,9 +317,7 @@
       gap:.25rem;
       background:rgba(15,23,42,.96);
     }
-    .points-pill strong{
-      font-size:.9rem;
-    }
+    .points-pill strong{ font-size:.9rem; }
 
     .bar-wrap{
       width:130px;
@@ -407,16 +343,10 @@
     }
 
     @media(max-width:720px){
-      .top-bar{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-      .logo{
-        width:170px;
-      }
-      .panel{
-        padding:.95rem;
-      }
+      .top-bar{ flex-direction:column; align-items:flex-start; }
+      .logo{ width:170px; }
+      .panel{ padding:.95rem; }
+      .panel-hint{ text-align:left; }
     }
   </style>
 </head>
@@ -429,15 +359,15 @@
         <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
         <div class="title-block">
           <div class="title">Finals Live Results</div>
-          <div class="subtitle">
+          <div class="subtitle" id="subtitleText">
             Live audience ranking from all ballots submitted tonight.
           </div>
         </div>
       </div>
       <div>
         <div class="pill-tag" style="margin-bottom:6px;">
-          <span class="pill-dot"></span>
-          <span id="statusText">Loading ballots…</span>
+          <span class="pill-dot" id="pillDot"></span>
+          <span id="statusText">Loading…</span>
         </div>
         <div class="updated-text" id="updatedText">Last updated –</div>
       </div>
@@ -447,8 +377,7 @@
       <div class="summary-card">
         <div class="summary-label">Total Ballots</div>
         <div class="summary-value" id="summaryBallots">–</div>
-        <div class="summary-sub">Valid audience submissions</div>
-        <div class="summary-pill">Cumulative, not per act</div>
+        <div class="summary-sub">Audience submissions counted</div>
       </div>
       <div class="summary-card">
         <div class="summary-label">Performances</div>
@@ -458,14 +387,14 @@
       <div class="summary-card">
         <div class="summary-label">Top-ranked Act</div>
         <div class="summary-value" id="summaryTopAct">–</div>
-        <div class="summary-sub" id="summaryTopDetails">Based on average rank (lower is better)</div>
+        <div class="summary-sub" id="summaryTopDetails">Sorted by Avg Rank → Points → Ballots</div>
       </div>
       <div class="summary-card">
         <div class="summary-label">Audience Favourite</div>
         <div class="trophy-pill">
           🏆 <span id="summaryTrophy">Waiting for votes…</span>
         </div>
-        <div class="summary-sub">Updates as new ballots arrive</div>
+        <div class="summary-sub">Updates automatically</div>
       </div>
     </section>
 
@@ -473,14 +402,7 @@
       <div class="panel-header">
         <div class="panel-title">Ranking Table</div>
         <div class="panel-hint">
-          Average rank is based on positions 1–5 from every ballot. Lower average rank wins.
-        </div>
-      </div>
-
-      <div class="legend-row">
-        <div class="legend-left">
-          <span class="legend-tag">#1 = audience favourite</span>
-          <span class="legend-tag">Bars show relative points</span>
+          Tie-breakers: Avg Rank (lower) → Total Points (higher) → Ballots (higher).
         </div>
       </div>
 
@@ -496,9 +418,7 @@
             </tr>
           </thead>
           <tbody id="resultsBody">
-            <tr>
-              <td colspan="5" class="no-data">Loading results…</td>
-            </tr>
+            <tr><td colspan="5" class="no-data">Loading results…</td></tr>
           </tbody>
         </table>
       </div>
@@ -530,26 +450,19 @@
     const summaryTrophy = document.getElementById("summaryTrophy");
     const statusText = document.getElementById("statusText");
     const updatedText = document.getElementById("updatedText");
+    const pillDot = document.getElementById("pillDot");
+    const subtitleText = document.getElementById("subtitleText");
 
     function setUpdatedNow(){
       const d = new Date();
       updatedText.textContent =
-        "Last updated " +
-        d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        "Last updated " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     }
 
-    /**
-     * Call this once you have an array like:
-     * [
-     *   { name: "Act Name", avgRank: 2.3, totalPoints: 412, ballots: 160, extra?: "meta" },
-     *   ...
-     * ]
-     */
     function renderResults(results){
       if(!results || !results.length){
         resultsBody.innerHTML =
           '<tr><td colspan="5" class="no-data">No votes recorded yet.</td></tr>';
-        statusText.textContent = "No ballots yet";
         summaryBallots.textContent = "0";
         summaryPerformances.textContent = "0";
         summaryTopAct.textContent = "–";
@@ -558,10 +471,14 @@
         return;
       }
 
-      // Sort by avgRank ascending (best first)
-      results.sort((a,b) => (a.avgRank ?? 999) - (b.avgRank ?? 999));
+      // Tie-break clarity: Avg Rank asc → Points desc → Ballots desc → Name asc
+      results.sort((a,b) =>
+        ((a.avgRank ?? 999) - (b.avgRank ?? 999)) ||
+        ((b.totalPoints ?? 0) - (a.totalPoints ?? 0)) ||
+        ((b.ballots ?? 0) - (a.ballots ?? 0)) ||
+        String(a.name || "").localeCompare(String(b.name || ""))
+      );
 
-      const totalBallots = results.reduce((max, r) => Math.max(max, r.ballots || 0), 0);
       const maxPoints = results.reduce((max, r) => Math.max(max, r.totalPoints || 0), 0);
 
       resultsBody.innerHTML = results.map((r, idx) => {
@@ -576,64 +493,62 @@
 
         return `
           <tr>
-            <td>
-              <span class="${rankClass}">#${rank}</span>
-            </td>
+            <td><span class="${rankClass}">#${rank}</span></td>
             <td>
               <div class="perf-name">${r.name || "Untitled"}</div>
               ${r.extra ? `<div class="perf-meta">${r.extra}</div>` : ""}
             </td>
             <td>
-              <div class="points-pill">
-                <span>Avg rank</span>
-                <strong>${r.avgRank ? r.avgRank.toFixed(2) : "–"}</strong>
-              </div>
+              <div class="points-pill"><span>Avg</span><strong>${r.avgRank ? r.avgRank.toFixed(2) : "–"}</strong></div>
             </td>
             <td>
-              <div class="points-pill">
-                <span>Points</span>
-                <strong>${r.totalPoints ?? "–"}</strong>
-              </div>
-              <div class="bar-wrap">
-                <div class="bar-fill" style="width:${barPercent}%;"></div>
-              </div>
+              <div class="points-pill"><span>Pts</span><strong>${r.totalPoints ?? "–"}</strong></div>
+              <div class="bar-wrap"><div class="bar-fill" style="width:${barPercent}%;"></div></div>
             </td>
-            <td>
-              <span class="perf-meta">${r.ballots || 0} ballots</span>
-            </td>
+            <td><span class="perf-meta">${r.ballots || 0} ballots</span></td>
           </tr>
         `;
       }).join("");
 
-      // Animate rows on first paint
       Array.from(resultsBody.querySelectorAll("tr")).forEach((row, idx) => {
-        setTimeout(() => row.classList.add("show"), 80 * idx);
+        setTimeout(() => row.classList.add("show"), 60 * idx);
       });
 
-      summaryBallots.textContent = totalBallots || "–";
-      summaryPerformances.textContent = results.length.toString();
+      summaryPerformances.textContent = String(results.length);
 
       const top = results[0];
       if(top){
         summaryTopAct.textContent = top.name || "Untitled";
         summaryTopDetails.textContent =
-          `Avg rank ${top.avgRank ? top.avgRank.toFixed(2) : "–"} · ${top.ballots || 0} ballots`;
+          `Avg ${top.avgRank ? top.avgRank.toFixed(2) : "–"} · ${top.totalPoints ?? 0} pts · ${top.ballots || 0} ballots`;
         summaryTrophy.textContent = top.name || "Audience favourite";
       } else {
         summaryTrophy.textContent = "No leader yet";
       }
 
-      statusText.textContent = "Live results loaded";
       setUpdatedNow();
     }
 
-    // --- Firestore finals aggregation ---
-
-    const FIRESTORE_URL =
+    const VOTES_URL =
       "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/finalVotes";
+    const CONFIG_URL =
+      "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/config/finals";
+
+    async function getVotingOpen() {
+      try {
+        const res = await fetch(CONFIG_URL);
+        if (!res.ok) return true;
+        const data = await res.json();
+        const fields = data.fields || {};
+        const v = fields.votingOpen && fields.votingOpen.booleanValue;
+        return (typeof v === "boolean") ? v : true;
+      } catch {
+        return true;
+      }
+    }
 
     async function fetchAllFinalVotes() {
-      const res = await fetch(FIRESTORE_URL + "?pageSize=200");
+      const res = await fetch(VOTES_URL + "?pageSize=200");
       if (!res.ok) {
         const txt = await res.text();
         throw new Error(txt || "Failed to fetch finalVotes");
@@ -643,7 +558,6 @@
     }
 
     function aggregateVotes(docs) {
-      // Map by actId (fallback to name)
       const acts = new Map();
       const totalBallots = docs.length;
 
@@ -651,7 +565,6 @@
         const fields = doc.fields || {};
         const actsInThisBallot = new Set();
 
-        // assuming 5 finalists like on the finals page
         for (let i = 0; i < 5; i++) {
           const actNameField = fields["act_" + i];
           const actIdField = fields["actId_" + i];
@@ -660,34 +573,22 @@
           if (!rankField || !actNameField) continue;
 
           const actName = actNameField.stringValue || "";
-          const actId =
-            (actIdField && actIdField.stringValue) || actName || "unknown";
-          const rawRank =
-            rankField.integerValue ?? rankField.stringValue ?? "";
+          const actId = (actIdField && actIdField.stringValue) || actName || "unknown";
+          const rawRank = rankField.integerValue ?? rankField.stringValue ?? "";
           const rank = parseInt(rawRank, 10);
           if (!actName || !Number.isFinite(rank)) continue;
 
           let stats = acts.get(actId);
           if (!stats) {
-            stats = {
-              id: actId,
-              name: actName,
-              totalRank: 0,
-              totalPoints: 0,
-              ballots: 0
-            };
+            stats = { id: actId, name: actName, totalRank: 0, totalPoints: 0, ballots: 0 };
             acts.set(actId, stats);
           }
 
           stats.totalRank += rank;
-
-          // Convert rank to points: 1st = 5 pts, 5th = 1 pt
-          stats.totalPoints += 6 - rank;
-
+          stats.totalPoints += (6 - rank); // 1->5 pts, 5->1 pt
           actsInThisBallot.add(actId);
         }
 
-        // Each act included in this ballot gets +1 ballot count
         for (const id of actsInThisBallot) {
           const stats = acts.get(id);
           if (stats) stats.ballots += 1;
@@ -696,49 +597,58 @@
 
       const results = [];
       for (const stats of acts.values()) {
-        const avgRank =
-          stats.ballots > 0 ? stats.totalRank / stats.ballots : null;
-        results.push({
-          name: stats.name,
-          avgRank,
-          totalPoints: stats.totalPoints,
-          ballots: stats.ballots
-        });
+        const avgRank = stats.ballots > 0 ? stats.totalRank / stats.ballots : null;
+        results.push({ name: stats.name, avgRank, totalPoints: stats.totalPoints, ballots: stats.ballots });
       }
 
       return { results, totalBallots };
     }
 
+    let pollTimer = null;
+
+    function setStatus(open) {
+      if (open) {
+        pillDot.classList.remove("closed");
+        statusText.textContent = "Voting open · Auto-refreshing";
+        subtitleText.textContent = "Live audience ranking from all ballots submitted tonight.";
+      } else {
+        pillDot.classList.add("closed");
+        statusText.textContent = "Voting closed · Final results";
+        subtitleText.textContent = "Voting is closed. Displaying final frozen results.";
+      }
+    }
+
     async function loadFinalsResults() {
       try {
-        statusText.textContent = "Loading ballots…";
+        const open = await getVotingOpen();
+        setStatus(open);
 
         const docs = await fetchAllFinalVotes();
         const { results, totalBallots } = aggregateVotes(docs);
 
-        // Render table + summary cards
         renderResults(results);
-
-        // Override total ballots to show number of documents (ballots)
         summaryBallots.textContent = String(totalBallots);
 
         if (!results.length) {
-          statusText.textContent = "No ballots yet";
-        } else {
-          statusText.textContent = "Live results loaded";
+          statusText.textContent = open ? "Voting open · No ballots yet" : "Voting closed · No ballots recorded";
+        }
+
+        // Freeze once voting is closed
+        if (!open && pollTimer) {
+          clearInterval(pollTimer);
+          pollTimer = null;
         }
       } catch (err) {
         console.error(err);
         statusText.textContent = "Error loading results";
         resultsBody.innerHTML =
-          '<tr><td colspan="5" class="no-data">Failed to load results: ' +
-          (err.message || err) +
-          '</td></tr>';
+          '<tr><td colspan="5" class="no-data">Failed to load results: ' + (err.message || err) + '</td></tr>';
       }
     }
 
-    // Run once on load
-    loadFinalsResults();
+    // Initial load + auto-refresh
+    await loadFinalsResults();
+    pollTimer = setInterval(loadFinalsResults, 10000);
   </script>
 </body>
 </html>
