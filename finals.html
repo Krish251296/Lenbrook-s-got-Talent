@@ -412,6 +412,18 @@
       setFormEnabled(true);
     })();
 
+// 🔁 Live status check: if you close voting, their page updates within ~8s
+setInterval(async () => {
+  const open = await getVotingOpen();
+  setStatus(open);
+
+  if (!open) {
+    closedBanner.style.display = "block";
+    setFormEnabled(false);
+  }
+}, 8000);
+
+    
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       clearErrors();
