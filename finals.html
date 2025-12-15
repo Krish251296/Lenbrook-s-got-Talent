@@ -85,7 +85,6 @@
       display: none;
     }
     .banner strong { color: var(--accent); }
-    #adminResetHint { display: none; }
 
     .card {
       background: var(--glass);
@@ -223,7 +222,6 @@
         <div class="banner" id="dupBanner">
           <strong>Vote already recorded on this device.</strong>
         </div>
-
       </div>
     </div>
 
@@ -277,7 +275,7 @@
     }
     setInterval(spawnFlake, 75);
 
-    // finals.html?reset=1 clears local lock (admin use)
+    // Silent admin reset: finals.html?reset=1
     const qs = new URLSearchParams(location.search);
     const isAdminResetMode = qs.get("reset") === "1";
     if (isAdminResetMode) {
@@ -310,7 +308,6 @@
     const statusLabel = document.getElementById("statusLabel");
     const closedBanner = document.getElementById("closedBanner");
     const dupBanner = document.getElementById("dupBanner");
-    const adminResetHint = document.getElementById("adminResetHint");
 
     const VOTED_KEY = "LGT_FINALS_VOTED";
 
@@ -387,7 +384,6 @@
     function showLockedUI() {
       dupBanner.style.display = "block";
       setFormEnabled(false);
-      if (isAdminResetMode) adminResetHint.style.display = "block";
     }
 
     function applyUIState(open) {
@@ -396,7 +392,6 @@
       // Reset banners every time, so open/close toggles correctly
       closedBanner.style.display = "none";
       dupBanner.style.display = "none";
-      adminResetHint.style.display = "none";
 
       if (!open) {
         closedBanner.style.display = "block";
@@ -501,7 +496,6 @@
         // Disable so they can’t submit twice; keep messaging clean
         setFormEnabled(false);
         dupBanner.style.display = "none";
-        adminResetHint.style.display = "none";
       } catch (err) {
         console.error(err);
         statusMsg.textContent = "Failed to submit: " + (err.message || err);
