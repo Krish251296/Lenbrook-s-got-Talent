@@ -83,9 +83,9 @@
       color: var(--muted);
       font-size: 0.86rem;
       display: none;
-      #adminResetHint { display: none; }
     }
     .banner strong { color: var(--accent); }
+    #adminResetHint { display: none; }
 
     .card {
       background: var(--glass);
@@ -215,17 +215,18 @@
           <strong>Use each rank once.</strong><br />
           1 = your top favourite, 5 = still great, but not your top pick.
         </div>
+
         <div class="banner" id="closedBanner">
           <strong>Voting is closed.</strong> Thanks for participating!
         </div>
-       <div class="banner" id="dupBanner">
-  <strong>Vote already recorded on this device.</strong>
-</div>
 
-<div class="banner" id="adminResetHint">
-  <strong>Admin:</strong> To clear the device lock, open <code>?reset=1</code>.
-</div>
+        <div class="banner" id="dupBanner">
+          <strong>Vote already recorded on this device.</strong>
+        </div>
 
+        <div class="banner" id="adminResetHint">
+          <strong>Admin:</strong> To clear the device lock, open <code>?reset=1</code>.
+        </div>
       </div>
     </div>
 
@@ -279,9 +280,10 @@
     }
     setInterval(spawnFlake, 75);
 
-    // Allow staff to reset local lock if needed:
-    // finals.html?reset=1
-    if (new URLSearchParams(location.search).get("reset") === "1") {
+    // finals.html?reset=1 clears local lock (admin use)
+    const qs = new URLSearchParams(location.search);
+    const isAdminResetMode = qs.get("reset") === "1";
+    if (isAdminResetMode) {
       localStorage.removeItem("LGT_FINALS_VOTED");
     }
 
@@ -311,6 +313,7 @@
     const statusLabel = document.getElementById("statusLabel");
     const closedBanner = document.getElementById("closedBanner");
     const dupBanner = document.getElementById("dupBanner");
+    const adminResetHint = document.getElementById("adminResetHint");
 
     const VOTED_KEY = "LGT_FINALS_VOTED";
 
@@ -384,6 +387,12 @@
       container.appendChild(row);
     });
 
+    function showLockedUI() {
+      dupBanner.style.display = "block";
+      setFormEnabled(false);
+      if (isAdminResetMode) adminResetHint.style.display = "block";
+    }
+
     // Apply voting open/closed + device lock
     (async function initStatus() {
       const open = await getVotingOpen();
@@ -396,8 +405,7 @@
       }
 
       if (isVotingLockedByDevice()) {
-        dupBanner.style.display = "block";
-        setFormEnabled(false);
+        showLockedUI();
         return;
       }
 
@@ -411,8 +419,7 @@
 
       // Stop if locked (extra guard)
       if (isVotingLockedByDevice()) {
-        dupBanner.style.display = "block";
-        setFormEnabled(false);
+        showLockedUI();
         return;
       }
 
@@ -483,9 +490,10 @@
         statusMsg.textContent = "";
         successWrap.style.display = "block";
 
-        // Keep disabled so they can’t submit twice
+        // Disable so they can’t submit twice; don't show reset hint to normal users
         setFormEnabled(false);
-        dupBanner.style.display = "block";
+        dupBanner.style.display = "none";
+        adminResetHint.style.display = "none";
       } catch (err) {
         console.error(err);
         statusMsg.textContent = "Failed to submit: " + (err.message || err);
