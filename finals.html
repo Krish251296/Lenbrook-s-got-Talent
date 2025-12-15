@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lenbrook's Got Talent – Finals Live Voting</title>
+  <title>Lenbrook's Got Talent – Finals Voting</title>
 
   <style>
     :root {
       --bg1: #050716;
       --bg2: #111827;
       --bg3: #1f2937;
-      --glass: rgba(15, 23, 42, 0.8);
-      --glass-soft: rgba(15, 23, 42, 0.6);
+      --glass: rgba(15, 23, 42, 0.86);
       --border: rgba(148, 163, 184, 0.65);
       --text: #e5e7eb;
       --muted: #9ca3af;
@@ -22,11 +21,7 @@
       --radius-lg: 16px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
@@ -43,14 +38,6 @@
       50% { transform: translateY(-6px); }
       100% { transform: translateY(0); }
     }
-    @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(16px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.6); }
-      100% { box-shadow: 0 0 0 16px rgba(251, 191, 36, 0); }
-    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
@@ -64,6 +51,9 @@
       min-height: 100vh;
       overflow-x: hidden;
       position: relative;
+      display: grid;
+      place-items: center;
+      padding: 22px;
     }
 
     /* Snow */
@@ -83,184 +73,51 @@
       animation: snow-fall linear infinite;
     }
 
-    main {
+    .shell {
+      width: min(720px, 100%);
       position: relative;
       z-index: 10;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: clamp(16px, 2vw, 28px);
-      padding-bottom: 40px;
     }
 
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .logo-wrap {
+    .brand {
       display: flex;
       align-items: center;
       gap: 16px;
+      margin-bottom: 14px;
     }
 
     .logo {
-      width: clamp(160px, 22vw, 230px);
+      width: clamp(150px, 22vw, 220px);
       height: auto;
       display: block;
       filter: drop-shadow(0 0 18px rgba(129,140,248,0.6));
       animation: float-soft 7s ease-in-out infinite;
     }
 
-    .title-block {
+    .brand-text {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
     .title {
-      font-size: 1.4rem;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
-    .subtitle {
+    .note {
       font-size: 0.9rem;
       color: var(--muted);
-      max-width: 520px;
+      line-height: 1.35;
     }
 
-    .pill-tag {
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      padding: 0.4rem 0.9rem;
-      font-size: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.65);
-    }
-
-    .pill-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: radial-gradient(circle, var(--accent) 0%, #b45309 75%);
-      box-shadow: 0 0 12px rgba(251, 191, 36, 0.9);
-      animation: pulseGlow 1.9s infinite;
-    }
-
-    /* Layout */
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1.1fr);
-      gap: 18px;
-      align-items: flex-start;
-      margin-top: 10px;
-      animation: fadeInUp 0.55s ease-out both;
-    }
-
-    @media (max-width: 880px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    /* Left info section */
-    .info-card {
-      background: var(--glass-soft);
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border);
-      padding: 1.2rem 1.3rem 1.3rem;
-      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(18px) saturate(150%);
-      -webkit-backdrop-filter: blur(18px) saturate(150%);
-    }
-
-    .info-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .info-text {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 0.9rem;
-    }
-
-    .steps {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 0.9rem;
-      display: grid;
-      gap: 0.6rem;
-    }
-
-    .step {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.5rem 0.75rem;
-      align-items: start;
-      font-size: 0.88rem;
-    }
-
-    .step-number {
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, var(--accent), #b45309);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #111827;
-      font-size: 0.8rem;
-      font-weight: 700;
-      box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
-      margin-top: 1px;
-    }
-
-    .step-title {
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .step-text {
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .hint-banner {
-      margin-top: 0.6rem;
-      border-radius: var(--radius-lg);
-      padding: 0.55rem 0.7rem;
-      font-size: 0.78rem;
-      background: rgba(15,23,42,0.95);
-      border: 1px dashed rgba(148,163,184,0.7);
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-
-    .hint-icon {
-      font-size: 1rem;
-    }
-
-    .hint-strong {
-      color: var(--accent2);
-      font-weight: 500;
-    }
-
-    /* Right: form card */
     .card {
       background: var(--glass);
       border-radius: var(--radius-xl);
       border: 1px solid var(--border);
-      padding: 1.4rem 1.3rem 1.5rem;
+      padding: 1.35rem 1.25rem 1.45rem;
       box-shadow: 0 24px 90px rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(18px) saturate(150%);
       -webkit-backdrop-filter: blur(18px) saturate(150%);
@@ -279,11 +136,6 @@
       margin: 0;
     }
 
-    .card-sub {
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-
     .status-bar {
       border-radius: 999px;
       background: rgba(15,23,42,0.95);
@@ -293,6 +145,8 @@
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
+      color: var(--muted);
+      white-space: nowrap;
     }
 
     .status-dot {
@@ -308,20 +162,20 @@
       display: flex;
       flex-direction: column;
       gap: 0.65rem;
-      max-height: 360px;
+      max-height: 420px;
       overflow: auto;
       padding-right: 0.1rem;
     }
 
     .finalist-row {
       display: grid;
-      grid-template-columns: 1fr minmax(110px, 130px);
+      grid-template-columns: 1fr minmax(120px, 140px);
       gap: 0.75rem;
       align-items: center;
       border-radius: var(--radius-lg);
       background: rgba(15,23,42,0.9);
       border: 1px solid rgba(148,163,184,0.45);
-      padding: 0.6rem 0.7rem;
+      padding: 0.65rem 0.75rem;
       transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
     }
 
@@ -332,53 +186,45 @@
       box-shadow: 0 10px 26px rgba(15,23,42,0.9);
     }
 
-    .finalist-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
     .finalist-name {
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 650;
+      font-size: 0.96rem;
     }
 
     .finalist-meta {
       font-size: 0.78rem;
       color: var(--muted);
+      margin-top: 2px;
     }
 
-    /* 🔧 UPDATED DROPDOWN STYLING */
+    /* Dropdown fix */
     .rank-select {
       min-width: 0;
-      padding: 0.45rem 0.6rem;
+      padding: 0.48rem 0.6rem;
       border-radius: 999px;
       border: 1px solid rgba(148,163,184,0.9);
-      background-color: #020617;   /* dark background */
-      color: #f9fafb;              /* light text */
-      font-weight: 600;
+      background-color: #020617;
+      color: #f9fafb;
+      font-weight: 700;
       font-size: 0.86rem;
       text-align: center;
       appearance: none;
-      position: relative;
       cursor: pointer;
     }
-
+    .rank-select option {
+      background-color: #020617;
+      color: #f9fafb;
+    }
     .rank-select.invalid {
       border-color: var(--danger);
       box-shadow: 0 0 0 1px rgba(251,113,133,0.7);
     }
 
-    .rank-select option {
-      background-color: #020617;   /* dropdown menu background */
-      color: #f9fafb;              /* dropdown text color */
-    }
-
     .error-text {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--danger);
-      margin-top: 0.4rem;
-      min-height: 1.1em;
+      margin-top: 0.55rem;
+      min-height: 1.2em;
     }
 
     .btn {
@@ -386,27 +232,24 @@
       margin-top: 0.9rem;
       border: 0;
       border-radius: 999px;
-      padding: 0.9rem 1.2rem;
+      padding: 0.95rem 1.2rem;
       font-size: 1rem;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
       background: radial-gradient(circle at 20% 20%, #ffffff 0%, var(--accent) 60%, #f97316 100%);
       color: #111827;
       box-shadow: 0 6px 22px rgba(251,191,36,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
     }
-
     .btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 12px 30px rgba(251,191,36,0.8);
       filter: brightness(1.02);
     }
-
     .btn:active {
       transform: translateY(0);
       box-shadow: 0 6px 18px rgba(251,191,36,0.7);
     }
-
     .btn[disabled] {
       opacity: 0.65;
       cursor: default;
@@ -416,148 +259,83 @@
 
     .status-msg {
       margin-top: 0.6rem;
-      font-size: 0.86rem;
+      font-size: 0.9rem;
       color: var(--accent2);
       min-height: 1.2em;
       text-align: center;
     }
-
-    .status-msg.error {
-      color: var(--danger);
-    }
+    .status-msg.error { color: var(--danger); }
 
     .success-wrap {
       margin-top: 0.6rem;
       text-align: center;
-      font-size: 0.86rem;
+      font-size: 0.9rem;
       color: var(--accent2);
       display: none;
     }
-
     .success-icon {
       font-size: 1.5rem;
       margin-bottom: 0.2rem;
     }
 
-    @media (max-width: 640px) {
-      .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .card {
-        padding: 1.2rem 1rem 1.4rem;
-      }
-      .info-card {
-        padding: 1.1rem 1rem 1.2rem;
-      }
-      .finalist-row {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 520px) {
+      .brand { flex-direction: column; align-items: flex-start; }
+      .finalist-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
+
 <body>
   <div class="snow-wrap" id="snowLayer" aria-hidden="true"></div>
 
-  <main>
-    <header class="top-bar">
-      <div class="logo-wrap">
-        <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
-        <div class="title-block">
-          <div class="title">Finals Live Voting</div>
-          <div class="subtitle">
-            Rank tonight’s performances from <strong>1 (favourite)</strong> to <strong>5</strong>.  
-            Each rank can be used only once.
-          </div>
+  <div class="shell">
+    <div class="brand">
+      <img src="logo.png" alt="Lenbrook's Got Talent" class="logo" />
+      <div class="brand-text">
+        <div class="title">Finals Voting</div>
+        <div class="note">
+          <strong>Use each rank once.</strong>
+          <br />
+          1 = your top favourite, 5 = still great, but not your top pick.
         </div>
       </div>
-      <div class="pill-tag">
-        <span class="pill-dot"></span>
-        <span>Voting open · 1 ballot per person</span>
-      </div>
-    </header>
+    </div>
 
-    <section class="layout">
-      <!-- Left info / how it works -->
-      <section class="info-card">
-        <h2 class="info-title">How finals voting works</h2>
-        <p class="info-text">
-          You’re choosing the audience favourite! Watch all performances, then assign each act a unique rank between 1 and 5.
-        </p>
-
-        <ol class="steps">
-          <li class="step">
-            <div class="step-number">1</div>
-            <div>
-              <div class="step-title">Watch all performances</div>
-              <div class="step-text">
-                Make sure you’ve seen every act so your ranking is fair.
-              </div>
-            </div>
-          </li>
-          <li class="step">
-            <div class="step-number">2</div>
-            <div>
-              <div class="step-title">Assign ranks 1–5</div>
-              <div class="step-text">
-                Use each rank once. <strong>1 = your top favourite</strong>, 5 = still great, but not your top pick.
-              </div>
-            </div>
-          </li>
-          <li class="step">
-            <div class="step-number">3</div>
-            <div>
-              <div class="step-title">Submit once</div>
-              <div class="step-text">
-                Tap the button to lock in your ballot. Results will appear live on the big screen.
-              </div>
-            </div>
-          </li>
-        </ol>
-
-        <div class="hint-banner">
-          <span class="hint-icon">💡</span>
-          <span>
-            <span class="hint-strong">Tip:</span> if you change your mind, adjust the ranks before submitting.
-          </span>
+    <section class="card">
+      <header class="card-header">
+        <div>
+          <h2>Cast your ballot</h2>
+          <div class="note" style="font-size:0.82rem; margin-top:2px;">
+            Pick a different rank for each performance.
+          </div>
         </div>
-      </section>
+        <div class="status-bar">
+          <span class="status-dot"></span>
+          <span>Live voting</span>
+        </div>
+      </header>
 
-      <!-- Right voting form -->
-      <section class="card">
-        <header class="card-header">
-          <div>
-            <h2>Cast your ballot</h2>
-            <p class="card-sub">Each performance must have a different rank.</p>
-          </div>
-          <div class="status-bar">
-            <span class="status-dot"></span>
-            <span>Live: audience voting</span>
-          </div>
-        </header>
+      <form id="finalsForm" novalidate>
+        <div id="finalistsContainer" class="finalist-list"></div>
 
-        <form id="finalsForm" novalidate>
-          <div id="finalistsContainer" class="finalist-list"></div>
+        <div class="error-text" id="validationError"></div>
 
-          <div class="error-text" id="validationError"></div>
+        <button type="submit" class="btn" id="submitBtn">
+          Submit your rankings ⟶
+        </button>
 
-          <button type="submit" class="btn" id="submitBtn">
-            Submit your rankings ⟶
-          </button>
+        <div id="statusMsg" class="status-msg"></div>
 
-          <div id="statusMsg" class="status-msg"></div>
-
-          <div id="successWrap" class="success-wrap">
-            <div class="success-icon">✅</div>
-            <div>Thank you! Your ballot has been recorded.</div>
-          </div>
-        </form>
-      </section>
+        <div id="successWrap" class="success-wrap">
+          <div class="success-icon">✅</div>
+          <div>Thank you! Your ballot has been recorded.</div>
+        </div>
+      </form>
     </section>
-  </main>
+  </div>
 
   <script>
-    /* ❄ Snow like your other pages */
+    /* ❄ Snow */
     const snowLayer = document.getElementById("snowLayer");
     function spawnFlake() {
       if (!snowLayer) return;
@@ -597,7 +375,7 @@
       const row = document.createElement("div");
       row.className = "finalist-row";
       row.innerHTML = `
-        <div class="finalist-main">
+        <div>
           <div class="finalist-name">${idx + 1}. ${act.name}</div>
           <div class="finalist-meta">${act.meta || ""}</div>
         </div>
@@ -623,9 +401,7 @@
       validationError.textContent = "";
       statusMsg.textContent = "";
       statusMsg.classList.remove("error");
-      document.querySelectorAll(".rank-select").forEach(sel => {
-        sel.classList.remove("invalid");
-      });
+      document.querySelectorAll(".rank-select").forEach(sel => sel.classList.remove("invalid"));
     }
 
     form.addEventListener("submit", async (e) => {
@@ -635,10 +411,11 @@
 
       const ranks = [];
       const selects = [];
+
       for (let i = 0; i < FINALISTS.length; i++) {
         const sel = form.elements["rank_" + i];
         selects.push(sel);
-        const v = sel.value.trim();
+        const v = (sel.value || "").trim();
         if (!v) {
           validationError.textContent = "Please choose a rank for all performances.";
           sel.classList.add("invalid");
@@ -646,18 +423,14 @@
         ranks.push(v ? parseInt(v, 10) : NaN);
       }
 
-      if (ranks.some(isNaN)) {
-        return;
-      }
+      if (ranks.some(isNaN)) return;
 
       const set = new Set(ranks);
       if (set.size !== FINALISTS.length) {
         validationError.textContent = "Each rank 1–5 must be used exactly once. Please adjust your choices.";
-        selects.forEach((sel, idx) => {
+        selects.forEach((sel) => {
           const val = parseInt(sel.value || "0", 10);
-          if (ranks.filter(r => r === val).length > 1) {
-            sel.classList.add("invalid");
-          }
+          if (ranks.filter(r => r === val).length > 1) sel.classList.add("invalid");
         });
         return;
       }
@@ -693,7 +466,7 @@
         successWrap.style.display = "block";
       } catch (err) {
         console.error(err);
-        statusMsg.textContent = "Failed to submit: " + err.message;
+        statusMsg.textContent = "Failed to submit: " + (err.message || err);
         statusMsg.classList.add("error");
         submitBtn.disabled = false;
       }
