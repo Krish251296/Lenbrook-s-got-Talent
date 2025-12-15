@@ -167,14 +167,84 @@
       opacity: .85;
     }
 
+    /* Wrap card content so we can blur it on "closed" takeover */
+    .card-inner{
+      position: relative;
+      z-index: 2;
+      transition: filter 180ms ease, opacity 180ms ease;
+    }
+
+    /* CLOSED takeover state */
+    .card.is-closed .card-inner{
+      filter: blur(6px);
+      opacity: 0.45;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .closed-overlay{
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      padding: 18px;
+      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.25), rgba(0,0,0,.62));
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .card.is-closed .closed-overlay{
+      display: flex;
+    }
+    .closed-modal{
+      width: min(520px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.42);
+      background: rgba(2,6,23,0.78);
+      box-shadow: 0 26px 90px rgba(0,0,0,.72);
+      padding: 16px 16px 14px;
+      text-align: center;
+    }
+    .closed-badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 12px;
+      border: 1px solid rgba(251,113,133,0.45);
+      background: rgba(251,113,133,0.12);
+      color: #fecdd3;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: .78rem;
+      margin-bottom: 10px;
+    }
+    .closed-title{
+      font-size: 1.25rem;
+      font-weight: 950;
+      letter-spacing: .01em;
+      margin-bottom: 6px;
+    }
+    .closed-text{
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.35;
+    }
+    .closed-tip{
+      margin-top: 10px;
+      color: rgba(229,231,235,.82);
+      font-size: .86rem;
+    }
+    .closed-tip b{ color: var(--gold); }
+
     .card-header{
       display:flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 10px;
       margin-bottom: 12px;
-      position: relative;
-      z-index: 2;
     }
     .card-header h2{
       font-size: 1.05rem;
@@ -211,8 +281,6 @@
       display:flex;
       flex-direction: column;
       gap: 8px;
-      position: relative;
-      z-index: 2;
     }
     .progress-top{
       display:flex;
@@ -248,8 +316,6 @@
       max-height: 520px;
       overflow: auto;
       padding-right: 2px;
-      position: relative;
-      z-index: 2;
     }
 
     .finalist-row{
@@ -288,12 +354,6 @@
       display:flex;
       align-items:center;
       gap: 8px;
-    }
-    .rank-label{
-      font-size: .8rem;
-      color: var(--muted);
-      margin-right: 2px;
-      display:none; /* keep clean; enable if you want "Rank" label */
     }
 
     .rank-btn{
@@ -337,8 +397,6 @@
       color: var(--danger);
       margin-top: 10px;
       min-height: 1.2em;
-      position: relative;
-      z-index: 2;
     }
 
     .btn{
@@ -354,8 +412,6 @@
       color: #111827;
       box-shadow: 0 10px 28px rgba(251,191,36,0.30);
       transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease, opacity 150ms ease;
-      position: relative;
-      z-index: 2;
     }
     .btn:hover{
       transform: translateY(-1px);
@@ -377,8 +433,6 @@
       color: var(--ice);
       min-height: 1.2em;
       text-align: center;
-      position: relative;
-      z-index: 2;
     }
     .status-msg.error{ color: var(--danger); }
 
@@ -388,8 +442,6 @@
       font-size: .92rem;
       color: var(--ice);
       display: none;
-      position: relative;
-      z-index: 2;
     }
     .success-icon{ font-size: 1.55rem; margin-bottom: 0.2rem; }
 
@@ -415,53 +467,65 @@
           <strong>Use each rank once.</strong> 1 = your top favourite, 5 = still great, but not your top pick.
         </div>
 
-        <div class="banner" id="closedBanner">
-          <strong>Voting is closed.</strong> Thanks for participating!
-        </div>
-
         <div class="banner" id="dupBanner">
           <strong>Vote already recorded on this device.</strong>
         </div>
       </div>
     </div>
 
-    <section class="card">
-      <header class="card-header">
-        <div>
-          <h2>Cast your ballot</h2>
-        </div>
-        <div class="status-bar" id="statusBar">
-          <span class="status-dot" id="statusDot"></span>
-          <span id="statusLabel">Checking status…</span>
-        </div>
-      </header>
-
-      <div class="progress-wrap" aria-live="polite">
-        <div class="progress-top">
-          <span><b id="rankedCount">0</b> / <b id="totalCount">5</b> ranked</span>
-          <span id="progressHint">Select ranks to enable submit</span>
-        </div>
-        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
-          <div class="progress-fill" id="progressFill"></div>
+    <section class="card" id="voteCard">
+      <!-- CLOSED TAKEOVER OVERLAY -->
+      <div class="closed-overlay" id="closedOverlay" aria-live="polite">
+        <div class="closed-modal" role="status" aria-label="Voting closed">
+          <div class="closed-badge">⛔ Voting Closed</div>
+          <div class="closed-title">Thanks for voting!</div>
+          <div class="closed-text">
+            Audience voting is now closed.
+          </div>
+          <div class="closed-tip">
+            Please watch the screen for <b>live results</b>.
+          </div>
         </div>
       </div>
 
-      <form id="finalsForm" novalidate>
-        <div id="finalistsContainer" class="finalist-list"></div>
+      <div class="card-inner">
+        <header class="card-header">
+          <div>
+            <h2>Cast your ballot</h2>
+          </div>
+          <div class="status-bar" id="statusBar">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusLabel">Checking status…</span>
+          </div>
+        </header>
 
-        <div class="error-text" id="validationError"></div>
-
-        <button type="submit" class="btn" id="submitBtn" disabled>
-          Rank all acts to submit
-        </button>
-
-        <div id="statusMsg" class="status-msg"></div>
-
-        <div id="successWrap" class="success-wrap">
-          <div class="success-icon">✅</div>
-          <div>Thank you! Your ballot has been recorded.</div>
+        <div class="progress-wrap" aria-live="polite">
+          <div class="progress-top">
+            <span><b id="rankedCount">0</b> / <b id="totalCount">5</b> ranked</span>
+            <span id="progressHint">Select ranks to enable submit</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
         </div>
-      </form>
+
+        <form id="finalsForm" novalidate>
+          <div id="finalistsContainer" class="finalist-list"></div>
+
+          <div class="error-text" id="validationError"></div>
+
+          <button type="submit" class="btn" id="submitBtn" disabled>
+            Rank all acts to submit
+          </button>
+
+          <div id="statusMsg" class="status-msg"></div>
+
+          <div id="successWrap" class="success-wrap">
+            <div class="success-icon">✅</div>
+            <div>Thank you! Your ballot has been recorded.</div>
+          </div>
+        </form>
+      </div>
     </section>
   </div>
 
@@ -487,7 +551,6 @@
     const isAdminResetMode = qs.get("reset") === "1";
     if (isAdminResetMode) {
       localStorage.removeItem("LGT_FINALS_VOTED");
-      // optional: remove reset param after use (prevents accidental repeat-unlock on refresh)
       qs.delete("reset");
       const newUrl = location.pathname + (qs.toString() ? "?" + qs.toString() : "") + location.hash;
       history.replaceState({}, "", newUrl);
@@ -508,6 +571,7 @@
     const CONFIG_URL =
       "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/config/finals";
 
+    const voteCard = document.getElementById("voteCard");
     const form = document.getElementById("finalsForm");
     const container = document.getElementById("finalistsContainer");
     const statusMsg = document.getElementById("statusMsg");
@@ -517,7 +581,6 @@
 
     const statusDot = document.getElementById("statusDot");
     const statusLabel = document.getElementById("statusLabel");
-    const closedBanner = document.getElementById("closedBanner");
     const dupBanner = document.getElementById("dupBanner");
 
     const rankedCountEl = document.getElementById("rankedCount");
@@ -542,9 +605,10 @@
     }
 
     function setFormEnabled(enabled) {
-      // Rank buttons
       document.querySelectorAll(".rank-btn").forEach(btn => {
-        btn.disabled = !enabled || btn.classList.contains("used");
+        // keep "used" buttons disabled even when enabled
+        const used = btn.classList.contains("used");
+        btn.disabled = !enabled || used;
         btn.style.pointerEvents = enabled ? "" : "none";
       });
       submitBtn.disabled = !enabled || !isComplete();
@@ -616,7 +680,6 @@
     }
 
     function updateButtonsUI() {
-      // For each row, disable ranks that are already used elsewhere
       FINALISTS.forEach((_, idx) => {
         const used = usedRanksSet(idx);
         const row = document.querySelector(`[data-row="${idx}"]`);
@@ -631,7 +694,6 @@
           const shouldDisable = !selected && used.has(r);
           btn.classList.toggle("used", shouldDisable);
 
-          // disabled property handled by setFormEnabled, but keep it consistent here too
           btn.disabled = shouldDisable;
           btn.setAttribute("aria-pressed", selected ? "true" : "false");
         });
@@ -642,7 +704,6 @@
 
     function renderFinalists() {
       container.innerHTML = "";
-
       FINALISTS.forEach((act, idx) => {
         const row = document.createElement("div");
         row.className = "finalist-row";
@@ -655,40 +716,31 @@
           </div>
           <div class="rank-pad" aria-label="Select rank for ${act.name}">
             ${[1,2,3,4,5].map(n => `
-              <button type="button" class="rank-btn" data-idx="${idx}" data-rank="${n}" aria-pressed="false">
-                ${n}
-              </button>
+              <button type="button" class="rank-btn" data-idx="${idx}" data-rank="${n}" aria-pressed="false">${n}</button>
             `).join("")}
           </div>
         `;
-
         container.appendChild(row);
       });
 
-      // click handling (toggle to clear if clicking selected)
       container.addEventListener("click", (e) => {
         const btn = e.target.closest(".rank-btn");
         if (!btn) return;
+        if (btn.classList.contains("used")) return;
 
         const idx = parseInt(btn.dataset.idx, 10);
         const r = parseInt(btn.dataset.rank, 10);
         if (Number.isNaN(idx) || Number.isNaN(r)) return;
 
-        // If this rank is disabled by "used", ignore
-        if (btn.classList.contains("used")) return;
-
-        // Toggle: clicking the same selected rank clears it
-        if (ranks[idx] === r) {
-          ranks[idx] = null;
-        } else {
-          ranks[idx] = r;
-        }
+        // Toggle: clicking selected clears it
+        ranks[idx] = (ranks[idx] === r) ? null : r;
 
         clearErrors();
         updateButtonsUI();
       });
 
       updateButtonsUI();
+      updateProgressUI();
     }
 
     function showLockedUI() {
@@ -697,33 +749,38 @@
       submitBtn.disabled = true;
     }
 
+    function showClosedTakeover(show) {
+      // CSS class controls blur + overlay visibility
+      voteCard.classList.toggle("is-closed", !!show);
+    }
+
     function applyUIState(open) {
       setStatus(open);
 
       // reset banners
-      closedBanner.style.display = "none";
       dupBanner.style.display = "none";
 
+      // closed takeover
+      showClosedTakeover(!open);
+
       if (!open) {
-        closedBanner.style.display = "block";
         setFormEnabled(false);
         submitBtn.disabled = true;
         return;
       }
 
+      // open
       if (isVotingLockedByDevice()) {
         showLockedUI();
         return;
       }
 
-      // open + not locked
       setFormEnabled(true);
       updateButtonsUI();
     }
 
     // Init
     renderFinalists();
-    updateProgressUI();
 
     (async function initStatus() {
       const open = await getVotingOpen();
@@ -741,7 +798,6 @@
       clearErrors();
       successWrap.style.display = "none";
 
-      // Stop if locked
       if (isVotingLockedByDevice()) {
         showLockedUI();
         return;
@@ -756,7 +812,7 @@
         return;
       }
 
-      // Extra safety: ensure unique (should already be enforced)
+      // Ensure uniqueness (should already be enforced)
       const s = new Set(ranks);
       if (s.size !== FINALISTS.length) {
         validationError.textContent = "Each rank 1–5 must be used exactly once.";
@@ -772,7 +828,6 @@
           createdAt: { stringValue: new Date().toISOString() }
         };
 
-        // Keep Firestore payload shape EXACTLY like before:
         FINALISTS.forEach((act, idx) => {
           fields["act_" + idx] = { stringValue: act.name };
           fields["actId_" + idx] = { stringValue: act.id };
@@ -790,10 +845,9 @@
           throw new Error(txt || "Firestore error");
         }
 
-        // Soft duplicate protection: lock device
         lockDeviceVoted();
 
-        // Clear UI selections
+        // reset selections
         for (let i = 0; i < ranks.length; i++) ranks[i] = null;
         updateButtonsUI();
 
@@ -801,9 +855,7 @@
         statusMsg.textContent = "";
         successWrap.style.display = "block";
 
-        // Disable so they can’t submit twice; keep messaging clean
         setFormEnabled(false);
-        dupBanner.style.display = "none";
       } catch (err) {
         console.error(err);
         statusMsg.textContent = "Failed to submit: " + (err.message || err);
