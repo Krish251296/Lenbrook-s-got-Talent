@@ -352,13 +352,34 @@
     setInterval(spawnFlake, 75);
 
     /* 🏁 CONFIG: your 5 finalists */
-    const FINALISTS = [
-      { id: "finalist1", name: "Finalist 1 – e.g. Festive Beats", meta: "Band · Upbeat holiday medley" },
-      { id: "finalist2", name: "Finalist 2", meta: "Solo · Vocals" },
-      { id: "finalist3", name: "Finalist 3", meta: "Instrumental" },
-      { id: "finalist4", name: "Finalist 4", meta: "Dance" },
-      { id: "finalist5", name: "Finalist 5", meta: "Wildcard" }
-    ];
+const FINALISTS = [
+  {
+    id: "wintersong",
+    name: "Wintersong – Winter Night Duo",
+    meta: "Alyza Knoetze & Josh Sutherland · Singing duet"
+  },
+  {
+    id: "nocturne",
+    name: "Nocturne",
+    meta: "Anders Berg · Classical guitar"
+  },
+  {
+    id: "sounds-of-persia",
+    name: "Sounds of Persia",
+    meta: "Amin Mashayekhi · Persian drum"
+  },
+  {
+    id: "youve-got-a-friend-in-me",
+    name: "You’ve Got a Friend in Me",
+    meta: "Chris Wright · Guitar & singing"
+  },
+  {
+    id: "silver-lining",
+    name: "Silver Lining",
+    meta: "Suzie Wu · Singing & fan dance"
+  }
+];
+
 
     const FIRESTORE_URL =
       "https://firestore.googleapis.com/v1/projects/lenbrook-s-got-talent/databases/(default)/documents/finalVotes";
