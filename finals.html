@@ -83,6 +83,7 @@
       color: var(--muted);
       font-size: 0.86rem;
       display: none;
+      #adminResetHint { display: none; }
     }
     .banner strong { color: var(--accent); }
 
@@ -217,9 +218,14 @@
         <div class="banner" id="closedBanner">
           <strong>Voting is closed.</strong> Thanks for participating!
         </div>
-        <div class="banner" id="dupBanner">
-          <strong>Vote already recorded on this device.</strong> If this is a mistake, open the page with <code>?reset=1</code>.
-        </div>
+       <div class="banner" id="dupBanner">
+  <strong>Vote already recorded on this device.</strong>
+</div>
+
+<div class="banner" id="adminResetHint">
+  <strong>Admin:</strong> To clear the device lock, open <code>?reset=1</code>.
+</div>
+
       </div>
     </div>
 
